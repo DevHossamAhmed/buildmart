@@ -1,0 +1,577 @@
+"use client";
+
+import React, { useState } from "react";
+import {
+  Plus,
+  Search,
+  Filter,
+  Download,
+  Edit2,
+  Trash2,
+  Eye,
+  CheckCircle,
+  Clock,
+  XCircle,
+  AlertCircle,
+} from "lucide-react";
+
+const MaterialRequestDashboard = () => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [formData, setFormData] = useState({
+    materialName: "",
+    quantity: "",
+    unit: "units",
+    category: "",
+    priority: "normal",
+    description: "",
+    projectName: "",
+    requestedDate: "",
+  });
+
+  const [requests, setRequests] = useState([
+    {
+      id: "MR-001",
+      materialName: "Steel Rebar Grade 60",
+      quantity: 500,
+      unit: "kg",
+      category: "Construction",
+      priority: "high",
+      status: "pending",
+      projectName: "Building A",
+      requestedBy: "Mahmoud Ahmed",
+      requestedDate: "2025-02-10",
+      updatedAt: "2025-02-10",
+    },
+    {
+      id: "MR-002",
+      materialName: "Cement Portland Type I",
+      quantity: 100,
+      unit: "bags",
+      category: "Construction",
+      priority: "normal",
+      status: "approved",
+      projectName: "Building B",
+      requestedBy: "Sara Ali",
+      requestedDate: "2025-02-08",
+      updatedAt: "2025-02-09",
+    },
+    {
+      id: "MR-003",
+      materialName: "Electrical Cables 2.5mm",
+      quantity: 200,
+      unit: "meters",
+      category: "Electrical",
+      priority: "urgent",
+      status: "pending",
+      projectName: "Renovation Project",
+      requestedBy: "Ahmed Hassan",
+      requestedDate: "2025-02-09",
+      updatedAt: "2025-02-09",
+    },
+    {
+      id: "MR-004",
+      materialName: "PVC Pipes 4 inch",
+      quantity: 50,
+      unit: "meters",
+      category: "Plumbing",
+      priority: "normal",
+      status: "completed",
+      projectName: "Building C",
+      requestedBy: "Mahmoud Ahmed",
+      requestedDate: "2025-02-05",
+      updatedAt: "2025-02-08",
+    },
+    {
+      id: "MR-005",
+      materialName: "Paint - White Latex",
+      quantity: 30,
+      unit: "gallons",
+      category: "Finishing",
+      priority: "low",
+      status: "rejected",
+      projectName: "Office Renovation",
+      requestedBy: "Fatima Mohamed",
+      requestedDate: "2025-02-07",
+      updatedAt: "2025-02-08",
+    },
+  ]);
+
+  const stats = [
+    {
+      label: "Total Requests",
+      value: "248",
+      change: "+12%",
+      color: "bg-blue-500",
+    },
+    { label: "Pending", value: "45", change: "+5%", color: "bg-yellow-500" },
+    { label: "Approved", value: "178", change: "+8%", color: "bg-green-500" },
+    { label: "Rejected", value: "25", change: "-3%", color: "bg-red-500" },
+  ];
+
+  //@ts-expect-error:status
+  const getStatusBadge = (status) => {
+    const styles = {
+      pending: "bg-yellow-100 text-yellow-800 border-yellow-300",
+      approved: "bg-green-100 text-green-800 border-green-300",
+      completed: "bg-blue-100 text-blue-800 border-blue-300",
+      rejected: "bg-red-100 text-red-800 border-red-300",
+    };
+    //@ts-expect-error:status
+    return styles[status] || styles.pending;
+  };
+
+  //@ts-expect-error:status
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "approved":
+        return <CheckCircle className="w-4 h-4" />;
+      case "pending":
+        return <Clock className="w-4 h-4" />;
+      case "rejected":
+        return <XCircle className="w-4 h-4" />;
+      case "completed":
+        return <CheckCircle className="w-4 h-4" />;
+      default:
+        return <AlertCircle className="w-4 h-4" />;
+    }
+  };
+
+  //@ts-expect-error:priority
+  const getPriorityBadge = (priority) => {
+    const styles = {
+      urgent: "bg-red-100 text-red-800 border-red-300",
+      high: "bg-orange-100 text-orange-800 border-orange-300",
+      normal: "bg-blue-100 text-blue-800 border-blue-300",
+      low: "bg-gray-100 text-gray-800 border-gray-300",
+    };
+    //@ts-expect-error:priority
+    return styles[priority] || styles.normal;
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleInputChange = (e: { target: { name: any; value: any } }) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = () => {
+    const newRequest = {
+      id: `MR-${String(requests.length + 1).padStart(3, "0")}`,
+      ...formData,
+      status: "pending",
+      requestedBy: "Mahmoud Ahmed",
+      updatedAt: new Date().toISOString().split("T")[0],
+    };
+    //@ts-expect-error:newRequest
+    setRequests([newRequest, ...requests]);
+    setIsDrawerOpen(false);
+    setFormData({
+      materialName: "",
+      quantity: "",
+      unit: "units",
+      category: "",
+      priority: "normal",
+      description: "",
+      projectName: "",
+      requestedDate: "",
+    });
+  };
+
+  const filteredRequests = requests.filter((req) => {
+    const matchesSearch =
+      req.materialName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      req.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      req.projectName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === "all" || req.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  return (
+    <div className="min-h-screen bg-gray-50 w-full">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b ">
+        <div className="px-6 py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                Material Requests
+              </h1>
+              <p className="text-sm text-gray-600 mt-1">
+                Manage and track all material requests
+              </p>
+            </div>
+            <button
+              onClick={() => setIsDrawerOpen(true)}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 sm:px-6 sm:py-3 text-white rounded-lg shadow-md hover:opacity-90 transition-opacity font-medium"
+              style={{ backgroundColor: "#d92335" }}
+            >
+              <Plus className="w-5 h-5" />
+              <span>New Request</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-6 py-6">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          {stats.map((stat, idx) => (
+            <div
+              key={idx}
+              className="bg-white rounded-lg shadow-sm p-5 border border-gray-100"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stat.value}
+                  </p>
+                  <p
+                    className={`text-xs mt-1 ${
+                      stat.change.startsWith("+")
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {stat.change} from last month
+                  </p>
+                </div>
+                <div
+                  className={`w-12 h-12 rounded-full ${stat.color} bg-opacity-20 flex items-center justify-center`}
+                >
+                  <div className={`w-2 h-2 rounded-full ${stat.color}`}></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Search and Filter Bar */}
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-6 border border-gray-100">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search by material, ID, or project..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none text-sm"
+                style={{
+                  //@ts-expect-error:focusRingColor
+                  focusRingColor: "#d92335",
+                }}
+              />
+            </div>
+            <div className="flex gap-3">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none text-sm bg-white"
+              >
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="completed">Completed</option>
+                <option value="rejected">Rejected</option>
+              </select>
+              <button className="px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Download className="w-4 h-4" />
+                <span className="hidden sm:inline">Export</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Request ID
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Material
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Quantity
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Category
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Priority
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Project
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Requested By
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredRequests.map((request) => (
+                  <tr
+                    key={request.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-4 py-4 text-sm font-medium text-gray-900">
+                      {request.id}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-900">
+                      {request.materialName}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-600">
+                      {request.quantity} {request.unit}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-600">
+                      {request.category}
+                    </td>
+                    <td className="px-4 py-4">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getPriorityBadge(
+                          request.priority
+                        )}`}
+                      >
+                        {request.priority.charAt(0).toUpperCase() +
+                          request.priority.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusBadge(
+                          request.status
+                        )}`}
+                      >
+                        {getStatusIcon(request.status)}
+                        {request.status.charAt(0).toUpperCase() +
+                          request.status.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-600">
+                      {request.projectName}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-600">
+                      {request.requestedBy}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-600">
+                      {request.requestedDate}
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex items-center gap-2">
+                        <button className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded transition-colors">
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button className="p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Side Drawer */}
+      {isDrawerOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/10 bg-opacity-50 z-[99999] transition-opacity"
+            onClick={() => setIsDrawerOpen(false)}
+          />
+
+          <div className="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white shadow-2xl z-[100000] flex flex-col animate-slide-in">
+            <div className="absolute top-4 right-4 z-10">
+              <button
+                onClick={() => setIsDrawerOpen(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                <span className="text-xl font-bold">×</span>
+              </button>
+            </div>
+
+            <div className="p-6 pt-16 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900">
+                New Material Request
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Fill in the details to create a new request
+              </p>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Material Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="materialName"
+                    value={formData.materialName}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    placeholder="e.g., Steel Rebar Grade 60"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Quantity <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="quantity"
+                      value={formData.quantity}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                      placeholder="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Unit <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="unit"
+                      value={formData.unit}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    >
+                      <option value="units">Units</option>
+                      <option value="kg">Kilograms</option>
+                      <option value="tons">Tons</option>
+                      <option value="meters">Meters</option>
+                      <option value="bags">Bags</option>
+                      <option value="gallons">Gallons</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Category <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Construction">Construction</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Plumbing">Plumbing</option>
+                    <option value="Finishing">Finishing</option>
+                    <option value="Safety">Safety Equipment</option>
+                    <option value="Tools">Tools & Equipment</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Priority <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="priority"
+                    value={formData.priority}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                  >
+                    <option value="low">Low</option>
+                    <option value="normal">Normal</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Project Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="projectName"
+                    value={formData.projectName}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    placeholder="e.g., Building A Construction"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Requested Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="requestedDate"
+                    value={formData.requestedDate}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description / Notes
+                  </label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    //@ts-expect-error:rows
+                    rows="4"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    placeholder="Add any additional information or special requirements..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200">
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setIsDrawerOpen(false)}
+                  className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="flex-1 px-6 py-3 text-white rounded-lg shadow-md hover:opacity-90 transition-opacity font-medium"
+                  style={{ backgroundColor: "#d92335" }}
+                >
+                  Submit Request
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default MaterialRequestDashboard;
