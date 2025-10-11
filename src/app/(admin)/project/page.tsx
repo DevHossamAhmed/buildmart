@@ -104,7 +104,7 @@ const ProjectsDashboard = () => {
 
   const stats = [
     { label: 'Active Projects', value: '12', change: '+3', icon: TrendingUp, color: 'bg-blue-500' },
-    { label: 'Total Budget', value: '32.5M EGP', change: '+15%', icon: Package, color: 'bg-green-500' },
+    { label: 'Total Budget', value: '32.5M SAR', change: '+15%', icon: Package, color: 'bg-green-500' },
     { label: 'Pending Requests', value: '40', change: '-5', icon: Clock, color: 'bg-yellow-500' },
     { label: 'Completed', value: '8', change: '+2', icon: CheckCircle2, color: 'bg-purple-500' }
   ];
@@ -134,7 +134,7 @@ const ProjectsDashboard = () => {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-EG', {
       style: 'currency',
-      currency: 'EGP',
+      currency: 'SAR',
       minimumFractionDigits: 0
     }).format(amount);
   };
@@ -500,7 +500,7 @@ const ProjectsDashboard = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Budget (EGP) <span className="text-red-500">*</span>
+                    Budget (SAR) <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
