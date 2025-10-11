@@ -788,89 +788,19 @@ const MaterialRequestDashboard = () => {
                     </tbody>
                   </table>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Quantity <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      name="quantity"
-                      value={formData.quantity}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
-                      placeholder="0"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Unit <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      name="unit"
-                      value={formData.unit}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
-                    >
-                      <option value="units">Units</option>
-                      <option value="kg">Kilograms</option>
-                      <option value="tons">Tons</option>
-                      <option value="meters">Meters</option>
-                      <option value="bags">Bags</option>
-                      <option value="gallons">Gallons</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Category <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
-                  >
-                    <option value="">Select Category</option>
-                    <option value="Construction">Construction</option>
-                    <option value="Electrical">Electrical</option>
-                    <option value="Plumbing">Plumbing</option>
-                    <option value="Finishing">Finishing</option>
-                    <option value="Safety">Safety Equipment</option>
-                    <option value="Tools">Tools & Equipment</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Requested Date <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    name="requestedDate"
-                    value={formData.requestedDate}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
-                  />
-                </div>
+              
               </div>
             </div>
 
             <div className="p-6 border-t border-gray-200">
               <div className="flex gap-3">
-                <button
-                  onClick={() => setIsDrawerOpen(false)}
-                  className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-                >
-                  Cancel
-                </button>
+
                 <button
                   onClick={handleSave}
                   className="flex-1 px-6 py-3 text-white rounded-lg shadow-md hover:opacity-90 transition-opacity font-medium"
                   style={{ backgroundColor: "#d92335" }}
                 >
-                  Submit Request
+                  save as draft{" "}
                 </button>
               </div>
             </div>
