@@ -660,7 +660,7 @@ const MaterialRequestDashboard = () => {
                         <th className="w-[12%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
                           Unit
                         </th>
-                        <th className="w-[13%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
+                        <th className="w-[12%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
                           Unit Price
                         </th>
                         <th className="w-[13%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
@@ -788,19 +788,28 @@ const MaterialRequestDashboard = () => {
                     </tbody>
                   </table>
                 </div>
-              
+               
+
+                
+
+                
               </div>
             </div>
 
             <div className="p-6 border-t border-gray-200">
               <div className="flex gap-3">
-
+                <button
+                  onClick={() => setIsDrawerOpen(false)}
+                  className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                >
+                  save as draft
+                </button>
                 <button
                   onClick={handleSave}
                   className="flex-1 px-6 py-3 text-white rounded-lg shadow-md hover:opacity-90 transition-opacity font-medium"
                   style={{ backgroundColor: "#d92335" }}
                 >
-                  save as draft{" "}
+                  Submit Request
                 </button>
               </div>
             </div>
