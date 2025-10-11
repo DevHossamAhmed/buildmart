@@ -28,6 +28,7 @@ const MaterialRequestDashboard = () => {
     description: "",
     projectName: "",
     requestedDate: "",
+    duedate:""
   });
 
   const [requests, setRequests] = useState([
@@ -43,6 +44,7 @@ const MaterialRequestDashboard = () => {
       requestedBy: "Mahmoud Ahmed",
       requestedDate: "2025-02-10",
       updatedAt: "2025-02-10",
+      duedate:"15-10-2025"
     },
     {
       id: "MR-002",
@@ -56,6 +58,7 @@ const MaterialRequestDashboard = () => {
       requestedBy: "Sara Ali",
       requestedDate: "2025-02-08",
       updatedAt: "2025-02-09",
+      duedate:"17-10-2025"
     },
     {
       id: "MR-003",
@@ -69,6 +72,7 @@ const MaterialRequestDashboard = () => {
       requestedBy: "Ahmed Hassan",
       requestedDate: "2025-02-09",
       updatedAt: "2025-02-09",
+      duedate:"20-10-2025"
     },
     {
       id: "MR-004",
@@ -82,6 +86,7 @@ const MaterialRequestDashboard = () => {
       requestedBy: "Mahmoud Ahmed",
       requestedDate: "2025-02-05",
       updatedAt: "2025-02-08",
+      duedate:"25-10-2025"
     },
     {
       id: "MR-005",
@@ -95,6 +100,7 @@ const MaterialRequestDashboard = () => {
       requestedBy: "Fatima Mohamed",
       requestedDate: "2025-02-07",
       updatedAt: "2025-02-08",
+      duedate:"30-10-2025"
     },
   ]);
 
@@ -105,9 +111,9 @@ const MaterialRequestDashboard = () => {
       change: "+12%",
       color: "bg-blue-500",
     },
-    { label: "Pending", value: "45", change: "+5%", color: "bg-yellow-500" },
-    { label: "Approved", value: "178", change: "+8%", color: "bg-green-500" },
-    { label: "Rejected", value: "25", change: "-3%", color: "bg-red-500" },
+    { label: "In Progress", value: "45", change: "+5%", color: "bg-yellow-500" },
+    { label: " Completed", value: "178", change: "+8%", color: "bg-green-500" },
+    { label: " Closed", value: "25", change: "-3%", color: "bg-red-500" },
   ];
 
   //@ts-expect-error:status
@@ -176,6 +182,7 @@ const MaterialRequestDashboard = () => {
       description: "",
       projectName: "",
       requestedDate: "",
+      duedate:""
     });
   };
 
@@ -297,14 +304,10 @@ const MaterialRequestDashboard = () => {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Material
                   </th>
+                  
+                  
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Quantity
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Priority
+                    Due Date
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Status
@@ -316,7 +319,7 @@ const MaterialRequestDashboard = () => {
                     Requested By
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Date
+                    Requested Date
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Actions
@@ -335,11 +338,9 @@ const MaterialRequestDashboard = () => {
                     <td className="px-4 py-4 text-sm text-gray-900">
                       {request.materialName}
                     </td>
+                    
                     <td className="px-4 py-4 text-sm text-gray-600">
-                      {request.quantity} {request.unit}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-gray-600">
-                      {request.category}
+                      {request.duedate}
                     </td>
                     <td className="px-4 py-4">
                       <span
