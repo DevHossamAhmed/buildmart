@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import {
   Plus,
   Search,
-  Filter,
   Download,
   Edit2,
   Trash2,
@@ -13,6 +12,8 @@ import {
   Clock,
   XCircle,
   AlertCircle,
+  FileText,
+  Loader,
 } from "lucide-react";
 
 const MaterialRequestDashboard = () => {
@@ -39,7 +40,7 @@ const MaterialRequestDashboard = () => {
       unit: "kg",
       category: "Construction",
       priority: "high",
-      status: "pending",
+      status: "draft",
       projectName: "Building A",
       requestedBy: "Mahmoud Ahmed",
       requestedDate: "2025-02-10",
@@ -53,7 +54,7 @@ const MaterialRequestDashboard = () => {
       unit: "bags",
       category: "Construction",
       priority: "normal",
-      status: "approved",
+      status: "in_progress",
       projectName: "Building B",
       requestedBy: "Sara Ali",
       requestedDate: "2025-02-08",
@@ -95,12 +96,54 @@ const MaterialRequestDashboard = () => {
       unit: "gallons",
       category: "Finishing",
       priority: "low",
-      status: "rejected",
+      status: "closed",
       projectName: "Office Renovation",
       requestedBy: "Fatima Mohamed",
       requestedDate: "2025-02-07",
       updatedAt: "2025-02-08",
       duedate:"30-10-2025"
+    },
+    {
+      id: "MR-006",
+      materialName: "Wood Planks Oak",
+      quantity: 150,
+      unit: "units",
+      category: "Finishing",
+      priority: "high",
+      status: "draft",
+      projectName: "Interior Design Phase 1",
+      requestedBy: "Omar Khalil",
+      requestedDate: "2025-02-11",
+      updatedAt: "2025-02-11",
+      duedate:"18-10-2025"
+    },
+    {
+      id: "MR-007",
+      materialName: "Concrete Mix M25",
+      quantity: 5,
+      unit: "tons",
+      category: "Construction",
+      priority: "urgent",
+      status: "in_progress",
+      projectName: "Foundation Work",
+      requestedBy: "Youssef Ibrahim",
+      requestedDate: "2025-02-09",
+      updatedAt: "2025-02-10",
+      duedate:"14-10-2025"
+    },
+    {
+      id: "MR-008",
+      materialName: "Glass Panels 10mm",
+      quantity: 20,
+      unit: "units",
+      category: "Finishing",
+      priority: "normal",
+      status: "pending",
+      projectName: "Facade Installation",
+      requestedBy: "Layla Hassan",
+      requestedDate: "2025-02-08",
+      updatedAt: "2025-02-09",
+      duedate:"22-10-2025"
     },
   ]);
 
@@ -119,45 +162,74 @@ const MaterialRequestDashboard = () => {
   //@ts-expect-error:status
   const getStatusBadge = (status) => {
     const styles = {
-      pending: "bg-yellow-100 text-yellow-800 border-yellow-300",
-      approved: "bg-green-100 text-green-800 border-green-300",
-      completed: "bg-blue-100 text-blue-800 border-blue-300",
-      rejected: "bg-red-100 text-red-800 border-red-300",
+      draft: "bg-gray-100 text-gray-700 border-gray-300",
+      in_progress: "bg-blue-100 text-blue-700 border-blue-300",
+      completed: "bg-green-100 text-green-700 border-green-300",
+      pending: "bg-yellow-100 text-yellow-700 border-yellow-300",
+      closed: "bg-red-100 text-red-700 border-red-300",
     };
     //@ts-expect-error:status
-    return styles[status] || styles.pending;
+    return styles[status] || styles.draft;
   };
-
-  //@ts-expect-error:status
+//@ts-expect-error:status
   const getStatusIcon = (status) => {
     switch (status) {
-      case "approved":
-        return <CheckCircle className="w-4 h-4" />;
+      case "draft":
+        return <FileText className="w-4 h-4" />;
+      case "in_progress":
+        return <Loader className="w-4 h-4" />;
       case "pending":
         return <Clock className="w-4 h-4" />;
-      case "rejected":
-        return <XCircle className="w-4 h-4" />;
       case "completed":
         return <CheckCircle className="w-4 h-4" />;
+      case "closed":
+        return <XCircle className="w-4 h-4" />;
       default:
         return <AlertCircle className="w-4 h-4" />;
     }
+  };
+//@ts-expect-error:status
+  const getStatusLabel = (status) => {
+    const labels = {
+      draft: "Draft",
+      in_progress: "In Progress",
+      pending: "Pending",
+      completed: "Completed",
+      closed: "Closed",
+    };
+    //@ts-expect-error:status
+    return labels[status] || status;
   };
 
   //@ts-expect-error:priority
   const getPriorityBadge = (priority) => {
     const styles = {
-      urgent: "bg-red-100 text-red-800 border-red-300",
-      high: "bg-orange-100 text-orange-800 border-orange-300",
-      normal: "bg-blue-100 text-blue-800 border-blue-300",
-      low: "bg-gray-100 text-gray-800 border-gray-300",
+      urgent: "bg-red-100 text-red-700 border-red-300",
+      high: "bg-orange-100 text-orange-700 border-orange-300",
+      normal: "bg-blue-100 text-blue-700 border-blue-300",
+      low: "bg-slate-100 text-slate-700 border-slate-300",
     };
     //@ts-expect-error:priority
     return styles[priority] || styles.normal;
   };
+//@ts-expect-error:priority
+  const getPriorityIcon = (priority) => {
+    switch (priority) {
+      case "urgent":
+        return <AlertCircle className="w-4 h-4" />;
+      case "high":
+        return <AlertCircle className="w-4 h-4" />;
+      case "normal":
+        return <Clock className="w-4 h-4" />;
+      case "low":
+        return <Clock className="w-4 h-4" />;
+      default:
+        return <Clock className="w-4 h-4" />;
+    }
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleInputChange = (e: { target: { name: any; value: any } }) => {
+  const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -166,7 +238,7 @@ const MaterialRequestDashboard = () => {
     const newRequest = {
       id: `MR-${String(requests.length + 1).padStart(3, "0")}`,
       ...formData,
-      status: "pending",
+      status: "draft",
       requestedBy: "Mahmoud Ahmed",
       updatedAt: new Date().toISOString().split("T")[0],
     };
@@ -266,10 +338,6 @@ const MaterialRequestDashboard = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none text-sm"
-                style={{
-                  //@ts-expect-error:focusRingColor
-                  focusRingColor: "#d92335",
-                }}
               />
             </div>
             <div className="flex gap-3">
@@ -279,10 +347,11 @@ const MaterialRequestDashboard = () => {
                 className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none text-sm bg-white"
               >
                 <option value="all">All Status</option>
+                <option value="draft">Draft</option>
+                <option value="in_progress">In Progress</option>
                 <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
                 <option value="completed">Completed</option>
-                <option value="rejected">Rejected</option>
+                <option value="closed">Closed</option>
               </select>
               <button className="px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium text-gray-700">
                 <Download className="w-4 h-4" />
@@ -302,15 +371,16 @@ const MaterialRequestDashboard = () => {
                     Request ID
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Material
-                  </th>
-                  
-                  
+                    TITLE
+                  </th>       
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Due Date
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Status
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    PRIORITY
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Project
@@ -344,23 +414,23 @@ const MaterialRequestDashboard = () => {
                     </td>
                     <td className="px-4 py-4">
                       <span
-                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getPriorityBadge(
-                          request.priority
-                        )}`}
-                      >
-                        {request.priority.charAt(0).toUpperCase() +
-                          request.priority.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusBadge(
                           request.status
                         )}`}
                       >
                         {getStatusIcon(request.status)}
-                        {request.status.charAt(0).toUpperCase() +
-                          request.status.slice(1)}
+                        {getStatusLabel(request.status)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getPriorityBadge(
+                          request.priority
+                        )}`}
+                      >
+                        {getPriorityIcon(request.priority)}
+                        {request.priority.charAt(0).toUpperCase() +
+                          request.priority.slice(1)}
                       </span>
                     </td>
                     <td className="px-4 py-4 text-sm text-gray-600">
@@ -380,9 +450,7 @@ const MaterialRequestDashboard = () => {
                         <button className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded transition-colors">
                           <Edit2 className="w-4 h-4" />
                         </button>
-                        <button className="p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        
                       </div>
                     </td>
                   </tr>
@@ -536,14 +604,26 @@ const MaterialRequestDashboard = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Due Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="duedate"
+                    value={formData.duedate}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Description / Notes
                   </label>
                   <textarea
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
-                    //@ts-expect-error:rows
-                    rows="4"
+                    rows={4}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
                     placeholder="Add any additional information or special requirements..."
                   />
