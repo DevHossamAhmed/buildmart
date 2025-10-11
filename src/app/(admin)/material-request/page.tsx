@@ -20,6 +20,17 @@ const MaterialRequestDashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [boqItems, setBoqItems] = useState([
+    {
+      id: 1,
+      category: "",
+      item: "",
+      unit: "",
+      unitPrice: "",
+      total: 0,
+      notes: "",
+    },
+  ]);
   const [formData, setFormData] = useState({
     materialName: "",
     quantity: "",
@@ -29,7 +40,7 @@ const MaterialRequestDashboard = () => {
     description: "",
     projectName: "",
     requestedDate: "",
-    duedate:""
+    duedate: "",
   });
 
   const [requests, setRequests] = useState([
@@ -45,7 +56,7 @@ const MaterialRequestDashboard = () => {
       requestedBy: "Mahmoud Ahmed",
       requestedDate: "2025-02-10",
       updatedAt: "2025-02-10",
-      duedate:"15-10-2025"
+      duedate: "15-10-2025",
     },
     {
       id: "MR-002",
@@ -59,7 +70,7 @@ const MaterialRequestDashboard = () => {
       requestedBy: "Sara Ali",
       requestedDate: "2025-02-08",
       updatedAt: "2025-02-09",
-      duedate:"17-10-2025"
+      duedate: "17-10-2025",
     },
     {
       id: "MR-003",
@@ -73,7 +84,7 @@ const MaterialRequestDashboard = () => {
       requestedBy: "Ahmed Hassan",
       requestedDate: "2025-02-09",
       updatedAt: "2025-02-09",
-      duedate:"20-10-2025"
+      duedate: "20-10-2025",
     },
     {
       id: "MR-004",
@@ -87,7 +98,7 @@ const MaterialRequestDashboard = () => {
       requestedBy: "Mahmoud Ahmed",
       requestedDate: "2025-02-05",
       updatedAt: "2025-02-08",
-      duedate:"25-10-2025"
+      duedate: "25-10-2025",
     },
     {
       id: "MR-005",
@@ -101,7 +112,7 @@ const MaterialRequestDashboard = () => {
       requestedBy: "Fatima Mohamed",
       requestedDate: "2025-02-07",
       updatedAt: "2025-02-08",
-      duedate:"30-10-2025"
+      duedate: "30-10-2025",
     },
     {
       id: "MR-006",
@@ -115,7 +126,7 @@ const MaterialRequestDashboard = () => {
       requestedBy: "Omar Khalil",
       requestedDate: "2025-02-11",
       updatedAt: "2025-02-11",
-      duedate:"18-10-2025"
+      duedate: "18-10-2025",
     },
     {
       id: "MR-007",
@@ -129,7 +140,7 @@ const MaterialRequestDashboard = () => {
       requestedBy: "Youssef Ibrahim",
       requestedDate: "2025-02-09",
       updatedAt: "2025-02-10",
-      duedate:"14-10-2025"
+      duedate: "14-10-2025",
     },
     {
       id: "MR-008",
@@ -143,7 +154,7 @@ const MaterialRequestDashboard = () => {
       requestedBy: "Layla Hassan",
       requestedDate: "2025-02-08",
       updatedAt: "2025-02-09",
-      duedate:"22-10-2025"
+      duedate: "22-10-2025",
     },
   ]);
 
@@ -154,7 +165,12 @@ const MaterialRequestDashboard = () => {
       change: "+12%",
       color: "bg-blue-500",
     },
-    { label: "In Progress", value: "45", change: "+5%", color: "bg-yellow-500" },
+    {
+      label: "In Progress",
+      value: "45",
+      change: "+5%",
+      color: "bg-yellow-500",
+    },
     { label: " Completed", value: "178", change: "+8%", color: "bg-green-500" },
     { label: " Closed", value: "25", change: "-3%", color: "bg-red-500" },
   ];
@@ -171,7 +187,7 @@ const MaterialRequestDashboard = () => {
     //@ts-expect-error:status
     return styles[status] || styles.draft;
   };
-//@ts-expect-error:status
+  //@ts-expect-error:status
   const getStatusIcon = (status) => {
     switch (status) {
       case "draft":
@@ -188,7 +204,7 @@ const MaterialRequestDashboard = () => {
         return <AlertCircle className="w-4 h-4" />;
     }
   };
-//@ts-expect-error:status
+  //@ts-expect-error:status
   const getStatusLabel = (status) => {
     const labels = {
       draft: "Draft",
@@ -212,7 +228,7 @@ const MaterialRequestDashboard = () => {
     //@ts-expect-error:priority
     return styles[priority] || styles.normal;
   };
-//@ts-expect-error:priority
+  //@ts-expect-error:priority
   const getPriorityIcon = (priority) => {
     switch (priority) {
       case "urgent":
@@ -229,7 +245,7 @@ const MaterialRequestDashboard = () => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
+  const handleInputChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -254,7 +270,7 @@ const MaterialRequestDashboard = () => {
       description: "",
       projectName: "",
       requestedDate: "",
-      duedate:""
+      duedate: "",
     });
   };
 
@@ -266,6 +282,46 @@ const MaterialRequestDashboard = () => {
     const matchesStatus = statusFilter === "all" || req.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  const handleBoqChange = (id: number, field: string, value: string) => {
+    setBoqItems(
+      boqItems.map((item) => {
+        if (item.id === id) {
+          const updatedItem = { ...item, [field]: value };
+          if (field === "unitPrice" || field === "unit") {
+            const quantity = parseFloat(formData.quantity) || 0;
+            const unitPrice =
+              parseFloat(field === "unitPrice" ? value : item.unitPrice) || 0;
+            updatedItem.total = quantity * unitPrice;
+          }
+          return updatedItem;
+        }
+        return item;
+      })
+    );
+  };
+
+  const addBoqRow = () => {
+    const newId = Math.max(...boqItems.map((item) => item.id), 0) + 1;
+    setBoqItems([
+      ...boqItems,
+      {
+        id: newId,
+        category: "",
+        item: "",
+        unit: "",
+        unitPrice: "",
+        total: 0,
+        notes: "",
+      },
+    ]);
+  };
+
+  const removeBoqRow = (id: number) => {
+    if (boqItems.length > 1) {
+      setBoqItems(boqItems.filter((item) => item.id !== id));
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 w-full">
@@ -372,7 +428,7 @@ const MaterialRequestDashboard = () => {
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     TITLE
-                  </th>       
+                  </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Due Date
                   </th>
@@ -408,7 +464,7 @@ const MaterialRequestDashboard = () => {
                     <td className="px-4 py-4 text-sm text-gray-900">
                       {request.materialName}
                     </td>
-                    
+
                     <td className="px-4 py-4 text-sm text-gray-600">
                       {request.duedate}
                     </td>
@@ -450,7 +506,6 @@ const MaterialRequestDashboard = () => {
                         <button className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded transition-colors">
                           <Edit2 className="w-4 h-4" />
                         </button>
-                        
                       </div>
                     </td>
                   </tr>
@@ -503,7 +558,236 @@ const MaterialRequestDashboard = () => {
                     placeholder="e.g., Steel Rebar Grade 60"
                   />
                 </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Project Name <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="projectName"
+                      value={formData.projectName}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    >
+                      <option value="">Select Project</option>
+                      <option value="PRJ-2024-001 - Structural Steel Installation">
+                        PRJ-2024-001 - Structural Steel Installation
+                      </option>
+                      <option value="PRJ-2024-002 - HVAC System Upgrade">
+                        PRJ-2024-002 - HVAC System Upgrade
+                      </option>
+                      <option value="PRJ-2024-003 - Electrical Infrastructure">
+                        PRJ-2024-003 - Electrical Infrastructure
+                      </option>
+                      <option value="PRJ-2024-004 - Foundation & Concrete Works">
+                        PRJ-2024-004 - Foundation & Concrete Works
+                      </option>
+                      <option value="PRJ-2024-005 - Plumbing & Drainage System">
+                        PRJ-2024-005 - Plumbing & Drainage System
+                      </option>
+                      <option value="PRJ-2024-006 - Facade & Cladding Works">
+                        PRJ-2024-006 - Facade & Cladding Works
+                      </option>
+                      <option value="PRJ-2024-007 - MEP Integration Phase 1">
+                        PRJ-2024-007 - MEP Integration Phase 1
+                      </option>
+                      <option value="PRJ-2024-008 - Fire Safety Systems">
+                        PRJ-2024-008 - Fire Safety Systems
+                      </option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Priority <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="priority"
+                      value={formData.priority}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    >
+                      <option value="low">Low</option>
+                      <option value="normal">Normal</option>
+                      <option value="high">High</option>
+                      <option value="urgent">Urgent</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Due Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="duedate"
+                    value={formData.duedate}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                  />
+                </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description / Notes
+                  </label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    rows={4}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    placeholder="Add any additional information or special requirements..."
+                  />
+                </div>
+                <div className="w-full h-[1px] bg-gray-300 mx-auto mt-[20px]"></div>
+                <div className="w-full flex justify-between">
+                  <h2 className="pt-1">BOQs</h2>
+                  <button className="bg-red-500 text-white p-1 rounded-md">
+                    Import
+                  </button>
+                </div>
+                {/* BOQ Table */}
+                <div className="overflow-x-auto border border-gray-300 rounded-lg">
+                  <table className="w-full text-sm table-fixed">
+                    <thead className="bg-gray-100 border-b border-gray-300">
+                      <tr>
+                        <th className="w-[20%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
+                          Cat
+                        </th>
+                        <th className="w-[15%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
+                          Item
+                        </th>
+                        <th className="w-[12%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
+                          Unit
+                        </th>
+                        <th className="w-[13%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
+                          Unit Price
+                        </th>
+                        <th className="w-[13%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
+                          Total
+                        </th>
+                        <th className="w-[15%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
+                          Notes
+                        </th>
+                        <th className="w-[10%] px-1 py-1 text-center text-[10px] font-semibold text-gray-700">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {boqItems.map((boqItem) => (
+                        <tr
+                          key={boqItem.id}
+                          className="border-b border-gray-200"
+                        >
+                          <td className="px-2 py-2 border-r border-gray-200">
+                            <select
+                              value={boqItem.category}
+                              onChange={(e) =>
+                                handleBoqChange(
+                                  boqItem.id,
+                                  "category",
+                                  e.target.value
+                                )
+                              }
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-500 focus:outline-none"
+                            >
+                              <option value="">Select</option>
+                              <option value="Construction">Construction</option>
+                              <option value="Electrical">Electrical</option>
+                              <option value="Plumbing">Plumbing</option>
+                              <option value="Finishing">Finishing</option>
+                              <option value="Safety">Safety</option>
+                            </select>
+                          </td>
+                          <td className="px-2 py-2 border-r border-gray-200">
+                            <input
+                              type="text"
+                              value={boqItem.item}
+                              onChange={(e) =>
+                                handleBoqChange(
+                                  boqItem.id,
+                                  "item",
+                                  e.target.value
+                                )
+                              }
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-500 focus:outline-none"
+                              placeholder="Item name"
+                            />
+                          </td>
+                          <td className="px-2 py-2 border-r border-gray-200">
+                            <select
+                              value={boqItem.unit}
+                              onChange={(e) =>
+                                handleBoqChange(
+                                  boqItem.id,
+                                  "unit",
+                                  e.target.value
+                                )
+                              }
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-500 focus:outline-none"
+                            >
+                              <option value="">Select</option>
+                              <option value="units">Units</option>
+                              <option value="kg">Kg</option>
+                              <option value="tons">Tons</option>
+                              <option value="meters">Meters</option>
+                              <option value="bags">Bags</option>
+                              <option value="gallons">Gallons</option>
+                            </select>
+                          </td>
+                          <td className="px-2 py-2 border-r border-gray-200">
+                            <input
+                              type="number"
+                              value={boqItem.unitPrice}
+                              onChange={(e) =>
+                                handleBoqChange(
+                                  boqItem.id,
+                                  "unitPrice",
+                                  e.target.value
+                                )
+                              }
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-500 focus:outline-none"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td className="px-2 py-2 border-r border-gray-200">
+                            <input
+                              type="text"
+                              value={boqItem.total.toFixed(2)}
+                              readOnly
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs bg-gray-50"
+                            />
+                          </td>
+                          <td className="px-2 py-2 border-r border-gray-200">
+                            <input
+                              type="text"
+                              value={boqItem.notes}
+                              onChange={(e) =>
+                                handleBoqChange(
+                                  boqItem.id,
+                                  "notes",
+                                  e.target.value
+                                )
+                              }
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-500 focus:outline-none"
+                              placeholder="Notes"
+                            />
+                          </td>
+                          <td className="px-2 py-2 text-center">
+                            <button
+                              onClick={() => removeBoqRow(boqItem.id)}
+                              className="text-red-500 hover:text-red-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                              disabled={boqItems.length === 1}
+                            >
+                              <Plus className="w-4 h-4 mx-auto" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -560,37 +844,6 @@ const MaterialRequestDashboard = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Priority <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="priority"
-                    value={formData.priority}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
-                  >
-                    <option value="low">Low</option>
-                    <option value="normal">Normal</option>
-                    <option value="high">High</option>
-                    <option value="urgent">Urgent</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Project Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="projectName"
-                    value={formData.projectName}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
-                    placeholder="e.g., Building A Construction"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Requested Date <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -599,33 +852,6 @@ const MaterialRequestDashboard = () => {
                     value={formData.requestedDate}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Due Date <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    name="duedate"
-                    value={formData.duedate}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description / Notes
-                  </label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    rows={4}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
-                    placeholder="Add any additional information or special requirements..."
                   />
                 </div>
               </div>
