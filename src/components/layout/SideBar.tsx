@@ -3,7 +3,16 @@ import Link from "next/link";
 import { RiDashboardLine } from "react-icons/ri";
 import { IoMdClose } from "react-icons/io";
 
-import { FaCode, FaTasks, FaClipboardList } from "react-icons/fa"; 
+import { 
+  FaClipboardList, 
+  FaBuilding, 
+  FaSitemap, 
+  FaTasks, 
+  FaWarehouse, 
+  FaMapMarkedAlt,
+  FaProjectDiagram,  
+  FaCode
+} from "react-icons/fa"; 
 
 interface SideBarProps {
   isOpen: boolean;
@@ -25,6 +34,31 @@ const navigationLinks = [
     name: "Project",
     href: "/project",
     icon: FaCode, 
+  },
+  {
+    name: "Companies",
+    href: "/companies",
+    icon: FaBuilding, 
+  },
+  {
+    name: "Departments",
+    href: "/departments",
+    icon: FaSitemap, 
+  },
+  {
+    name: "Activities",
+    href: "/activities",
+    icon: FaTasks, 
+  },
+  {
+    name: "Warehouses",
+    href: "/warehouses",
+    icon: FaWarehouse, 
+  },
+  {
+    name: "Regions",
+    href: "/regions",
+    icon: FaMapMarkedAlt, 
   },
 ];
 
