@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { RiDashboardLine } from "react-icons/ri";
 import { IoMdClose } from "react-icons/io";
 
@@ -10,7 +11,6 @@ import {
   FaTasks, 
   FaWarehouse, 
   FaMapMarkedAlt,
-  FaProjectDiagram,  
   FaCode
 } from "react-icons/fa"; 
 
@@ -63,6 +63,8 @@ const navigationLinks = [
 ];
 
 const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
+  const pathname = usePathname();
+
   return (
     <>
       {isOpen && (
@@ -104,18 +106,28 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
 
         <nav className="flex-1 px-4 py-6 overflow-y-auto">
           <ul className="space-y-1">
-            {navigationLinks.map((link) => (
-              <li key={link.name}>
-                <Link
-                  href={link.href}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium hover:bg-gray-50 hover:text-[#d92335] transition-all duration-200"
-                  onClick={onClose}
-                >
-                  <link.icon className="text-[20px]" />
-                  <span>{link.name}</span>
-                </Link>
-              </li>
-            ))}
+            {navigationLinks.map((link) => {
+              const isActive = pathname === link.href;
+              
+              return (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className={`
+                      flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200
+                      ${isActive 
+                        ? "bg-red-600 text-white" 
+                        : "text-gray-700 hover:bg-gray-50 hover:text-[#d92335]"
+                      }
+                    `}
+                    onClick={onClose}
+                  >
+                    <link.icon className="text-[20px]" />
+                    <span>{link.name}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
       </aside>
