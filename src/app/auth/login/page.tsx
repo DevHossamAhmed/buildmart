@@ -122,7 +122,7 @@ const Page = () => {
                 </label>
               </div>
               <Link
-                href="/forgot-password"
+                href="/auth/forgot-password"
                 className="text-sm text-[#d92335] hover:text-[#d92335] font-medium transition-colors"
               >
                 Forgot password?
