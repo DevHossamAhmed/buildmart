@@ -24,11 +24,9 @@ const MaterialRequestDashboard = () => {
     {
       id: 1,
       category: "",
-      item: "",
+      description: "",
+      quantity: 0,
       unit: "",
-      unitPrice: "",
-      total: 0,
-      notes: "",
     },
   ]);
   const [formData, setFormData] = useState({
@@ -290,9 +288,6 @@ const MaterialRequestDashboard = () => {
           const updatedItem = { ...item, [field]: value };
           if (field === "unitPrice" || field === "unit") {
             const quantity = parseFloat(formData.quantity) || 0;
-            const unitPrice =
-              parseFloat(field === "unitPrice" ? value : item.unitPrice) || 0;
-            updatedItem.total = quantity * unitPrice;
           }
           return updatedItem;
         }
@@ -308,11 +303,9 @@ const MaterialRequestDashboard = () => {
       {
         id: newId,
         category: "",
-        item: "",
         unit: "",
-        unitPrice: "",
-        total: 0,
-        notes: "",
+        quantity: 0,
+        description: "",
       },
     ]);
   };
@@ -364,11 +357,10 @@ const MaterialRequestDashboard = () => {
                     {stat.value}
                   </p>
                   <p
-                    className={`text-xs mt-1 ${
-                      stat.change.startsWith("+")
+                    className={`text-xs mt-1 ${stat.change.startsWith("+")
                         ? "text-green-600"
                         : "text-red-600"
-                    }`}
+                      }`}
                   >
                     {stat.change} from last month
                   </p>
@@ -435,7 +427,7 @@ const MaterialRequestDashboard = () => {
                     Request ID
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    TITLE
+                   Request TITLE
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Due Date
@@ -555,7 +547,7 @@ const MaterialRequestDashboard = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Material Name <span className="text-red-500">*</span>
+                    Request Title <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -569,7 +561,7 @@ const MaterialRequestDashboard = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Project Name <span className="text-red-500">*</span>
+                      Project Name 
                     </label>
                     <select
                       name="projectName"
@@ -660,26 +652,18 @@ const MaterialRequestDashboard = () => {
                     <thead className="bg-gray-100 border-b border-gray-300">
                       <tr>
                         <th className="w-[20%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
-                          Cat
+                          Category
                         </th>
                         <th className="w-[15%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
-                          Item
+                          Description
                         </th>
                         <th className="w-[12%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
+                          Quantity
+                        </th>
+                        <th className="w-[15%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
                           Unit
                         </th>
-                        <th className="w-[12%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
-                          Unit Price
-                        </th>
-                        <th className="w-[13%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
-                          Total
-                        </th>
-                        <th className="w-[15%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
-                          Notes
-                        </th>
-                        <th className="w-[10%] px-1 py-1 text-center text-[10px] font-semibold text-gray-700">
-                          Action
-                        </th>
+                        <th className="w-[10%] px-1 py-1 text-center text-[10px] font-semibold text-gray-700"></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -711,16 +695,31 @@ const MaterialRequestDashboard = () => {
                           <td className="px-2 py-2 border-r border-gray-200">
                             <input
                               type="text"
-                              value={boqItem.item}
+                              value={boqItem.description}
                               onChange={(e) =>
                                 handleBoqChange(
                                   boqItem.id,
-                                  "item",
+                                  "description",
                                   e.target.value
                                 )
                               }
                               className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-500 focus:outline-none"
-                              placeholder="Item name"
+                              placeholder="Description"
+                            />
+                          </td>
+                          <td className="px-2 py-2 border-r border-gray-200">
+                            <input
+                              type="number"
+                              value={boqItem.quantity}
+                              onChange={(e) =>
+                                handleBoqChange(
+                                  boqItem.id,
+                                  "quantity",
+                                  e.target.value
+                                )
+                              }
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-500 focus:outline-none"
+                              placeholder="0.00"
                             />
                           </td>
                           <td className="px-2 py-2 border-r border-gray-200">
@@ -743,44 +742,6 @@ const MaterialRequestDashboard = () => {
                               <option value="bags">Bags</option>
                               <option value="gallons">Gallons</option>
                             </select>
-                          </td>
-                          <td className="px-2 py-2 border-r border-gray-200">
-                            <input
-                              type="number"
-                              value={boqItem.unitPrice}
-                              onChange={(e) =>
-                                handleBoqChange(
-                                  boqItem.id,
-                                  "unitPrice",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-500 focus:outline-none"
-                              placeholder="0.00"
-                            />
-                          </td>
-                          <td className="px-2 py-2 border-r border-gray-200">
-                            <input
-                              type="text"
-                              value={boqItem.total.toFixed(2)}
-                              readOnly
-                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs bg-gray-50"
-                            />
-                          </td>
-                          <td className="px-2 py-2 border-r border-gray-200">
-                            <input
-                              type="text"
-                              value={boqItem.notes}
-                              onChange={(e) =>
-                                handleBoqChange(
-                                  boqItem.id,
-                                  "notes",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-500 focus:outline-none"
-                              placeholder="Notes"
-                            />
                           </td>
                           <td className="px-2 py-2 text-center">
                             <button
@@ -805,7 +766,7 @@ const MaterialRequestDashboard = () => {
                   onClick={() => setIsDrawerOpen(false)}
                   className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                 >
-                  save as draft
+                  Save as Draft
                 </button>
                 <button
                   onClick={handleSave}
