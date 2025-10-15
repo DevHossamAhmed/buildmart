@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import { Upload, Link, FileText, ArrowRight, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Logo from "../../../../public/assets/images/logo.jpg";
+import { useRouter } from "next/navigation";
 
 const AddCategoriesPage = () => {
+  const router = useRouter();
   const [importSource, setImportSource] = useState("");
   const [importMethod, setImportMethod] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
@@ -25,7 +27,6 @@ const AddCategoriesPage = () => {
     if (selectedFile) {
       //@ts-expect-error:name
       console.log("File uploaded:", selectedFile.name);
-     
     }
   };
 
@@ -219,7 +220,10 @@ const AddCategoriesPage = () => {
 
         {/* Navigation Buttons */}
         <div className="flex justify-between items-center mt-8">
-          <button className="flex items-center gap-2 bg-gray-100 cursor-pointer text-gray-700 py-3 px-6 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300">
+          <button
+            onClick={() => router.push("/setup-account")}
+            className="flex items-center gap-2 bg-gray-100 cursor-pointer text-gray-700 py-3 px-6 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300"
+          >
             <ArrowLeft size={20} />
             Back
           </button>

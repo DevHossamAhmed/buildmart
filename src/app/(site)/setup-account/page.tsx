@@ -3,7 +3,11 @@ import React, { useState } from "react";
 import { X, Mail, Edit2, Trash2, Users, Check } from "lucide-react";
 import Logo from "../../../../public/assets/images/logo.jpg";
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
+
+
 const SetupAccountPage = () => {
+  const router = useRouter();
   const [showPopup, setShowPopup] = useState(false);
   const [teamName, setTeamName] = useState("");
   const [emailInput, setEmailInput] = useState("");
@@ -186,7 +190,9 @@ const SetupAccountPage = () => {
 
         {/* Next Button */}
         <div className="flex justify-end mt-8">
-          <button className="bg-[#d92335] text-white py-3 px-8 cursor-pointer rounded-xl font-semibold  transition-all duration-300 shadow-lg hover:shadow-xl">
+          <button
+          onClick={() => router.push("/add-categories")}
+          className="bg-[#d92335] text-white py-3 px-8 cursor-pointer rounded-xl font-semibold  transition-all duration-300 shadow-lg hover:shadow-xl">
             Next →
           </button>
         </div>
