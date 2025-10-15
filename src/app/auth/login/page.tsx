@@ -17,7 +17,7 @@ const Page = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     setTimeout(() => {
       console.log({ email, password, rememberMe });
       router.push("/dashboard");
@@ -44,7 +44,6 @@ const Page = () => {
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
               Sign in to your account
             </h2>
-
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -167,8 +166,15 @@ const Page = () => {
                 "Sign in"
               )}
             </button>
-
           </form>
+          <div className="mt-[10px]">
+            <Link
+              href="/auth/sign-up"
+              className="text-[14px] underline hover:text-[#d92335] hover:underline pt-[10px]"
+            >
+              Create New Account
+            </Link>
+          </div>
         </div>
 
         <p className="text-center text-xs text-gray-500 mt-6">
