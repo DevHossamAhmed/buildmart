@@ -15,6 +15,7 @@ import {
   FileText,
   Loader,
 } from "lucide-react";
+import Link from "next/link";
 
 const MaterialRequestDashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -55,6 +56,7 @@ const MaterialRequestDashboard = () => {
       requestedDate: "2025-02-10",
       updatedAt: "2025-02-10",
       duedate: "15-10-2025",
+      rfbs: 3,
     },
     {
       id: "MR-002",
@@ -69,6 +71,7 @@ const MaterialRequestDashboard = () => {
       requestedDate: "2025-02-08",
       updatedAt: "2025-02-09",
       duedate: "17-10-2025",
+      rfbs: 0,
     },
     {
       id: "MR-003",
@@ -83,6 +86,7 @@ const MaterialRequestDashboard = () => {
       requestedDate: "2025-02-09",
       updatedAt: "2025-02-09",
       duedate: "20-10-2025",
+      rfbs: 0,
     },
     {
       id: "MR-004",
@@ -97,6 +101,7 @@ const MaterialRequestDashboard = () => {
       requestedDate: "2025-02-05",
       updatedAt: "2025-02-08",
       duedate: "25-10-2025",
+      rfbs: 5,
     },
     {
       id: "MR-005",
@@ -111,6 +116,7 @@ const MaterialRequestDashboard = () => {
       requestedDate: "2025-02-07",
       updatedAt: "2025-02-08",
       duedate: "30-10-2025",
+      rfbs: 0,
     },
     {
       id: "MR-006",
@@ -125,6 +131,7 @@ const MaterialRequestDashboard = () => {
       requestedDate: "2025-02-11",
       updatedAt: "2025-02-11",
       duedate: "18-10-2025",
+      rfbs: 2,
     },
     {
       id: "MR-007",
@@ -139,6 +146,7 @@ const MaterialRequestDashboard = () => {
       requestedDate: "2025-02-09",
       updatedAt: "2025-02-10",
       duedate: "14-10-2025",
+      rfbs: 0,
     },
     {
       id: "MR-008",
@@ -153,6 +161,7 @@ const MaterialRequestDashboard = () => {
       requestedDate: "2025-02-08",
       updatedAt: "2025-02-09",
       duedate: "22-10-2025",
+      rfbs: 0,
     },
   ]);
 
@@ -242,6 +251,14 @@ const MaterialRequestDashboard = () => {
     }
   };
 
+  //@ts-expect-error:status
+  const getRFBsDisplay = (status, rfbs) => {
+    if (status === "in_progress" || status === "pending" || status === "closed") {
+      return "- - -";
+    }
+    return `${String(rfbs).padStart(2, '0')} RFBs`;
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleInputChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
@@ -255,6 +272,7 @@ const MaterialRequestDashboard = () => {
       status: "draft",
       requestedBy: "Mahmoud Ahmed",
       updatedAt: new Date().toISOString().split("T")[0],
+      rfbs: Math.floor(Math.random() * 10) + 1,
     };
     //@ts-expect-error:newRequest
     setRequests([newRequest, ...requests]);
@@ -448,6 +466,9 @@ const MaterialRequestDashboard = () => {
                     Requested Date
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    RFBs
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -498,14 +519,19 @@ const MaterialRequestDashboard = () => {
                     <td className="px-4 py-4 text-sm text-gray-600">
                       {request.requestedDate}
                     </td>
+                    <td className="px-4 py-4 text-sm text-gray-600">
+                      <Link href="#" className="hover:underline">{getRFBsDisplay(request.status, request.rfbs)}</Link>
+                    </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-2">
                         <button className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
-                          <Eye className="w-4 h-4" />
+                          <Link href="#"><Eye className="w-4 h-4" /></Link>
                         </button>
-                        <button className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded transition-colors">
-                          <Edit2 className="w-4 h-4" />
-                        </button>
+                        {(request.status === "in_progress" || request.status === "pending") && (
+                          <button className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded transition-colors">
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -749,7 +775,7 @@ const MaterialRequestDashboard = () => {
                               className="text-red-500 hover:text-red-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                               disabled={boqItems.length === 1}
                             >
-                              <Plus className="w-4 h-4 mx-auto" />
+                              <Trash2 className="w-4 h-4 mx-auto" />
                             </button>
                           </td>
                         </tr>
@@ -757,6 +783,13 @@ const MaterialRequestDashboard = () => {
                     </tbody>
                   </table>
                 </div>
+                <button
+                  onClick={addBoqRow}
+                  className="w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-red-500 hover:text-red-500 transition-colors flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Row
+                </button>
               </div>
             </div>
 
