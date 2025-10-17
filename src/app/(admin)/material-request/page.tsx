@@ -40,6 +40,7 @@ const MaterialRequestDashboard = () => {
     projectName: "",
     requestedDate: "",
     duedate: "",
+    estValue: "",
   });
 
   const [requests, setRequests] = useState([
@@ -253,10 +254,14 @@ const MaterialRequestDashboard = () => {
 
   //@ts-expect-error:status
   const getRFBsDisplay = (status, rfbs) => {
-    if (status === "in_progress" || status === "pending" || status === "closed") {
+    if (
+      status === "in_progress" ||
+      status === "pending" ||
+      status === "closed"
+    ) {
       return "- - -";
     }
-    return `${String(rfbs).padStart(2, '0')} RFBs`;
+    return `${String(rfbs).padStart(2, "0")} RFBs`;
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -287,6 +292,7 @@ const MaterialRequestDashboard = () => {
       projectName: "",
       requestedDate: "",
       duedate: "",
+      estValue: "",
     });
   };
 
@@ -375,10 +381,11 @@ const MaterialRequestDashboard = () => {
                     {stat.value}
                   </p>
                   <p
-                    className={`text-xs mt-1 ${stat.change.startsWith("+")
+                    className={`text-xs mt-1 ${
+                      stat.change.startsWith("+")
                         ? "text-green-600"
                         : "text-red-600"
-                      }`}
+                    }`}
                   >
                     {stat.change} from last month
                   </p>
@@ -445,7 +452,7 @@ const MaterialRequestDashboard = () => {
                     Request ID
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                   Request TITLE
+                    Request TITLE
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Due Date
@@ -519,15 +526,27 @@ const MaterialRequestDashboard = () => {
                     <td className="px-4 py-4 text-sm text-gray-600">
                       {request.requestedDate}
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-600">
-                      <Link href={`/RFBs/${encodeURIComponent(request.materialName)}`} className="hover:underline">{getRFBsDisplay(request.status, request.rfbs)}</Link>
+                    <td className="px-4 py-4 text-sm text-gray-600 ">
+                      {getRFBsDisplay(request.status, request.rfbs)}
                     </td>
                     <td className="px-4 py-4">
-                      <div className="flex items-center gap-2">
-                        <button className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
-                          <Link href={`/RFBs/${encodeURIComponent(request.materialName)}`}><Eye className="w-4 h-4" /></Link>
-                        </button>
-                        {(request.status === "in_progress" || request.status === "pending") && (
+                      <div className="flex justify-center items-center gap-2">
+                        {(request.status === "in_progress" ||
+                          request.status === "completed" ||
+                          request.status === "closed") && (
+                          <button className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                            <Link
+                              href={`/RFBs/${encodeURIComponent(
+                                request.materialName
+                              )}`}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Link>
+                          </button>
+                        )}
+
+                        {(request.status === "pending" ||
+                          request.status === "draft") && (
                           <button className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded transition-colors">
                             <Edit2 className="w-4 h-4" />
                           </button>
@@ -587,7 +606,7 @@ const MaterialRequestDashboard = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Project Name 
+                      Project Name
                     </label>
                     <select
                       name="projectName"
@@ -647,6 +666,18 @@ const MaterialRequestDashboard = () => {
                     type="date"
                     name="duedate"
                     value={formData.duedate}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Est.Value <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="amount"
+                    name="estValue"
+                    value={formData.estValue}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
                   />

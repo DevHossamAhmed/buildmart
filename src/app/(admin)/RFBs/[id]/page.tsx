@@ -24,6 +24,7 @@ import {
   TrendingUp,
   ShoppingCart,
 } from "lucide-react";
+import Link from "next/link";
 
 const RFBsDetailPage = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -44,6 +45,9 @@ const RFBsDetailPage = () => {
     description:
       "Required for foundation reinforcement work in Building A. Must meet ASTM A615 Grade 60 specifications with proper certification.",
     rfbsCount: 3,
+    projectCompnay: "ABCC",
+    projectDepartment: "IT",
+    projectRegion: "Riyadh",
   };
 
   // BOQ Items data
@@ -102,7 +106,8 @@ const RFBsDetailPage = () => {
       id: 1,
       user: "Sara Ali",
       action: "commented",
-      message: "Please confirm if we need mill test certificates for this order",
+      message:
+        "Please confirm if we need mill test certificates for this order",
       timestamp: "2025-02-12 10:30 AM",
       type: "comment",
     },
@@ -150,9 +155,11 @@ const RFBsDetailPage = () => {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
-              </button>
+              <Link href="/material-request">
+                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                  <ArrowLeft className="w-5 h-5 text-gray-600" />
+                </button>
+              </Link>
               <div>
                 <div className="flex items-center gap-3">
                   <h1 className="text-2xl font-bold text-gray-900">
@@ -172,7 +179,8 @@ const RFBsDetailPage = () => {
                     )}`}
                   >
                     {requestData.priority.charAt(0).toUpperCase() +
-                      requestData.priority.slice(1)} Priority
+                      requestData.priority.slice(1)}{" "}
+                    Priority
                   </span>
                 </div>
                 <p className="text-sm text-gray-600 mt-1">
@@ -181,12 +189,12 @@ const RFBsDetailPage = () => {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium">
+              <button className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium">
                 <Download className="w-4 h-4" />
                 Export
               </button>
               <button
-                className="px-4 py-2 text-white rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2 text-sm font-medium"
+                className="px-4 py-2 text-white cursor-pointer rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2 text-sm font-medium"
                 style={{ backgroundColor: "#d92335" }}
               >
                 <Send className="w-4 h-4" />
@@ -221,7 +229,7 @@ const RFBsDetailPage = () => {
 
           {/* Tabs */}
           <div className="flex gap-6 border-b border-gray-200">
-            {["overview", "boq", "rfbs", "activity"].map((tab) => (
+            {["overview", "rfbs", "activity"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -301,40 +309,36 @@ const RFBsDetailPage = () => {
                 {/* BOQ Summary */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Bill of Quantities
+                    Quantities
                   </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead className="bg-gray-50 border-b border-gray-200">
                         <tr>
                           <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                            Category
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                             Description
                           </th>
                           <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                             Quantity
-                          </th>
-                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                            Unit Price
-                          </th>
-                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                            Total
                           </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
                         {boqItems.map((item) => (
                           <tr key={item.id} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 text-sm text-gray-900">
+                            <td className="px-4 py-4">
+                              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                                {item.category}
+                              </span>
+                            </td>
+                            <td className="px-4 py-4 text-sm text-gray-900">
                               {item.description}
                             </td>
-                            <td className="px-4 py-3 text-sm text-gray-600">
+                            <td className="px-4 py-4 text-sm text-gray-600">
                               {item.quantity} {item.unit}
-                            </td>
-                            <td className="px-4 py-3 text-sm text-gray-600">
-                              ${item.unitPrice}
-                            </td>
-                            <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                              ${item.totalPrice.toLocaleString()}
                             </td>
                           </tr>
                         ))}
@@ -345,79 +349,6 @@ const RFBsDetailPage = () => {
               </>
             )}
 
-            {activeTab === "boq" && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Bill of Quantities Details
-                  </h3>
-                  <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium">
-                    <Download className="w-4 h-4 inline mr-2" />
-                    Export BOQ
-                  </button>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 border-b border-gray-200">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                          Category
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                          Description
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                          Quantity
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                          Unit Price
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                          Total Price
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {boqItems.map((item) => (
-                        <tr key={item.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-4">
-                            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
-                              {item.category}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4 text-sm text-gray-900">
-                            {item.description}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-gray-600">
-                            {item.quantity} {item.unit}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-gray-600">
-                            ${item.unitPrice}
-                          </td>
-                          <td className="px-4 py-4 text-sm font-medium text-gray-900">
-                            ${item.totalPrice.toLocaleString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                    <tfoot className="bg-gray-50 border-t-2 border-gray-300">
-                      <tr>
-                        <td
-                          colSpan={4}
-                          className="px-4 py-4 text-right text-sm font-semibold text-gray-900"
-                        >
-                          Total Amount:
-                        </td>
-                        <td className="px-4 py-4 text-sm font-bold text-gray-900">
-                          ${totalAmount.toLocaleString()}
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              </div>
-            )}
-
             {activeTab === "rfbs" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-4">
@@ -425,7 +356,7 @@ const RFBsDetailPage = () => {
                     Request for Bids
                   </h3>
                   <button
-                    className="px-4 py-2 text-white rounded-lg hover:opacity-90 text-sm font-medium"
+                    className="px-4 py-2 text-white cursor-pointer rounded-lg hover:opacity-90 text-sm font-medium"
                     style={{ backgroundColor: "#d92335" }}
                   >
                     <Send className="w-4 h-4 inline mr-2" />
@@ -476,7 +407,7 @@ const RFBsDetailPage = () => {
                           </div>
                         </div>
                       </div>
-                      <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium">
+                      <button className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium">
                         View Details
                       </button>
                     </div>
@@ -562,7 +493,7 @@ const RFBsDetailPage = () => {
                 <div className="flex items-start gap-3">
                   <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
                   <div>
-                    <p className="text-xs text-gray-600">Requested Date</p>
+                    <p className="text-xs text-gray-600">Summited Date</p>
                     <p className="text-sm font-medium text-gray-900">
                       {requestData.requestedDate}
                     </p>
@@ -580,22 +511,35 @@ const RFBsDetailPage = () => {
                 <div className="flex items-start gap-3">
                   <User className="w-5 h-5 text-gray-400 mt-0.5" />
                   <div>
-                    <p className="text-xs text-gray-600">Requested By</p>
+                    <p className="text-xs text-gray-600">Summited By</p>
                     <p className="text-sm font-medium text-gray-900">
                       {requestData.requestedBy}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Building2 className="w-5 h-5 text-gray-400 mt-0.5" />
-                  <div>
-                    <p className="text-xs text-gray-600">Project</p>
-                    <p className="text-sm font-medium text-gray-900">
-                      {requestData.projectName}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {requestData.projectCode}
-                    </p>
+                <div className="border-t border-gray-100 pt-4">
+                  <div className="flex items-start gap-3 mb-3">
+                    <Building2 className="w-5 h-5 text-gray-400 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-xs text-gray-600 mb-1">Project</p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {requestData.projectName}
+                      </p>
+                      <p className="text-xs text-gray-500 font-mono mt-1">
+                        {requestData.projectCode}
+                      </p>
+                      <div className="flex items-center ">
+                        <span className="text-xs font-mono text-gray-500">
+                          {requestData.projectRegion}/
+                        </span>
+                        <span className="text-xs font-mono text-gray-500">
+                          {requestData.projectCompnay}/
+                        </span>{" "}
+                        <span className="text-xs font-mono text-gray-500">
+                          {requestData.projectDepartment}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -607,15 +551,15 @@ const RFBsDetailPage = () => {
                 Quick Actions
               </h3>
               <div className="space-y-2">
-                <button className="w-full px-4 py-2.5 bg-gray-50 hover:bg-gray-100 rounded-lg text-left text-sm font-medium text-gray-700 transition-colors flex items-center gap-2">
+                <button className="w-full px-4 py-2.5 cursor-pointer bg-gray-50 hover:bg-gray-100 rounded-lg text-left text-sm font-medium text-gray-700 transition-colors flex items-center gap-2">
                   <Edit2 className="w-4 h-4" />
                   Edit Request
                 </button>
-                <button className="w-full px-4 py-2.5 bg-gray-50 hover:bg-gray-100 rounded-lg text-left text-sm font-medium text-gray-700 transition-colors flex items-center gap-2">
+                <button className="w-full px-4 py-2.5 bg-gray-50 cursor-pointer hover:bg-gray-100 rounded-lg text-left text-sm font-medium text-gray-700 transition-colors flex items-center gap-2">
                   <Download className="w-4 h-4" />
                   Download PDF
                 </button>
-                <button className="w-full px-4 py-2.5 bg-gray-50 hover:bg-gray-100 rounded-lg text-left text-sm font-medium text-gray-700 transition-colors flex items-center gap-2">
+                <button className="w-full px-4 py-2.5 bg-gray-50 cursor-pointer hover:bg-gray-100 rounded-lg text-left text-sm font-medium text-gray-700 transition-colors flex items-center gap-2">
                   <MessageSquare className="w-4 h-4" />
                   Add Comment
                 </button>
