@@ -57,7 +57,7 @@ const MaterialRequestDashboard = () => {
       requestedDate: "2025-02-10",
       updatedAt: "2025-02-10",
       duedate: "15-10-2025",
-      rfbs: 3,
+      rfbs: 0,
     },
     {
       id: "MR-002",
@@ -72,7 +72,7 @@ const MaterialRequestDashboard = () => {
       requestedDate: "2025-02-08",
       updatedAt: "2025-02-09",
       duedate: "17-10-2025",
-      rfbs: 0,
+      rfbs: 6,
     },
     {
       id: "MR-003",
@@ -117,7 +117,7 @@ const MaterialRequestDashboard = () => {
       requestedDate: "2025-02-07",
       updatedAt: "2025-02-08",
       duedate: "30-10-2025",
-      rfbs: 0,
+      rfbs: 4,
     },
     {
       id: "MR-006",
@@ -132,7 +132,7 @@ const MaterialRequestDashboard = () => {
       requestedDate: "2025-02-11",
       updatedAt: "2025-02-11",
       duedate: "18-10-2025",
-      rfbs: 2,
+      rfbs: 0,
     },
     {
       id: "MR-007",
@@ -147,7 +147,7 @@ const MaterialRequestDashboard = () => {
       requestedDate: "2025-02-09",
       updatedAt: "2025-02-10",
       duedate: "14-10-2025",
-      rfbs: 0,
+      rfbs: 10,
     },
     {
       id: "MR-008",
@@ -254,11 +254,7 @@ const MaterialRequestDashboard = () => {
 
   //@ts-expect-error:status
   const getRFBsDisplay = (status, rfbs) => {
-    if (
-      status === "in_progress" ||
-      status === "pending" ||
-      status === "closed"
-    ) {
+    if (status === "pending" || status === "draft") {
       return "- - -";
     }
     return `${String(rfbs).padStart(2, "0")} RFBs`;
@@ -535,9 +531,7 @@ const MaterialRequestDashboard = () => {
                           request.status === "completed" ||
                           request.status === "closed") && (
                           <button className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
-                            <Link
-                              href={`/RFBs/${request.id}`}
-                            >
+                            <Link href={`/RFBs/${request.id}`}>
                               <Eye className="w-4 h-4" />
                             </Link>
                           </button>
@@ -673,7 +667,7 @@ const MaterialRequestDashboard = () => {
                     Est.Value <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type="amount"
+                    type="number"
                     name="estValue"
                     value={formData.estValue}
                     onChange={handleInputChange}
