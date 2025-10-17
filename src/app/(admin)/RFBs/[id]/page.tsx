@@ -23,6 +23,8 @@ import {
   DollarSign,
   TrendingUp,
   ShoppingCart,
+  Upload,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -30,6 +32,11 @@ const RFBsDetailPage = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [newComment, setNewComment] = useState("");
   const [showStatusMenu, setShowStatusMenu] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadFile, setUploadFile] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [fileType, setFileType] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
 
   // Sample data for the material request
   const requestData = {
@@ -139,6 +146,14 @@ const RFBsDetailPage = () => {
     },
   ];
 
+  const fileTypes = [
+    { value: "specification", label: "Specification" },
+    { value: "drawing", label: "Drawing" },
+    { value: "certificate", label: "Certificate" },
+    { value: "quotation", label: "Quotation" },
+    { value: "invoice", label: "Invoice" },
+    { value: "other", label: "Other" },
+  ];
   //@ts-expect-error:status
   const getStatusColor = (status) => {
     const colors = {
@@ -151,7 +166,6 @@ const RFBsDetailPage = () => {
     //@ts-expect-error:status
     return colors[status] || colors.draft;
   };
-
   //@ts-expect-error:status
   const getPriorityColor = (priority) => {
     const colors = {
@@ -166,6 +180,56 @@ const RFBsDetailPage = () => {
 
   const totalAmount = boqItems.reduce((sum, item) => sum + item.totalPrice, 0);
 
+  const handleDragOver = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleDrop = (e: {
+    preventDefault: () => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dataTransfer: { files: any };
+  }) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      setUploadFile(files[0]);
+      setFileName(files[0].name);
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFileSelect = (e: { target: { files: any } }) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setUploadFile(files[0]);
+      setFileName(files[0].name);
+    }
+  };
+
+  const handleUploadSubmit = () => {
+    console.log("Uploading file:", { uploadFile, fileName, fileType });
+    setShowUploadModal(false);
+    setUploadFile(null);
+    setFileName("");
+    setFileType("");
+  };
+
+  const resetUploadModal = () => {
+    setShowUploadModal(false);
+    setUploadFile(null);
+    setFileName("");
+    setFileType("");
+    setIsDragging(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -173,11 +237,9 @@ const RFBsDetailPage = () => {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
-              <Link href="/material-request">
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
-                  <ArrowLeft className="w-5 h-5 text-gray-600" />
-                </button>
-              </Link>
+              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                <ArrowLeft className="w-5 h-5 text-gray-600" />
+              </button>
               <div>
                 <div className="flex items-center gap-3">
                   <h1 className="text-2xl font-bold text-gray-900">
@@ -369,10 +431,7 @@ const RFBsDetailPage = () => {
 
             {activeTab === "rfbs" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Request for Bids
-                  </h3>
+                <div className="flex items-center justify-end mb-4">
                   <button
                     className="px-4 py-2 text-white cursor-pointer rounded-lg hover:opacity-90 text-sm font-medium"
                     style={{ backgroundColor: "#d92335" }}
@@ -442,8 +501,12 @@ const RFBsDetailPage = () => {
                   <h3 className="text-lg font-semibold text-gray-900">
                     Attached Documents
                   </h3>
-                  <button className="px-4 py-2 bg-red-600 text-white rounded-lg cursor-pointer hover:bg-red-700 transition-colors flex items-center gap-2 text-sm font-medium">
-                    <Paperclip className="w-4 h-4 rotate-45" /> Upload Document
+                  <button
+                    onClick={() => setShowUploadModal(true)}
+                    className="px-4 py-2 text-white rounded-lg cursor-pointer hover:opacity-90 transition-opacity flex items-center gap-2 text-sm font-medium"
+                    style={{ backgroundColor: "#d92335" }}
+                  >
+                    <Upload className="w-4 h-4" /> Upload Document
                   </button>
                 </div>
 
@@ -466,7 +529,7 @@ const RFBsDetailPage = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <button className="p-2 hover:bg-gray-200 cursor-pointer rounded-lg transition-colors">
-                          <Eye className="w-4 h-4 text-gray-600" />
+                          <Trash2 className="w-4 h-4 text-gray-600" />
                         </button>
                         <button className="p-2 hover:bg-gray-200 cursor-pointer rounded-lg transition-colors">
                           <Download className="w-4 h-4 text-gray-600" />
@@ -651,15 +714,38 @@ const RFBsDetailPage = () => {
                     </p>
                   </div>
                 </div>
+
                 <div className="flex gap-3">
                   <div className="flex flex-col items-center">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <FileText className="w-4 h-4 text-blue-600" />
+                    <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                      <Clock className="w-4 h-4 text-yellow-600" />
+                    </div>
+                    <div className="w-0.5 h-full bg-gray-200 mt-2"></div>
+                  </div>
+                  <div className="pb-4">
+                    <p className="text-sm font-medium text-gray-900">
+                      Sent to Review
+                    </p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      Feb 10, 2025 - 10:00 AM
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">by System</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex flex-col items-center">
+                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                      <AlertCircle className="w-4 h-4 text-gray-600" />
                     </div>
                   </div>
-                  <div>
+                  <div className="pb-4">
                     <p className="text-sm font-medium text-gray-900">Draft</p>
-                    <p className="text-xs text-gray-600 mt-1">Current Status</p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      Feb 13, 2025 - 08:00 AM
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Status changed to Draft
+                    </p>
                   </div>
                 </div>
               </div>
@@ -667,6 +753,121 @@ const RFBsDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Upload Modal (Upload Document) */}
+      {showUploadModal && (
+        <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-5 border-b border-gray-200">
+              <h3 className="text-xl font-semibold text-gray-900">
+                Upload New Document
+              </h3>
+              <button
+                onClick={resetUploadModal}
+                className="p-1 rounded-full hover:bg-gray-100 cursor-pointer transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-4">
+              {/* Drop Zone / File Preview */}
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`border-2 border-dashed p-10 rounded-lg text-center transition-colors ${
+                  isDragging
+                    ? "border-red-500 bg-red-50"
+                    : "border-gray-300 bg-gray-50"
+                }`}
+              >
+                {uploadFile ? (
+                  <div className="flex items-center justify-center gap-3">
+                    <FileText className="w-6 h-6 text-red-600" />
+                    <p className="text-sm font-medium text-gray-900">
+                      {fileName} (
+                      {Math.round(
+                        //@ts-expect-error:status
+                        uploadFile.size / 1024
+                      )}{" "}
+                      KB)
+                    </p>
+                    <button
+                      onClick={() => setUploadFile(null)}
+                      className="ml-4 text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <Upload className="w-8 h-8 mx-auto text-gray-400 mb-3" />
+                    <p className="text-sm text-gray-600">
+                      Drag and drop your file here, or{" "}
+                      <label className="text-red-600 font-medium cursor-pointer hover:text-red-700">
+                        <input
+                          type="file"
+                          className="hidden"
+                          onChange={handleFileSelect}
+                        />
+                        browse
+                      </label>
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Max file size: 5MB
+                    </p>
+                  </>
+                )}
+              </div>
+
+              {/* File Type Selector */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Document Type
+                </label>
+                <select
+                  value={fileType}
+                  onChange={(e) => setFileType(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+                >
+                  <option value="" disabled>
+                    Select a document type
+                  </option>
+                  {fileTypes.map((type) => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-5 border-t border-gray-200 flex justify-end gap-3">
+              <button
+                onClick={resetUploadModal}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUploadSubmit}
+                disabled={!uploadFile || !fileType}
+                className={`px-4 py-2 text-white rounded-lg text-sm font-medium transition-opacity ${
+                  !uploadFile || !fileType
+                    ? "bg-red-300 cursor-not-allowed"
+                    : "bg-red-600 hover:bg-red-700"
+                }`}
+              >
+                Upload
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

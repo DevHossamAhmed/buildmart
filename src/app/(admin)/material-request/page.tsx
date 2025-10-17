@@ -257,7 +257,7 @@ const MaterialRequestDashboard = () => {
     if (status === "pending" || status === "draft") {
       return "- - -";
     }
-    return `${String(rfbs).padStart(2, "0")} RFBs`;
+    return `${String(rfbs).padStart(2, "0")} RFPs`;
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -469,7 +469,7 @@ const MaterialRequestDashboard = () => {
                     Requested Date
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    RFBs
+                    RFPs
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Actions
