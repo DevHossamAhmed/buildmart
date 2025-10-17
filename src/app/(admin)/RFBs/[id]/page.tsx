@@ -756,118 +756,143 @@ const RFBsDetailPage = () => {
 
       {/* Upload Modal (Upload Document) */}
       {showUploadModal && (
-        <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg">
-            {/* Modal Header */}
-            <div className="flex justify-between items-center p-5 border-b border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900">
-                Upload New Document
-              </h3>
-              <button
-                onClick={resetUploadModal}
-                className="p-1 rounded-full hover:bg-gray-100 cursor-pointer transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-500" />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-6 space-y-4">
-              {/* Drop Zone / File Preview */}
-              <div
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                className={`border-2 border-dashed p-10 rounded-lg text-center transition-colors ${
-                  isDragging
-                    ? "border-red-500 bg-red-50"
-                    : "border-gray-300 bg-gray-50"
-                }`}
-              >
-                {uploadFile ? (
-                  <div className="flex items-center justify-center gap-3">
-                    <FileText className="w-6 h-6 text-red-600" />
-                    <p className="text-sm font-medium text-gray-900">
-                      {fileName} (
-                      {Math.round(
-                        //@ts-expect-error:status
-                        uploadFile.size / 1024
-                      )}{" "}
-                      KB)
-                    </p>
+              <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg">
+                  {/* Modal Header */}
+                  <div className="flex justify-between items-center p-5 border-b border-gray-200">
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      Upload New Document
+                    </h3>
                     <button
-                      onClick={() => setUploadFile(null)}
-                      className="ml-4 text-red-500 hover:text-red-700"
+                      onClick={resetUploadModal}
+                      className="p-1 rounded-full hover:bg-gray-100 cursor-pointer transition-colors"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <X className="w-5 h-5 text-gray-500" />
                     </button>
                   </div>
-                ) : (
-                  <>
-                    <Upload className="w-8 h-8 mx-auto text-gray-400 mb-3" />
-                    <p className="text-sm text-gray-600">
-                      Drag and drop your file here, or{" "}
-                      <label className="text-red-600 font-medium cursor-pointer hover:text-red-700">
-                        <input
-                          type="file"
-                          className="hidden"
-                          onChange={handleFileSelect}
-                        />
-                        browse
+      
+                  <div className="p-6 space-y-4">
+                    <div>
+                      <label
+                        htmlFor="document-name"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
+                        Document Name
                       </label>
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Max file size: 5MB
-                    </p>
-                  </>
-                )}
+                      <input
+                        id="document-name"
+                        type="text"
+                        placeholder="Enter document name"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Document Type
+                      </label>
+                      <div className="relative">
+                        <select
+                          value={fileType}
+                          onChange={(e) => setFileType(e.target.value)}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 appearance-none pr-10"
+                        >
+                          <option value="" disabled>
+                            Select a document type
+                          </option>
+                          <option value="specification" >
+                            Specification
+                          </option>
+                          <option value="drawing" >
+                            Drawing
+                          </option>
+                          <option value="certificate" >
+                            Certificate
+                          </option>
+                          <option value="quotation" >
+                            Quotation
+                          </option>
+                          <option value="invoice" >
+                            Invoice
+                          </option>
+                          <option value="other" >
+                            Other
+                          </option>
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                          <svg
+                            className="fill-current h-4 w-4"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                      className={`border-2 border-dashed p-10 rounded-lg text-center transition-colors ${
+                        isDragging
+                          ? "border-red-500 bg-red-50"
+                          : "border-gray-300 bg-gray-50"
+                      }`}
+                    >
+                      {uploadFile ? (
+                        <div className="flex items-center justify-center gap-3">
+                          <p className="text-sm font-medium text-gray-900">
+                          </p>
+                          <button
+                            onClick={() => setUploadFile(null)}
+                            className="ml-4 text-red-500 hover:text-red-700"
+                          >
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="text-sm text-gray-600">
+                            Drag and drop your file here, or{" "}
+                            <label className="text-red-600 font-medium cursor-pointer hover:text-red-700">
+                              <input
+                                type="file"
+                                className="hidden"
+                                onChange={handleFileSelect}
+                              />
+                              browse
+                            </label>
+                          </p>
+                          <p className="text-xs text-gray-400 mt-1">
+                            Max file size: 5MB
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+      
+                  {/* Modal Footer */}
+                  <div className="p-5 border-t border-gray-200 flex justify-end gap-3">
+                    <button
+                      onClick={resetUploadModal}
+                      className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleUploadSubmit}
+                      disabled={!uploadFile || !fileType}
+                      className={`px-4 py-2 text-white rounded-lg text-sm font-medium transition-opacity ${
+                        !uploadFile || !fileType
+                          ? "bg-red-300 cursor-not-allowed"
+                          : "bg-red-600 hover:bg-red-700"
+                      }`}
+                    >
+                      Upload
+                    </button>
+                  </div>
+                </div>
               </div>
-
-              {/* File Type Selector */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Document Type
-                </label>
-                <select
-                  value={fileType}
-                  onChange={(e) => setFileType(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
-                >
-                  <option value="" disabled>
-                    Select a document type
-                  </option>
-                  {fileTypes.map((type) => (
-                    <option key={type.value} value={type.value}>
-                      {type.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="p-5 border-t border-gray-200 flex justify-end gap-3">
-              <button
-                onClick={resetUploadModal}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleUploadSubmit}
-                disabled={!uploadFile || !fileType}
-                className={`px-4 py-2 text-white rounded-lg text-sm font-medium transition-opacity ${
-                  !uploadFile || !fileType
-                    ? "bg-red-300 cursor-not-allowed"
-                    : "bg-red-600 hover:bg-red-700"
-                }`}
-              >
-                Upload
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+            )}
     </div>
   );
 };

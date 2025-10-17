@@ -24,7 +24,7 @@ import {
   Eye,
   Trash2,
   X,
-  Upload, 
+  Upload,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -135,14 +135,7 @@ const RFBDetailsPage = () => {
     return colors[status as keyof typeof colors] || colors.pending;
   };
 
-  const fileTypes = [
-    { value: "specification", label: "Specification" },
-    { value: "drawing", label: "Drawing" },
-    { value: "certificate", label: "Certificate" },
-    { value: "quotation", label: "Quotation" },
-    { value: "invoice", label: "Invoice" },
-    { value: "other", label: "Other" },
-  ];
+ 
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -159,7 +152,6 @@ const RFBDetailsPage = () => {
     }
   };
 
-  
   const handleDragOver = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsDragging(true);
@@ -752,7 +744,7 @@ const RFBDetailsPage = () => {
       </div>
 
       {showUploadModal && (
-        <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg">
             {/* Modal Header */}
             <div className="flex justify-between items-center p-5 border-b border-gray-200">
@@ -767,9 +759,64 @@ const RFBDetailsPage = () => {
               </button>
             </div>
 
-            {/* Modal Body */}
             <div className="p-6 space-y-4">
-              {/* Drop Zone / File Preview */}
+              <div>
+                <label
+                  htmlFor="document-name"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Document Name
+                </label>
+                <input
+                  id="document-name"
+                  type="text"
+                  placeholder="Enter document name"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Document Type
+                </label>
+                <div className="relative">
+                  <select
+                    value={fileType}
+                    onChange={(e) => setFileType(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 appearance-none pr-10"
+                  >
+                    <option value="" disabled>
+                      Select a document type
+                    </option>
+                    <option value="specification" >
+                      Specification
+                    </option>
+                    <option value="drawing" >
+                      Drawing
+                    </option>
+                    <option value="certificate" >
+                      Certificate
+                    </option>
+                    <option value="quotation" >
+                      Quotation
+                    </option>
+                    <option value="invoice" >
+                      Invoice
+                    </option>
+                    <option value="other" >
+                      Other
+                    </option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg
+                      className="fill-current h-4 w-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
               <div
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -782,25 +829,16 @@ const RFBDetailsPage = () => {
               >
                 {uploadFile ? (
                   <div className="flex items-center justify-center gap-3">
-                    <FileText className="w-6 h-6 text-red-600" />
                     <p className="text-sm font-medium text-gray-900">
-                      {fileName} (
-                      {Math.round(
-                        //@ts-expect-error:status
-                        uploadFile.size / 1024
-                      )}{" "}
-                      KB)
                     </p>
                     <button
                       onClick={() => setUploadFile(null)}
                       className="ml-4 text-red-500 hover:text-red-700"
                     >
-                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 ) : (
                   <>
-                    <Upload className="w-8 h-8 mx-auto text-gray-400 mb-3" />
                     <p className="text-sm text-gray-600">
                       Drag and drop your file here, or{" "}
                       <label className="text-red-600 font-medium cursor-pointer hover:text-red-700">
@@ -817,27 +855,6 @@ const RFBDetailsPage = () => {
                     </p>
                   </>
                 )}
-              </div>
-
-              {/* File Type Selector */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Document Type
-                </label>
-                <select
-                  value={fileType}
-                  onChange={(e) => setFileType(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
-                >
-                  <option value="" disabled>
-                    Select a document type
-                  </option>
-                  {fileTypes.map((type) => (
-                    <option key={type.value} value={type.value}>
-                      {type.label}
-                    </option>
-                  ))}
-                </select>
               </div>
             </div>
 
