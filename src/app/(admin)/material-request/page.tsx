@@ -520,12 +520,12 @@ const MaterialRequestDashboard = () => {
                       {request.requestedDate}
                     </td>
                     <td className="px-4 py-4 text-sm text-gray-600">
-                      <Link href="#" className="hover:underline">{getRFBsDisplay(request.status, request.rfbs)}</Link>
+                      <Link href={`/RFBs/${encodeURIComponent(request.materialName)}`} className="hover:underline">{getRFBsDisplay(request.status, request.rfbs)}</Link>
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-2">
                         <button className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
-                          <Link href="#"><Eye className="w-4 h-4" /></Link>
+                          <Link href={`/RFBs/${encodeURIComponent(request.materialName)}`}><Eye className="w-4 h-4" /></Link>
                         </button>
                         {(request.status === "in_progress" || request.status === "pending") && (
                           <button className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded transition-colors">
