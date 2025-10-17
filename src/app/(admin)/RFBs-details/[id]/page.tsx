@@ -43,7 +43,7 @@ const RFBDetailsPage = () => {
 
   // Sample RFB Data
   const rfbData = {
-    id: "RFBs-001",
+    id: "RFPs-001",
     status: "submitted",
     supplier: {
       name: "Ahmed Steel Co.",
@@ -101,7 +101,7 @@ const RFBDetailsPage = () => {
       validityPeriod: "30 days from submission",
     },
     documents: [
-      { name: "Quote_RFBs-001.pdf", size: "245 KB", type: "PDF" },
+      { name: "Quote_RFPs-001.pdf", size: "245 KB", type: "PDF" },
       { name: "Product_Specs.pdf", size: "1.2 MB", type: "PDF" },
       { name: "Certifications.pdf", size: "892 KB", type: "PDF" },
     ],

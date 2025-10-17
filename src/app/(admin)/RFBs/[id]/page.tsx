@@ -82,7 +82,7 @@ const RFBsDetailPage = () => {
   // RFBs (Request for Bids) data
   const rfbsData = [
     {
-      id: "RFBs-001",
+      id: "RFPs-001",
       supplier: "Ahmed Steel Co.",
       status: "pending",
       submittedDate: "2025-02-11",
@@ -90,7 +90,7 @@ const RFBsDetailPage = () => {
       responseTime: "2 days",
     },
     {
-      id: "RFBs-002",
+      id: "RFPs-002",
       supplier: "Modern Materials Ltd.",
       status: "submitted",
       submittedDate: "2025-02-12",
@@ -98,7 +98,7 @@ const RFBsDetailPage = () => {
       responseTime: "1 day",
     },
     {
-      id: "RFBs-003",
+      id: "RFPs-003",
       supplier: "Prime Construction Supply",
       status: "pending",
       submittedDate: "2025-02-11",
@@ -278,7 +278,7 @@ const RFBsDetailPage = () => {
                 style={{ backgroundColor: "#d92335" }}
               >
                 <Send className="w-4 h-4" />
-                Send RFBs
+                Send RFPs
               </button>
               <div className="relative">
                 <button
@@ -309,7 +309,7 @@ const RFBsDetailPage = () => {
 
           {/* Tabs */}
           <div className="flex gap-6 border-b border-gray-200 ">
-            {["overview", "rfbs", "documents", "activity"].map((tab) => (
+            {["overview", "rfps", "documents", "activity"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -368,7 +368,7 @@ const RFBsDetailPage = () => {
                       <div className="p-2 bg-purple-100 rounded-lg">
                         <ShoppingCart className="w-5 h-5 text-purple-600" />
                       </div>
-                      <p className="text-sm text-gray-600">RFBs Sent</p>
+                      <p className="text-sm text-gray-600">RFPs Sent</p>
                     </div>
                     <p className="text-2xl font-bold text-gray-900">
                       {requestData.rfbsCount}
@@ -429,7 +429,7 @@ const RFBsDetailPage = () => {
               </>
             )}
 
-            {activeTab === "rfbs" && (
+            {activeTab === "rfps" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-end mb-4">
                   <button
