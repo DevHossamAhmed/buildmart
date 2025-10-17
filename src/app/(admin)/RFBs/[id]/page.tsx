@@ -75,7 +75,7 @@ const RFBsDetailPage = () => {
   // RFBs (Request for Bids) data
   const rfbsData = [
     {
-      id: "RFB-001",
+      id: "RFBs-001",
       supplier: "Ahmed Steel Co.",
       status: "pending",
       submittedDate: "2025-02-11",
@@ -83,7 +83,7 @@ const RFBsDetailPage = () => {
       responseTime: "2 days",
     },
     {
-      id: "RFB-002",
+      id: "RFBs-002",
       supplier: "Modern Materials Ltd.",
       status: "submitted",
       submittedDate: "2025-02-12",
@@ -91,7 +91,7 @@ const RFBsDetailPage = () => {
       responseTime: "1 day",
     },
     {
-      id: "RFB-003",
+      id: "RFBs-003",
       supplier: "Prime Construction Supply",
       status: "pending",
       submittedDate: "2025-02-11",
@@ -228,12 +228,12 @@ const RFBsDetailPage = () => {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-6 border-b border-gray-200">
+          <div className="flex gap-6 border-b border-gray-200 ">
             {["overview", "rfbs", "activity"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-3 px-1 text-sm font-medium transition-colors relative ${
+                className={`pb-3 px-1 text-sm font-medium transition-colors cursor-pointer relative ${
                   activeTab === tab
                     ? "text-red-600"
                     : "text-gray-600 hover:text-gray-900"
@@ -407,9 +407,11 @@ const RFBsDetailPage = () => {
                           </div>
                         </div>
                       </div>
-                      <button className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium">
-                        View Details
-                      </button>
+                      <Link href={`/RFBs-details/${rfb.id}`}>
+                        <button className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium">
+                          View Details
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 ))}
