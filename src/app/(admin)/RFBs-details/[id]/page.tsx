@@ -145,8 +145,8 @@ const RFBDetailsPage = () => {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
-              <Link href="#">
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+              <Link href={`/RFBs/${rfbData.requestDetails.materialRequestId}`}>
+                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
                   <ArrowLeft className="w-5 h-5 text-gray-600" />
                 </button>
               </Link>
@@ -171,19 +171,19 @@ const RFBDetailsPage = () => {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium">
+              <button className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium">
                 <Share2 className="w-4 h-4" />
                 Share
               </button>
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium">
+              <button className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium">
                 <Printer className="w-4 h-4" />
                 Print
               </button>
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium">
+              <button className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium">
                 <Download className="w-4 h-4" />
                 Download
               </button>
-              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium">
+              <button className="px-4 py-2 cursor-pointer bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium">
                 <CheckCircle className="w-4 h-4" />
                 Approve Quote
               </button>
@@ -196,7 +196,7 @@ const RFBDetailsPage = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-3 px-1 text-sm font-medium transition-colors relative ${
+                className={`pb-3 px-1 text-sm font-medium cursor-pointer transition-colors relative ${
                   activeTab === tab
                     ? "text-red-600"
                     : "text-gray-600 hover:text-gray-900"
@@ -433,9 +433,15 @@ const RFBDetailsPage = () => {
 
             {activeTab === "documents" && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Attached Documents
-                </h3>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Attached Documents
+                  </h3>
+                  <button className="px-4 py-2 bg-red-600 text-white cursor-pointer rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2 text-sm font-medium">
+                    <Paperclip className="w-4 h-4 rotate-45" /> Upload Document
+                  </button>
+                </div>
+
                 <div className="space-y-3">
                   {rfbData.documents.map((doc, index) => (
                     <div
@@ -454,10 +460,10 @@ const RFBDetailsPage = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-gray-200 rounded-lg transition-colors">
+                        <button className="p-2 hover:bg-gray-200 cursor-pointer rounded-lg transition-colors">
                           <Eye className="w-4 h-4 text-gray-600" />
                         </button>
-                        <button className="p-2 hover:bg-gray-200 rounded-lg transition-colors">
+                        <button className="p-2 hover:bg-gray-200 cursor-pointer rounded-lg transition-colors">
                           <Download className="w-4 h-4 text-gray-600" />
                         </button>
                       </div>
@@ -632,6 +638,7 @@ const RFBDetailsPage = () => {
                     <p className="text-xs text-gray-500 font-mono mt-0.5">
                       {rfbData.requestDetails.projectCode}
                     </p>
+                    <p className="text-xs text-gray-500 font-mono mt-0.5">Riyadh/ABCC/IT</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">

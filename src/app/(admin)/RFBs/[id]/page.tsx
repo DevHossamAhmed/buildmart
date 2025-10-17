@@ -100,6 +100,24 @@ const RFBsDetailPage = () => {
     },
   ];
 
+  const documentsData = [
+    {
+      name: "Specification Sheet - Rebar A615.pdf",
+      size: "1.2 MB",
+      url: "/docs/spec-rebar-a615.pdf",
+    },
+    {
+      name: "Project Drawing A-101.dwg",
+      size: "3.5 MB",
+      url: "/docs/drawing-a101.dwg",
+    },
+    {
+      name: "Material Request Form.xlsx",
+      size: "45 KB",
+      url: "/docs/mr-form.xlsx",
+    },
+  ];
+
   // Comments/Activity data
   const activities = [
     {
@@ -203,21 +221,21 @@ const RFBsDetailPage = () => {
               <div className="relative">
                 <button
                   onClick={() => setShowStatusMenu(!showStatusMenu)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                 >
                   <MoreVertical className="w-5 h-5 text-gray-600" />
                 </button>
                 {showStatusMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                    <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2">
+                    <button className="w-full px-4 py-2 text-left cursor-pointer text-sm hover:bg-gray-50 flex items-center gap-2">
                       <Edit2 className="w-4 h-4" />
                       Edit Request
                     </button>
-                    <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2">
+                    <button className="w-full px-4 py-2 text-left cursor-pointer text-sm hover:bg-gray-50 flex items-center gap-2">
                       <Eye className="w-4 h-4" />
                       View History
                     </button>
-                    <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                    <button className="w-full px-4 py-2 text-left cursor-pointer text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
                       <Trash2 className="w-4 h-4" />
                       Delete Request
                     </button>
@@ -229,7 +247,7 @@ const RFBsDetailPage = () => {
 
           {/* Tabs */}
           <div className="flex gap-6 border-b border-gray-200 ">
-            {["overview", "rfbs", "activity"].map((tab) => (
+            {["overview", "rfbs", "documents", "activity"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -415,6 +433,48 @@ const RFBsDetailPage = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {activeTab === "documents" && (
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Attached Documents
+                  </h3>
+                  <button className="px-4 py-2 bg-red-600 text-white rounded-lg cursor-pointer hover:bg-red-700 transition-colors flex items-center gap-2 text-sm font-medium">
+                    <Paperclip className="w-4 h-4 rotate-45" /> Upload Document
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {documentsData.map((doc, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-red-100 rounded-lg">
+                          <FileText className="w-5 h-5 text-red-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {doc.name}
+                          </p>
+                          <p className="text-xs text-gray-500">{doc.size}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button className="p-2 hover:bg-gray-200 cursor-pointer rounded-lg transition-colors">
+                          <Eye className="w-4 h-4 text-gray-600" />
+                        </button>
+                        <button className="p-2 hover:bg-gray-200 cursor-pointer rounded-lg transition-colors">
+                          <Download className="w-4 h-4 text-gray-600" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

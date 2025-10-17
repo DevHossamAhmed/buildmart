@@ -536,9 +536,7 @@ const MaterialRequestDashboard = () => {
                           request.status === "closed") && (
                           <button className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
                             <Link
-                              href={`/RFBs/${encodeURIComponent(
-                                request.materialName
-                              )}`}
+                              href={`/RFBs/${request.id}`}
                             >
                               <Eye className="w-4 h-4" />
                             </Link>
