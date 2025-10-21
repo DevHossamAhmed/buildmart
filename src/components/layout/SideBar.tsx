@@ -31,6 +31,11 @@ const navigationLinks = [
     icon: FaClipboardList, 
   },
   {
+    name: "Users & Team",
+    href: "/users&team",
+    icon: FaClipboardList, 
+  },
+  {
     name: "Project",
     href: "/project",
     icon: FaCode, 
