@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -213,8 +214,8 @@ const UsersTeamsPage = () => {
               <button
                 onClick={() =>
                   activeTab === "teams"
-                    ? setShowUserModal(true)
-                    : setShowTeamModal(true)
+                    ? setShowTeamModal(true)
+                    : setShowUserModal(true)
                 }
                 className="px-4 py-2 text-white cursor-pointer rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2 text-sm font-medium"
                 style={{ backgroundColor: "#d92335" }}
