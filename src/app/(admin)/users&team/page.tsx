@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 
 const UsersTeamsPage = () => {
-  const [activeTab, setActiveTab] = useState("users");
+  const [activeTab, setActiveTab] = useState("teams");
   const [searchQuery, setSearchQuery] = useState("");
   const [showUserModal, setShowUserModal] = useState(false);
   const [showTeamModal, setShowTeamModal] = useState(false);
@@ -212,7 +212,7 @@ const UsersTeamsPage = () => {
               </button>
               <button
                 onClick={() =>
-                  activeTab === "users"
+                  activeTab === "teams"
                     ? setShowUserModal(true)
                     : setShowTeamModal(true)
                 }
@@ -220,7 +220,7 @@ const UsersTeamsPage = () => {
                 style={{ backgroundColor: "#d92335" }}
               >
                 <Plus className="w-4 h-4" />
-                {activeTab === "users" ? "Add User" : "Create Team"}
+                {activeTab === "teams" ?  "Create Team": "Add User"}
               </button>
             </div>
           </div>
