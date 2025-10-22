@@ -1,18 +1,21 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { RiDashboardLine } from "react-icons/ri";
 import { IoMdClose } from "react-icons/io";
-
-import { 
-  FaClipboardList, 
-  FaBuilding, 
-  FaSitemap, 
-  FaTasks, 
-  FaWarehouse, 
+import {
+  FaClipboardList,
+  FaBuilding,
+  FaSitemap,
+  FaTasks,
+  FaWarehouse,
   FaMapMarkedAlt,
-  FaCode
-} from "react-icons/fa"; 
+  FaCode,
+  FaCog,
+  FaChevronDown,
+  FaChevronUp,
+} from "react-icons/fa";
 
 interface SideBarProps {
   isOpen: boolean;
@@ -20,55 +23,26 @@ interface SideBarProps {
 }
 
 const navigationLinks = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: RiDashboardLine, 
-  },
-  {
-    name: "Material Request",
-    href: "/material-request",
-    icon: FaClipboardList, 
-  },
-  {
-    name: "Users & Teams",
-    href: "/users&team",
-    icon: FaClipboardList, 
-  },
-  {
-    name: "Project",
-    href: "/project",
-    icon: FaCode, 
-  },
-  {
-    name: "Companies",
-    href: "/companies",
-    icon: FaBuilding, 
-  },
-  {
-    name: "Departments",
-    href: "/departments",
-    icon: FaSitemap, 
-  },
-  {
-    name: "Activities",
-    href: "/activities",
-    icon: FaTasks, 
-  },
-  {
-    name: "Warehouses",
-    href: "/warehouses",
-    icon: FaWarehouse, 
-  },
-  {
-    name: "Regions",
-    href: "/regions",
-    icon: FaMapMarkedAlt, 
-  },
+  { name: "Dashboard", href: "/dashboard", icon: RiDashboardLine },
+  { name: "Material Request", href: "/material-request", icon: FaClipboardList },
+  { name: "Users & Teams", href: "/users&team", icon: FaClipboardList },
+  { name: "Categories", href: "/categories", icon: FaClipboardList },
+  { name: "Project", href: "/project", icon: FaCode },
+];
+
+const settingsLinks = [
+  { name: "Companies", href: "/companies", icon: FaBuilding },
+  { name: "Departments", href: "/departments", icon: FaSitemap },
+  { name: "Activities", href: "/activities", icon: FaTasks },
+  { name: "Warehouses", href: "/warehouses", icon: FaWarehouse },
+  { name: "Regions", href: "/regions", icon: FaMapMarkedAlt },
 ];
 
 const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
+  const [openSettings, setOpenSettings] = useState(false);
+
+  const isSettingsActive = settingsLinks.some((s) => pathname.startsWith(s.href));
 
   return (
     <>
@@ -87,6 +61,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
           lg:translate-x-0
         `}
       >
+        {/* Header */}
         <div className="px-6 py-5 flex items-center justify-between">
           <div className="w-full text-center">
             <h1
@@ -109,22 +84,20 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
+        {/* Links */}
         <nav className="flex-1 px-4 py-6 overflow-y-auto">
           <ul className="space-y-1">
             {navigationLinks.map((link) => {
               const isActive = pathname === link.href;
-              
               return (
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className={`
-                      flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200
-                      ${isActive 
-                        ? "bg-red-600 text-white" 
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200
+                      ${isActive
+                        ? "bg-red-600 text-white"
                         : "text-gray-700 hover:bg-gray-50 hover:text-[#d92335]"
-                      }
-                    `}
+                      }`}
                     onClick={onClose}
                   >
                     <link.icon className="text-[20px]" />
@@ -133,6 +106,54 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                 </li>
               );
             })}
+
+            {/* Settings Dropdown */}
+            <li>
+              <button
+                onClick={() => setOpenSettings(!openSettings)}
+                className={`w-full flex items-center cursor-pointer justify-between px-4 py-3 rounded-lg text-[15px] font-semibold transition-all duration-200
+                  ${
+                    isSettingsActive
+                      ? "text-[#d92335] bg-gray-100"
+                      : "text-gray-700 hover:bg-gray-50 hover:text-[#d92335]"
+                  }`}
+              >
+                <div className="flex items-center gap-3">
+                  <FaCog className="text-[20px]" />
+                  <span>Settings</span>
+                </div>
+                {openSettings ? (
+                  <FaChevronUp className="text-[14px]" />
+                ) : (
+                  <FaChevronDown className="text-[14px]" />
+                )}
+              </button>
+
+              {/* Submenu */}
+              {openSettings && (
+                <ul className="mt-1 ml-8 space-y-1 border-l border-gray-200 pl-3">
+                  {settingsLinks.map((sub) => {
+                    const isActive = pathname === sub.href;
+                    return (
+                      <li key={sub.name}>
+                        <Link
+                          href={sub.href}
+                          className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[14px] font-medium transition-all duration-200
+                            ${isActive
+                              ? "bg-red-600 text-white"
+                              : "text-gray-700 hover:bg-gray-50 hover:text-[#d92335]"
+                            }`}
+                          onClick={onClose}
+                        >
+                          <sub.icon className="text-[16px]" />
+                          <span>{sub.name}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </li>
           </ul>
         </nav>
       </aside>
