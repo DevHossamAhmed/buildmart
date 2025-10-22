@@ -249,7 +249,7 @@ const RFBsDetailPage = () => {
                     {requestData.id}
                   </h1>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
+                    className={`px-3 py-1 rounded-full text-xs font-medium border SAR{getStatusColor(
                       requestData.status
                     )}`}
                   >
@@ -257,7 +257,7 @@ const RFBsDetailPage = () => {
                       requestData.status.slice(1)}
                   </span>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium border ${getPriorityColor(
+                    className={`px-3 py-1 rounded-full text-xs font-medium border SAR{getPriorityColor(
                       requestData.priority
                     )}`}
                   >
@@ -316,7 +316,7 @@ const RFBsDetailPage = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-3 px-1 text-sm font-medium transition-colors cursor-pointer relative ${
+                className={`pb-3 px-1 text-sm font-medium transition-colors cursor-pointer relative SAR{
                   activeTab === tab
                     ? "text-red-600"
                     : "text-gray-600 hover:text-gray-900"
@@ -363,7 +363,7 @@ const RFBsDetailPage = () => {
                       <p className="text-sm text-gray-600">Est. Value</p>
                     </div>
                     <p className="text-2xl font-bold text-gray-900">
-                      ${totalAmount.toLocaleString()}
+                      {totalAmount.toLocaleString()} SAR
                     </p>
                   </div>
                   <div className="bg-white rounded-lg border border-gray-200 p-5">
@@ -435,14 +435,14 @@ const RFBsDetailPage = () => {
             {activeTab === "rfps" && (
               <div className="space-y-4">
                 <div className="flex items-center gap-1.5 justify-end mb-4">
+                  <ComparisonBtn/>
                   <button
                     className="px-4 py-2 text-white cursor-pointer rounded-lg hover:opacity-90 text-sm font-medium"
                     style={{ backgroundColor: "#d92335" }}
                   >
                     <Send className="w-4 h-4 inline mr-2" />
-                    Send New RFB
+                    Send New RFP
                   </button>
-                  <ComparisonBtn/>
                 </div>
                 {rfbsData.map((rfb) => (
                   <div
@@ -456,7 +456,7 @@ const RFBsDetailPage = () => {
                             {rfb.id}
                           </h4>
                           <span
-                            className={`px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusColor(
+                            className={`px-2.5 py-1 rounded-full text-xs font-medium border SAR{getStatusColor(
                               rfb.status
                             )}`}
                           >
@@ -483,12 +483,12 @@ const RFBsDetailPage = () => {
                           <div>
                             <p className="text-gray-600 mb-1">Total Amount</p>
                             <p className="text-gray-900 font-bold text-lg">
-                              ${rfb.totalAmount.toLocaleString()}
+                              SAR{rfb.totalAmount.toLocaleString()}
                             </p>
                           </div>
                         </div>
                       </div>
-                      <Link href={`/RFBs-details/${rfb.id}`}>
+                      <Link href={`/RFBs-details/SAR{rfb.id}`}>
                         <button className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium">
                           View Details
                         </button>
@@ -837,7 +837,7 @@ const RFBsDetailPage = () => {
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
-                      className={`border-2 border-dashed p-10 rounded-lg text-center transition-colors ${
+                      className={`border-2 border-dashed p-10 rounded-lg text-center transition-colors SAR{
                         isDragging
                           ? "border-red-500 bg-red-50"
                           : "border-gray-300 bg-gray-50"
@@ -885,7 +885,7 @@ const RFBsDetailPage = () => {
                     <button
                       onClick={handleUploadSubmit}
                       disabled={!uploadFile || !fileType}
-                      className={`px-4 py-2 text-white rounded-lg text-sm font-medium transition-opacity ${
+                      className={`px-4 py-2 text-white rounded-lg text-sm font-medium transition-opacity SAR{
                         !uploadFile || !fileType
                           ? "bg-red-300 cursor-not-allowed"
                           : "bg-red-600 hover:bg-red-700"
