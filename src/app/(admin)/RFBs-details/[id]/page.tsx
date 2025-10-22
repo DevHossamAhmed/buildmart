@@ -343,7 +343,7 @@ const RFBDetailsPage = () => {
 
                 {/* Tabs Navigation */}
                 <div className="flex border-b cursor-pointer border-gray-200 mb-6">
-                  {["Original", "Proposil", "Version"].map((tab) => (
+                  {["Original", "Proposal", "Versions"].map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setItemsTab(tab)}
@@ -356,9 +356,9 @@ const RFBDetailsPage = () => {
                     >
                       {tab === "Original"
                         ? "Original"
-                        : tab === "Proposil"
-                        ? "Proposil"
-                        : "Version"}
+                        : tab === "Proposal"
+                        ? "Proposal"
+                        : "Versions"}
                     </button>
                   ))}
                 </div>
@@ -371,7 +371,7 @@ const RFBDetailsPage = () => {
                 )}
 
                 {/* ---------------- TAB 2: Pricing Breakdown ---------------- */}
-                {itemsTab === "Proposil" && (
+                {itemsTab === "Proposal" && (
                   <>
                     <RfbsDetailsProposil
                       items={rfbData.items}
@@ -381,7 +381,7 @@ const RFBDetailsPage = () => {
                 )}
 
                 {/* ---------------- TAB 3: Summary ---------------- */}
-                {itemsTab === "Version" && <></>}
+                {itemsTab === "Versions" && <></>}
               </div>
             )}
 
