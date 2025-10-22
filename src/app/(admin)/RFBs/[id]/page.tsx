@@ -27,6 +27,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import ComparisonBtn from "@/components/rfbs-ui/ComparisonBtn";
 
 const RFBsDetailPage = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -311,7 +312,7 @@ const RFBsDetailPage = () => {
 
           {/* Tabs */}
           <div className="flex gap-6 border-b border-gray-200 ">
-            {["overview", "rfps", "documents", "activity"].map((tab) => (
+            {["overview", "rfps", "documents", "Communication"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -433,7 +434,7 @@ const RFBsDetailPage = () => {
 
             {activeTab === "rfps" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-end mb-4">
+                <div className="flex items-center gap-1.5 justify-end mb-4">
                   <button
                     className="px-4 py-2 text-white cursor-pointer rounded-lg hover:opacity-90 text-sm font-medium"
                     style={{ backgroundColor: "#d92335" }}
@@ -441,6 +442,7 @@ const RFBsDetailPage = () => {
                     <Send className="w-4 h-4 inline mr-2" />
                     Send New RFB
                   </button>
+                  <ComparisonBtn/>
                 </div>
                 {rfbsData.map((rfb) => (
                   <div
@@ -543,10 +545,10 @@ const RFBsDetailPage = () => {
               </div>
             )}
 
-            {activeTab === "activity" && (
+            {activeTab === "Communication" && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-6">
-                  Activity & Comments
+                  Communication
                 </h3>
                 <div className="space-y-6">
                   {activities.map((activity) => (

@@ -27,6 +27,8 @@ import {
   Upload,
 } from "lucide-react";
 import Link from "next/link";
+import RfbsDetailsGeneral from "@/components/rfbs-ui/RfbsDetailsGeneral";
+import RfbsDetailsProposil from "@/components/rfbs-ui/RfbsDetailsProposil";
 
 const RFBDetailsPage = () => {
   const [activeTab, setActiveTab] = useState("items");
@@ -36,6 +38,7 @@ const RFBDetailsPage = () => {
   const [fileName, setFileName] = useState("");
   const [fileType, setFileType] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+  const [itemsTab, setItemsTab] = useState("Original");
 
   const toggleUploadModal = () => {
     setShowUploadModal(!showUploadModal);
@@ -134,8 +137,6 @@ const RFBDetailsPage = () => {
     };
     return colors[status as keyof typeof colors] || colors.pending;
   };
-
- 
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -256,10 +257,15 @@ const RFBDetailsPage = () => {
 
           {/* Tabs */}
           <div className="flex gap-6 border-b border-gray-200">
-            {["items", "terms", "documents", "activity"].map((tab) => (
+            {["items", "terms", "documents", "Communication"].map((tab) => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => {
+                  setActiveTab(tab);
+                  if (tab === "items") {
+                    setItemsTab("Original"); 
+                  }
+                }}
                 className={`pb-3 px-1 text-sm font-medium cursor-pointer transition-colors relative ${
                   activeTab === tab
                     ? "text-red-600"
@@ -331,95 +337,51 @@ const RFBDetailsPage = () => {
 
             {activeTab === "items" && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">
                   Quoted Items
                 </h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 border-b border-gray-200">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                          Description
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                          Qty
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                          Unit Price
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                          Total
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                          Availability
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                          Delivery
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {rfbData.items.map((item) => (
-                        <tr key={item.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-4 text-sm font-medium text-gray-900">
-                            {item.description}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-gray-600">
-                            {item.offeredQty} {item.unit}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-gray-900">
-                            ${item.unitPrice}
-                          </td>
-                          <td className="px-4 py-4 text-sm font-semibold text-gray-900">
-                            ${item.totalPrice.toLocaleString()}
-                          </td>
-                          <td className="px-4 py-4">
-                            <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
-                              {item.availability}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4 text-sm text-gray-600">
-                            {item.deliveryTime}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+
+                {/* Tabs Navigation */}
+                <div className="flex border-b cursor-pointer border-gray-200 mb-6">
+                  {["Original", "Proposil", "Version"].map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setItemsTab(tab)}
+                      className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200
+            ${
+              itemsTab === tab
+                ? "border-b-2 border-red-600 text-red-600"
+                : "text-gray-500 hover:text-red-600"
+            }`}
+                    >
+                      {tab === "Original"
+                        ? "Original"
+                        : tab === "Proposil"
+                        ? "Proposil"
+                        : "Version"}
+                    </button>
+                  ))}
                 </div>
 
-                {/* Pricing Breakdown */}
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <div className="flex justify-end">
-                    <div className="w-80 space-y-3">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Subtotal:</span>
-                        <span className="font-medium text-gray-900">
-                          ${rfbData.pricing.subtotal.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Tax (15%):</span>
-                        <span className="font-medium text-gray-900">
-                          ${rfbData.pricing.tax.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Shipping:</span>
-                        <span className="font-medium text-gray-900">
-                          ${rfbData.pricing.shipping.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm pt-3 border-t border-gray-200">
-                        <span className="font-semibold text-gray-900">
-                          Total Amount:
-                        </span>
-                        <span className="font-bold text-lg text-green-600">
-                          ${rfbData.pricing.total.toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
+                {/* ---------------- TAB 1: Items List ---------------- */}
+                {itemsTab === "Original" && (
+                  <div className="overflow-x-auto">
+                    <RfbsDetailsGeneral />
                   </div>
-                </div>
+                )}
+
+                {/* ---------------- TAB 2: Pricing Breakdown ---------------- */}
+                {itemsTab === "Proposil" && (
+                  <>
+                    <RfbsDetailsProposil
+                      items={rfbData.items}
+                      pricing={rfbData.pricing}
+                    />
+                  </>
+                )}
+
+                {/* ---------------- TAB 3: Summary ---------------- */}
+                {itemsTab === "Version" && <></>}
               </div>
             )}
 
@@ -540,10 +502,10 @@ const RFBDetailsPage = () => {
               </div>
             )}
 
-            {activeTab === "activity" && (
+            {activeTab === "Communication" && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-6">
-                  Activity Timeline
+                  Communication
                 </h3>
                 <div className="space-y-6">
                   {rfbData.activities.map((activity) => (
@@ -787,24 +749,12 @@ const RFBDetailsPage = () => {
                     <option value="" disabled>
                       Select a document type
                     </option>
-                    <option value="specification" >
-                      Specification
-                    </option>
-                    <option value="drawing" >
-                      Drawing
-                    </option>
-                    <option value="certificate" >
-                      Certificate
-                    </option>
-                    <option value="quotation" >
-                      Quotation
-                    </option>
-                    <option value="invoice" >
-                      Invoice
-                    </option>
-                    <option value="other" >
-                      Other
-                    </option>
+                    <option value="specification">Specification</option>
+                    <option value="drawing">Drawing</option>
+                    <option value="certificate">Certificate</option>
+                    <option value="quotation">Quotation</option>
+                    <option value="invoice">Invoice</option>
+                    <option value="other">Other</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <svg
@@ -829,13 +779,11 @@ const RFBDetailsPage = () => {
               >
                 {uploadFile ? (
                   <div className="flex items-center justify-center gap-3">
-                    <p className="text-sm font-medium text-gray-900">
-                    </p>
+                    <p className="text-sm font-medium text-gray-900"></p>
                     <button
                       onClick={() => setUploadFile(null)}
                       className="ml-4 text-red-500 hover:text-red-700"
-                    >
-                    </button>
+                    ></button>
                   </div>
                 ) : (
                   <>
