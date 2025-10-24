@@ -65,10 +65,10 @@ const RfbsDetailsProposil: React.FC<RfbsDetailsProposilProps> = ({
                   {item.offeredQty} {item.unit}
                 </td>
                 <td className="px-4 py-4 text-sm text-gray-900">
-                  ${item.unitPrice}
+                  {item.unitPrice} SAR
                 </td>
                 <td className="px-4 py-4 text-sm font-semibold text-gray-900">
-                  ${item.totalPrice.toLocaleString()}
+                  {item.totalPrice.toLocaleString()} SAR
                 </td>
                 <td className="px-4 py-4">
                   <span
@@ -97,19 +97,19 @@ const RfbsDetailsProposil: React.FC<RfbsDetailsProposilProps> = ({
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Subtotal:</span>
               <span className="font-medium text-gray-900">
-                ${pricing.subtotal.toLocaleString()}
+               {pricing.subtotal.toLocaleString()} SAR
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Tax (15%):</span>
               <span className="font-medium text-gray-900">
-                ${pricing.tax.toLocaleString()}
+                {pricing.tax.toLocaleString()} SAR
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Shipping:</span>
               <span className="font-medium text-gray-900">
-                ${pricing.shipping.toLocaleString()}
+                {pricing.shipping.toLocaleString()} SAR
               </span>
             </div>
             <div className="flex justify-between text-sm pt-3 border-t border-gray-200">
@@ -117,7 +117,7 @@ const RfbsDetailsProposil: React.FC<RfbsDetailsProposilProps> = ({
                 Total Amount:
               </span>
               <span className="font-bold text-lg text-green-600">
-                ${pricing.total.toLocaleString()}
+                {pricing.total.toLocaleString()} SAR
               </span>
             </div>
           </div>

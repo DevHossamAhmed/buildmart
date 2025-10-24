@@ -25,6 +25,7 @@ import {
 import Link from "next/link";
 import RfbsDetailsGeneral from "@/components/rfbs-ui/RfbsDetailsGeneral";
 import RfbsDetailsProposil from "@/components/rfbs-ui/RfbsDetailsProposil";
+import Versions from "@/components/rfbs-ui/Versions";
 
 const RFBDetailsPage = () => {
   const [activeTab, setActiveTab] = useState("items");
@@ -377,7 +378,9 @@ const RFBDetailsPage = () => {
                 )}
 
                 {/* ---------------- TAB 3: Versions ---------------- */}
-                {itemsTab === "Versions" && <></>}
+                {itemsTab === "Versions" && <>
+                <Versions/>
+                </>}
               </div>
             )}
 
