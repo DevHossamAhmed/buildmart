@@ -363,14 +363,14 @@ const RFBDetailsPage = () => {
                   ))}
                 </div>
 
-                {/* ---------------- TAB 1: Items List ---------------- */}
+                {/* ---------------- TAB 1: Original ---------------- */}
                 {itemsTab === "Original" && (
                   <div className="overflow-x-auto">
                     <RfbsDetailsGeneral />
                   </div>
                 )}
 
-                {/* ---------------- TAB 2: Pricing Breakdown ---------------- */}
+                {/* ---------------- TAB 2: Proposal ---------------- */}
                 {itemsTab === "Proposal" && (
                   <>
                     <RfbsDetailsProposil
@@ -380,7 +380,7 @@ const RFBDetailsPage = () => {
                   </>
                 )}
 
-                {/* ---------------- TAB 3: Summary ---------------- */}
+                {/* ---------------- TAB 3: Versions ---------------- */}
                 {itemsTab === "Versions" && <></>}
               </div>
             )}
