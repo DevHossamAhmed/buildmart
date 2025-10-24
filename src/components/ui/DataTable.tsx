@@ -71,7 +71,7 @@ const DataTable: React.FC<DataTableProps> = ({
                   {columns.map((column, colIndex) => (
                     <td
                       key={colIndex}
-                      className={`px-4 py-4 text-sm ${
+                      className={`px-4 py-4 text-[12px] ${
                         column.className || "text-gray-600"
                       }`}
                     >
