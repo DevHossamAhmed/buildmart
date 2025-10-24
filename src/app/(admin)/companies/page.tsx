@@ -38,6 +38,9 @@ const Companies = () => {
       status: "active",
       createdAt: "2024-01-15",
       createdBy: "Ahmed Mahmoud",
+      email:"testmail@domin.com",
+      telephone:"0555548845",
+      taxId:"000000"
     },
     {
       id: 2,
@@ -47,6 +50,9 @@ const Companies = () => {
       status: "active",
       createdAt: "2024-02-20",
       createdBy: "Sara Ali",
+      email:"testmail@domin.com",
+      telephone:"0555548845",
+      taxId:"000000"
     },
     {
       id: 3,
@@ -56,6 +62,9 @@ const Companies = () => {
       status: "inactive",
       createdAt: "2024-03-10",
       createdBy: "Mohamed Hassan",
+      email:"testmail@domin.com",
+      telephone:"0555548845",
+      taxId:"000000"
     },
     {
       id: 4,
@@ -65,6 +74,9 @@ const Companies = () => {
       status: "active",
       createdAt: "2024-01-25",
       createdBy: "Fatima Mohamed",
+      email:"testmail@domin.com",
+      telephone:"0555548845",
+      taxId:"000000"
     },
     {
       id: 5,
@@ -74,6 +86,9 @@ const Companies = () => {
       status: "active",
       createdAt: "2024-02-05",
       createdBy: "Omar Khalil",
+      email:"testmail@domin.com",
+      telephone:"0555548845",
+      taxId:"000000"
     },
     {
       id: 6,
@@ -83,6 +98,9 @@ const Companies = () => {
       status: "inactive",
       createdAt: "2024-03-15",
       createdBy: "Layla Hassan",
+      email:"testmail@domin.com",
+      telephone:"0555548845",
+      taxId:"000000"
     },
     {
       id: 7,
@@ -92,6 +110,9 @@ const Companies = () => {
       status: "active",
       createdAt: "2024-01-30",
       createdBy: "Youssef Ibrahim",
+      email:"testmail@domin.com",
+      telephone:"0555548845",
+      taxId:"000000"
     },
     {
       id: 8,
@@ -101,6 +122,9 @@ const Companies = () => {
       status: "active",
       createdAt: "2024-02-12",
       createdBy: "Mona Salem",
+      email:"testmail@domin.com",
+      telephone:"0555548845",
+      taxId:"000000"
     },
   ]);
   //@ts-expect-error:value
@@ -166,8 +190,8 @@ const Companies = () => {
       code: "",
       description: "",
       status: "active",
-      brandName: "",
       taxId: "",
+      brandName: "",
       email: "",
       telephone: "",
       website: "",
@@ -221,11 +245,22 @@ const Companies = () => {
       accessor: "code",
       className: "text-gray-900 font-medium",
     },
-    {
-      header: "Description",
-      accessor: "description",
+     {
+      header: "CR Number",
+      accessor: "taxId",
       className: "text-gray-600",
     },
+     {
+      header: "Email",
+      accessor: "email",
+      className: "text-gray-600",
+    },
+     {
+      header: "Tel",
+      accessor: "telephone",
+      className: "text-gray-600",
+    },
+   
     {
       header: "Status",
       accessor: "status",
@@ -251,31 +286,11 @@ const Companies = () => {
       accessor: "createdBy",
       className: "text-gray-600",
     },
-    {
-      header: "Email",
-      accessor: "email",
-      className: "text-gray-600",
-    },
-    {
-      header: "Tel",
-      accessor: "telephone",
-      className: "text-gray-600",
-    },
-    {
-      header: "Website",
-      accessor: "website",
-      className: "text-gray-600",
-    },
-    {
-      header: "CR Number",
-      accessor: "taxId",
-      className: "text-gray-600",
-    },
-    {
-      header: "Brand",
-      accessor: "brandName",
-      className: "text-gray-600",
-    },
+   
+   
+  
+   
+
   ];
 
   return (
@@ -498,8 +513,7 @@ const Companies = () => {
             />
           </div>
           <hr />
-          {userType != "Individual" && (
-            <div
+           <div
               className="flex items-center p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 border border-yellow-200"
               role="alert"
             >
@@ -519,7 +533,7 @@ const Companies = () => {
               </svg>
               This person will be Superadmin to this account.
             </div>
-          )}
+        
 
           <div className="grid grid-cols-2 gap-4">
             <div>
