@@ -16,15 +16,11 @@ import {
   Mail,
   Phone,
   MapPin,
-  AlertCircle,
-  MessageSquare,
   Paperclip,
   Printer,
   Share2,
-  Eye,
   Trash2,
   X,
-  Upload,
 } from "lucide-react";
 import Link from "next/link";
 import RfbsDetailsGeneral from "@/components/rfbs-ui/RfbsDetailsGeneral";
