@@ -315,19 +315,19 @@ const LeftSide = () => {
                     October 30, 2017
                   </td>
                   <td className="py-4 px-4 text-sm text-gray-900 font-medium">
-                    $473.85
+                    473.85 SAR
                   </td>
                   <td className="py-4 px-4 text-sm text-gray-900 font-medium">
-                    $473.85
+                    473.85 SAR
                   </td>
                   <td className="py-4 px-4 text-sm text-gray-900 font-medium">
-                    $473.85
+                    473.85 SAR
                   </td>
                   <td className="py-4 px-4 text-sm text-gray-900 font-medium">
-                    $473.85
+                    473.85 SAR
                   </td>
                   <td className="py-4 px-4 text-sm text-gray-900 font-medium">
-                    $473.85
+                    473.85 SAR
                   </td>
                 </tr>
               ))}

@@ -308,7 +308,7 @@ const RFBDetailsPage = () => {
                   <p className="text-xs text-gray-600">Subtotal</p>
                 </div>
                 <p className="text-2xl font-bold text-gray-900">
-                  ${rfbData.pricing.subtotal.toLocaleString()}
+                  {rfbData.pricing.subtotal.toLocaleString()} SAR
                 </p>
               </div>
               <div className="bg-white rounded-lg border border-gray-200 p-5">
@@ -319,7 +319,7 @@ const RFBDetailsPage = () => {
                   <p className="text-xs text-gray-600">Tax (15%)</p>
                 </div>
                 <p className="text-2xl font-bold text-gray-900">
-                  ${rfbData.pricing.tax.toLocaleString()}
+                  {rfbData.pricing.tax.toLocaleString()} SAR
                 </p>
               </div>
               <div className="bg-white rounded-lg border border-gray-200 p-5">
@@ -330,7 +330,7 @@ const RFBDetailsPage = () => {
                   <p className="text-xs text-gray-600">Total</p>
                 </div>
                 <p className="text-2xl font-bold text-green-600">
-                  ${rfbData.pricing.total.toLocaleString()}
+                  {rfbData.pricing.total.toLocaleString()} SAR
                 </p>
               </div>
             </div>

@@ -34,7 +34,7 @@ const OverView = () => {
               Total Transactions
             </h2>
             <p className="text-[24px] sm:text-[28px] lg:text-[30px] font-bold flex flex-wrap items-center gap-2">
-              $20,450.87
+              20,450.87 SAR
               <span className="bg-green-200 rounded-md text-[11px] sm:text-[12px] text-green-700 font-bold px-1.5 py-0.5">
                 +2.5%
               </span>
@@ -46,7 +46,7 @@ const OverView = () => {
               Total Online Sales
             </h2>
             <p className="text-[24px] sm:text-[28px] lg:text-[30px] font-bold flex flex-wrap items-center gap-2">
-              $6,135
+              6,135 SAR
               <span className="bg-green-200 rounded-md text-[11px] sm:text-[12px] text-green-700 font-bold px-1.5 py-0.5">
                 +9.5%
               </span>
@@ -58,7 +58,7 @@ const OverView = () => {
               Total Offline Sales
             </h2>
             <p className="text-[24px] sm:text-[28px] lg:text-[30px] font-bold flex flex-wrap items-center gap-2">
-              $10,225
+              10,225 SAR
               <span className="bg-red-200 rounded-md text-[11px] sm:text-[12px] text-red-700 font-bold px-1.5 py-0.5">
                 -1.6%
               </span>
@@ -70,7 +70,7 @@ const OverView = () => {
               Total Payments
             </h2>
             <p className="text-[24px] sm:text-[28px] lg:text-[30px] font-bold flex flex-wrap items-center gap-2">
-              $4,090
+              4,090 SAR
               <span className="bg-green-200 rounded-md text-[11px] sm:text-[12px] text-green-700 font-bold px-1.5 py-0.5">
                 +3.5%
               </span>
