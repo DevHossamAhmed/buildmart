@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Plus,
   Search,
@@ -17,12 +18,14 @@ import {
   Edit2,
   Trash2,
   Archive,
+  GitBranch,
 } from "lucide-react";
 
 const ProjectsDashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const router = useRouter();
   const [formData, setFormData] = useState({
     projectName: "",
     projectCode: "",
@@ -450,10 +453,19 @@ const ProjectsDashboard = () => {
                     </div>
                   )}
                 </div>
+               
               </div>
 
               {/* Card Footer */}
               <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-2">
+                 <button
+                  onClick={() =>
+                    router.push(`/approval-work-flow/${project.id}`)
+                  }
+                  className="p-2 flex gap-1.5 bg-red-500 text-white text-[14px]  items-center   cursor-pointer  rounded-lg transition-colors"
+                >
+                  <GitBranch className="w-4 h-4" /> Work Flow
+                </button>
                 <button className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
                   <Eye className="w-4 h-4" />
                 </button>
