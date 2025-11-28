@@ -15,6 +15,7 @@ import {
   FaCog,
   FaChevronDown,
   FaChevronUp,
+  FaHandshake,
 } from "react-icons/fa";
 
 interface SideBarProps {
@@ -33,7 +34,7 @@ const navigationLinks = [
 const settingsLinks = [
   { name: "Companies", href: "/companies", icon: FaBuilding },
   { name: "Departments", href: "/departments", icon: FaSitemap },
-  { name: "Activities", href: "/activities", icon: FaTasks },
+  { name: "WBS", href: "/wbs", icon: FaTasks },
   { name: "Warehouses", href: "/warehouses", icon: FaWarehouse },
   { name: "Regions", href: "/regions", icon: FaMapMarkedAlt },
 ];
@@ -153,6 +154,22 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                   })}
                 </ul>
               )}
+            </li>
+
+            {/* Vendor Link */}
+            <li>
+              <Link
+                href="/vendor"
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200
+                  ${pathname === "/vendor"
+                    ? "bg-red-600 text-white"
+                    : "text-gray-700 hover:bg-gray-50 hover:text-[#d92335]"
+                  }`}
+                onClick={onClose}
+              >
+                <FaHandshake className="text-[20px]" />
+                <span>Vendor</span>
+              </Link>
             </li>
           </ul>
         </nav>
