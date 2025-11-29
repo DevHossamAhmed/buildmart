@@ -7,7 +7,6 @@ import {
   Send,
   Clock,
   CheckCircle,
-  XCircle,
   FileText,
   Calendar,
   User,
@@ -21,7 +20,6 @@ import {
   Trash2,
   Eye,
   DollarSign,
-  TrendingUp,
   ShoppingCart,
   Upload,
   X,
@@ -59,7 +57,7 @@ const RFBsDetailPage = () => {
   };
 
   // BOQ Items data
-  const boqItems = [
+const boqItems = [
     {
       id: 1,
       category: "Construction",
@@ -68,6 +66,7 @@ const RFBsDetailPage = () => {
       unit: "kg",
       unitPrice: 25.5,
       totalPrice: 7650,
+      mrCode: "MR-2024-001", 
     },
     {
       id: 2,
@@ -77,6 +76,7 @@ const RFBsDetailPage = () => {
       unit: "kg",
       unitPrice: 22.0,
       totalPrice: 4400,
+      mrCode: "MR-2024-002", 
     },
   ];
 
@@ -147,37 +147,6 @@ const RFBsDetailPage = () => {
     },
   ];
 
-  const fileTypes = [
-    { value: "specification", label: "Specification" },
-    { value: "drawing", label: "Drawing" },
-    { value: "certificate", label: "Certificate" },
-    { value: "quotation", label: "Quotation" },
-    { value: "invoice", label: "Invoice" },
-    { value: "other", label: "Other" },
-  ];
-  //@ts-expect-error:status
-  const getStatusColor = (status) => {
-    const colors = {
-      draft: "bg-gray-100 text-gray-700 border-gray-300",
-      pending: "bg-yellow-100 text-yellow-700 border-yellow-300",
-      submitted: "bg-blue-100 text-blue-700 border-blue-300",
-      approved: "bg-green-100 text-green-700 border-green-300",
-      rejected: "bg-red-100 text-red-700 border-red-300",
-    };
-    //@ts-expect-error:status
-    return colors[status] || colors.draft;
-  };
-  //@ts-expect-error:status
-  const getPriorityColor = (priority) => {
-    const colors = {
-      urgent: "bg-red-100 text-red-700 border-red-300",
-      high: "bg-orange-100 text-orange-700 border-orange-300",
-      normal: "bg-blue-100 text-blue-700 border-blue-300",
-      low: "bg-slate-100 text-slate-700 border-slate-300",
-    };
-    //@ts-expect-error:status
-    return colors[priority] || colors.normal;
-  };
 
   const totalAmount = boqItems.reduce((sum, item) => sum + item.totalPrice, 0);
 
@@ -191,7 +160,6 @@ const RFBsDetailPage = () => {
     setIsDragging(false);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDrop = (e: {
     preventDefault: () => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -399,6 +367,9 @@ const RFBsDetailPage = () => {
                       <thead className="bg-gray-50 border-b border-gray-200">
                         <tr>
                           <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                            MR Code
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                             Category
                           </th>
                           <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
@@ -412,6 +383,11 @@ const RFBsDetailPage = () => {
                       <tbody className="divide-y divide-gray-200">
                         {boqItems.map((item) => (
                           <tr key={item.id} className="hover:bg-gray-50">
+                            <td className="px-4 py-4">
+                              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                                {item.mrCode}
+                              </span>
+                            </td>
                             <td className="px-4 py-4">
                               <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
                                 {item.category}

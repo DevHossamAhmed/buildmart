@@ -45,6 +45,7 @@ const UsersTeamsPage = () => {
       status: "active",
       avatar: "AM",
       department: "Engineering",
+      entity: "Main Office", 
       joinDate: "2024-01-15",
       lastActive: "2 hours ago",
     },
@@ -58,6 +59,7 @@ const UsersTeamsPage = () => {
       status: "active",
       avatar: "SA",
       department: "Procurement",
+      entity: "Supply Chain Division", 
       joinDate: "2024-02-20",
       lastActive: "5 mins ago",
     },
@@ -71,6 +73,7 @@ const UsersTeamsPage = () => {
       status: "active",
       avatar: "MA",
       department: "Engineering",
+      entity: "Main Office", 
       joinDate: "2023-11-10",
       lastActive: "1 day ago",
     },
@@ -84,6 +87,7 @@ const UsersTeamsPage = () => {
       status: "inactive",
       avatar: "FH",
       department: "Finance",
+      entity: "Corporate Headquarters", 
       joinDate: "2024-03-05",
       lastActive: "1 week ago",
     },
@@ -97,13 +101,14 @@ const UsersTeamsPage = () => {
       status: "active",
       avatar: "OK",
       department: "IT",
+      entity: "Technology Center", 
       joinDate: "2023-09-12",
       lastActive: "30 mins ago",
     },
   ];
 
   // Sample Teams Data
-  const teamsData = [
+ const teamsData = [
     {
       id: 1,
       name: "Engineering Team",
@@ -111,10 +116,10 @@ const UsersTeamsPage = () => {
         "Responsible for project execution and technical implementation",
       members: 12,
       NumberofRoles: 5,
-
       projects: 8,
       status: "active",
       color: "blue",
+      entity: "Main Office", 
     },
     {
       id: 2,
@@ -122,10 +127,10 @@ const UsersTeamsPage = () => {
       description: "Handles all procurement and supplier management activities",
       members: 6,
       NumberofRoles: 5,
-
       projects: 15,
       status: "active",
       color: "green",
+      entity: "Supply Chain Division",
     },
     {
       id: 3,
@@ -133,10 +138,10 @@ const UsersTeamsPage = () => {
       description: "Manages financial operations and budget control",
       members: 5,
       NumberofRoles: 5,
-
       projects: 20,
       status: "active",
       color: "purple",
+      entity: "Corporate Headquarters", 
     },
     {
       id: 4,
@@ -144,10 +149,10 @@ const UsersTeamsPage = () => {
       description: "Provides technical support and system administration",
       members: 4,
       NumberofRoles: 5,
-
       projects: 3,
       status: "active",
       color: "orange",
+      entity: "Technology Center", 
     },
   ];
 
@@ -374,6 +379,9 @@ const UsersTeamsPage = () => {
                         Role
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                        Department
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                         Team
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
@@ -381,6 +389,9 @@ const UsersTeamsPage = () => {
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                         Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                        Entity 
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                         Last Active
@@ -417,6 +428,11 @@ const UsersTeamsPage = () => {
                           </span>
                         </td>
                         <td className="px-6 py-4">
+                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                            {user.department}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
                           <p className="text-sm text-gray-900">{user.team}</p>
                           <p className="text-xs text-gray-500">
                             {user.department}
@@ -443,6 +459,11 @@ const UsersTeamsPage = () => {
                             {user.status.charAt(0).toUpperCase() +
                               user.status.slice(1)}
                           </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-sm text-gray-600">
+                            {user.entity}
+                          </p>
                         </td>
                         <td className="px-6 py-4">
                           <p className="text-sm text-gray-600">
@@ -527,6 +548,9 @@ const UsersTeamsPage = () => {
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                         Count Users
                       </th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                        Entity
+                      </th>
 
                       <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
                         Actions
@@ -568,6 +592,11 @@ const UsersTeamsPage = () => {
                               {team.members}
                             </p>
                           </div>
+                        </td>
+                        <td className="px-6 py-4 ">
+                          <span className="text-sm text-gray-600 max-w-xs truncate font-medium ">
+                            {team.entity}
+                          </span>
                         </td>
 
                         <td className="px-6 py-4">
