@@ -375,12 +375,16 @@ const UsersTeamsPage = () => {
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                         User
                       </th>
+                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                        Department
+                      </th>
+                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                        Entity 
+                      </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                         Role
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                        Department
-                      </th>
+                     
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                         Team
                       </th>
@@ -390,9 +394,7 @@ const UsersTeamsPage = () => {
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                        Entity 
-                      </th>
+                     
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                         Last Active
                       </th>
@@ -422,14 +424,20 @@ const UsersTeamsPage = () => {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
+                       
+                         <td className="px-6 py-4">
                           <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
-                            {user.role}
+                            {user.department}
                           </span>
+                        </td>
+                         <td className="px-6 py-4">
+                          <p className="text-sm text-gray-600">
+                            {user.entity}
+                          </p>
                         </td>
                         <td className="px-6 py-4">
                           <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
-                            {user.department}
+                            {user.role}
                           </span>
                         </td>
                         <td className="px-6 py-4">
@@ -460,11 +468,7 @@ const UsersTeamsPage = () => {
                               user.status.slice(1)}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
-                          <p className="text-sm text-gray-600">
-                            {user.entity}
-                          </p>
-                        </td>
+                       
                         <td className="px-6 py-4">
                           <p className="text-sm text-gray-600">
                             {user.lastActive}
@@ -539,6 +543,9 @@ const UsersTeamsPage = () => {
                         Name
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                        Entity
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                         Description
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
@@ -548,9 +555,7 @@ const UsersTeamsPage = () => {
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                         Count Users
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                        Entity
-                      </th>
+                      
 
                       <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
                         Actions
@@ -574,6 +579,11 @@ const UsersTeamsPage = () => {
                             </p>
                           </div>
                         </td>
+                         <td className="px-6 py-4 ">
+                          <span className="text-sm text-gray-600 max-w-xs truncate font-medium ">
+                            {team.entity}
+                          </span>
+                        </td>
                         <td className="px-6 py-4">
                           <p className="text-sm text-gray-600 max-w-xs truncate">
                             {team.description}
@@ -593,11 +603,7 @@ const UsersTeamsPage = () => {
                             </p>
                           </div>
                         </td>
-                        <td className="px-6 py-4 ">
-                          <span className="text-sm text-gray-600 max-w-xs truncate font-medium ">
-                            {team.entity}
-                          </span>
-                        </td>
+                       
 
                         <td className="px-6 py-4">
                           <div className="flex items-center justify-end gap-2">
