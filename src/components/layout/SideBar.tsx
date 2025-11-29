@@ -16,6 +16,7 @@ import {
   FaChevronDown,
   FaChevronUp,
   FaHandshake,
+  FaDollarSign,
 } from "react-icons/fa";
 
 interface SideBarProps {
@@ -37,6 +38,7 @@ const settingsLinks = [
   { name: "WBS", href: "/wbs", icon: FaTasks },
   { name: "Warehouses", href: "/warehouses", icon: FaWarehouse },
   { name: "Regions", href: "/regions", icon: FaMapMarkedAlt },
+  { name: "Cost Code", href: "/cost-code", icon: FaDollarSign  },
 ];
 
 const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
