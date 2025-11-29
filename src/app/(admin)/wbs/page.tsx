@@ -11,7 +11,7 @@ import {
 import DrawerComponent from "@/components/ui/DrawerComponent";
 import DataTable from "@/components/ui/DataTable";
 
-const Activities = () => {
+const WBS = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -23,7 +23,7 @@ const Activities = () => {
     status: "active",
   });
 
-  const [activities, setActivities] = useState([
+  const [WBS, setWBS] = useState([
     {
       id: 1,
       name: "Concrete Pouring",
@@ -137,13 +137,13 @@ const Activities = () => {
   };
 
   const handleSave = () => {
-    const newActivity = {
-      id: activities.length + 1,
+    const newWBS = {
+      id: WBS.length + 1,
       ...formData,
       createdAt: new Date().toISOString().split("T")[0],
       createdBy: "Ahmed Mahmoud",
     };
-    setActivities([newActivity, ...activities]);
+    setWBS([newWBS, ...WBS]);
     setIsDrawerOpen(false);
     setFormData({
       name: "",
@@ -153,24 +153,24 @@ const Activities = () => {
     });
   };
 
-  const filteredActivities = activities.filter((activity) => {
+  const filteredWBS = WBS.filter((WBS) => {
     const matchesSearch =
-      activity.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      activity.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      activity.description.toLowerCase().includes(searchTerm.toLowerCase());
+      WBS.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      WBS.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      WBS.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
-      statusFilter === "all" || activity.status === statusFilter;
+      statusFilter === "all" || WBS.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleView = (row: any) => {
-    console.log("View activity:", row);
+    console.log("View WBS:", row);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEdit = (row: any) => {
-    console.log("Edit activity:", row);
+    console.log("Edit WBS:", row);
     setFormData({
       name: row.name,
       code: row.code,
@@ -183,7 +183,7 @@ const Activities = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDelete = (row: any) => {
     if (window.confirm(`Are you sure you want to delete ${row.name}?`)) {
-      setActivities(activities.filter((activity) => activity.id !== row.id));
+      setWBS(WBS.filter((WBS) => WBS.id !== row.id));
     }
   };
 
@@ -238,10 +238,10 @@ const Activities = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                Activities
+                WBS
               </h1>
               <p className="text-sm text-gray-600 mt-1">
-                Manage and track all activities
+                Manage and track all WBS
               </p>
             </div>
             <button
@@ -250,7 +250,7 @@ const Activities = () => {
               style={{ backgroundColor: "#d92335" }}
             >
               <Plus className="w-5 h-5" />
-              <span>New Activity</span>
+              <span>New WBS</span>
             </button>
           </div>
         </div>
@@ -299,7 +299,7 @@ const Activities = () => {
         {/* Table */}
         <DataTable
           columns={columns}
-          data={filteredActivities}
+          data={filteredWBS}
           onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
@@ -311,8 +311,8 @@ const Activities = () => {
       <DrawerComponent
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        title="New Activity"
-        subtitle="Fill in the details to create a new activity"
+        title="New WBS"
+        subtitle="Fill in the details to create a new WBS"
         onSave={handleSave}
         saveButtonText="Save"
         cancelButtonText="Cancel"
@@ -321,7 +321,7 @@ const Activities = () => {
           <div className="flex gap-6">
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Activity Name <span className="text-red-500">*</span>
+                WBS Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -335,7 +335,7 @@ const Activities = () => {
 
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Activity Code
+                WBS Code
               </label>
               <input
                 type="text"
@@ -378,7 +378,7 @@ const Activities = () => {
               onChange={handleInputChange}
               rows={4}
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
-              placeholder="Add activity description..."
+              placeholder="Add WBS description..."
             />
           </div>
         </div>
@@ -387,4 +387,4 @@ const Activities = () => {
   );
 };
 
-export default Activities;
+export default WBS;
