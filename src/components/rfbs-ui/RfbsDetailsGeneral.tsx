@@ -6,12 +6,72 @@ const RfbsDetailsGeneral = () => {
 
   // BOQ Items data
 const boqItems = [
-  { id: 1, category: "Construction", description: "Steel Rebar 16mm", quantity: 300, unit: "kg", unitPrice: 25.5, totalPrice: 7650 },
-  { id: 2, category: "Electrical", description: "Copper Cable 10mm²", quantity: 120, unit: "m", unitPrice: 15.0, totalPrice: 1800 },
-  { id: 3, category: "Plumbing", description: "PVC Pipe 2-inch", quantity: 90, unit: "pcs", unitPrice: 12.5, totalPrice: 1125 },
-  { id: 4, category: "Finishing", description: "Ceramic Floor Tiles 60x60cm", quantity: 250, unit: "m²", unitPrice: 35.0, totalPrice: 8750 },
-  { id: 5, category: "HVAC", description: "Split AC Unit 2 Ton", quantity: 5, unit: "unit", unitPrice: 2800, totalPrice: 14000 },
-  { id: 6, category: "Safety", description: "Fire Extinguisher 6kg CO₂", quantity: 20, unit: "pcs", unitPrice: 350, totalPrice: 7000 },
+  { 
+    id: 1, 
+    category: "Construction", 
+    description: "Steel Rebar 16mm", 
+    quantity: 300, 
+    unit: "kg", 
+    unitPrice: 25.5, 
+    totalPrice: 7650,
+    mrCode: "MR-2024-001",
+    masterCode: "CONST-STL-16MM-001"
+  },
+  { 
+    id: 2, 
+    category: "Electrical", 
+    description: "Copper Cable 10mm²", 
+    quantity: 120, 
+    unit: "m", 
+    unitPrice: 15.0, 
+    totalPrice: 1800,
+    mrCode: "MR-2024-002",
+    masterCode: "ELEC-CBL-10MM-001"
+  },
+  { 
+    id: 3, 
+    category: "Plumbing", 
+    description: "PVC Pipe 2-inch", 
+    quantity: 90, 
+    unit: "pcs", 
+    unitPrice: 12.5, 
+    totalPrice: 1125,
+    mrCode: "MR-2024-003",
+    masterCode: "PLMB-PVC-2IN-001"
+  },
+  { 
+    id: 4, 
+    category: "Finishing", 
+    description: "Ceramic Floor Tiles 60x60cm", 
+    quantity: 250, 
+    unit: "m²", 
+    unitPrice: 35.0, 
+    totalPrice: 8750,
+    mrCode: "MR-2024-004",
+    masterCode: "FNSH-TLE-60CM-001"
+  },
+  { 
+    id: 5, 
+    category: "HVAC", 
+    description: "Split AC Unit 2 Ton", 
+    quantity: 5, 
+    unit: "unit", 
+    unitPrice: 2800, 
+    totalPrice: 14000,
+    mrCode: "MR-2024-005",
+    masterCode: "HVAC-AC-2TON-001"
+  },
+  { 
+    id: 6, 
+    category: "Safety", 
+    description: "Fire Extinguisher 6kg CO₂", 
+    quantity: 20, 
+    unit: "pcs", 
+    unitPrice: 350, 
+    totalPrice: 7000,
+    mrCode: "MR-2024-006",
+    masterCode: "SFTY-EXT-6KG-001"
+  },
 ];
 
 
@@ -24,6 +84,8 @@ const boqItems = [
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Master Code</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">mr-code</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Category</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Description</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Quantity</th>
@@ -39,6 +101,16 @@ const boqItems = [
                       isHighlighted ? "bg-yellow-100 hover:bg-yellow-200" : "hover:bg-gray-50"
                     } transition-colors`}
                   >
+                    <td className="px-4 py-4">
+                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                        {item.masterCode}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                        {item.mrCode}
+                      </span>
+                    </td>
                     <td className="px-4 py-4">
                       <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
                         {item.category}

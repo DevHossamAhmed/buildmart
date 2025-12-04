@@ -66,7 +66,8 @@ const boqItems = [
       unit: "kg",
       unitPrice: 25.5,
       totalPrice: 7650,
-      mrCode: "MR-2024-001", 
+      mrCode: "MR-2024-001",
+      masterCode: "MC-STEEL-001", 
     },
     {
       id: 2,
@@ -76,7 +77,8 @@ const boqItems = [
       unit: "kg",
       unitPrice: 22.0,
       totalPrice: 4400,
-      mrCode: "MR-2024-002", 
+      mrCode: "MR-2024-002",
+      masterCode: "MC-STEEL-002",
     },
   ];
 
@@ -367,6 +369,9 @@ const boqItems = [
                       <thead className="bg-gray-50 border-b border-gray-200">
                         <tr>
                           <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                            Master Code
+                          </th> 
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                             MR Code
                           </th>
                           <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
@@ -383,6 +388,11 @@ const boqItems = [
                       <tbody className="divide-y divide-gray-200">
                         {boqItems.map((item) => (
                           <tr key={item.id} className="hover:bg-gray-50">
+                            <td className="px-4 py-4">
+                              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                                {item.masterCode}
+                              </span>
+                            </td>
                             <td className="px-4 py-4">
                               <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
                                 {item.mrCode}
