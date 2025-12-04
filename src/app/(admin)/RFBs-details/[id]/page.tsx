@@ -81,6 +81,9 @@ const RFBDetailsPage = () => {
         totalPrice: 7950,
         availability: "In Stock",
         deliveryTime: "5 days",
+        mrCode: "MR-2024-001",
+        masterCode: "CONST-STL-16MM-001",
+        vendorCode: "VND-STL-16-A001"
       },
       {
         id: 2,
@@ -92,6 +95,9 @@ const RFBDetailsPage = () => {
         totalPrice: 4700,
         availability: "In Stock",
         deliveryTime: "5 days",
+        mrCode: "MR-2024-002",
+        masterCode: "CONST-STL-12MM-002",
+        vendorCode: "VND-STL-12-A002"
       },
     ],
     terms: {

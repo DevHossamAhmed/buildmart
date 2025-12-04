@@ -9,6 +9,9 @@ interface Item {
   totalPrice: number;
   availability: string;
   deliveryTime: string;
+  mrCode: string;
+  masterCode: string;
+  vendorCode: string;
 }
 
 interface Pricing {
@@ -35,6 +38,15 @@ const RfbsDetailsProposil: React.FC<RfbsDetailsProposilProps> = ({
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                Master Code
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                MR Code
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                Vendor Code
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                 Description
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
@@ -58,21 +70,30 @@ const RfbsDetailsProposil: React.FC<RfbsDetailsProposilProps> = ({
           <tbody className="divide-y divide-gray-200">
             {items.map((item) => (
               <tr key={item.id} className="hover:bg-gray-50">
-                <td className="px-4 py-4 text-sm font-medium text-gray-900">
+                <td className="px-4 py-4 text-[10px] font-medium text-gray-900">
+                  {item.masterCode}
+                </td>
+                <td className="px-4 py-4 text-[10px] font-medium text-gray-900">
+                  {item.mrCode}
+                </td>
+                <td className="px-4 py-4 text-[10px] font-medium text-gray-900">
+                  {item.vendorCode}
+                </td>
+                <td className="px-4 py-4 text-[10px] font-medium text-gray-900">
                   {item.description}
                 </td>
-                <td className="px-4 py-4 text-sm text-gray-600">
+                <td className="px-4 py-4 text-[10px] text-gray-600">
                   {item.offeredQty} {item.unit}
                 </td>
-                <td className="px-4 py-4 text-sm text-gray-900">
+                <td className="px-4 py-4 text-[10px] text-gray-900">
                   {item.unitPrice} SAR
                 </td>
-                <td className="px-4 py-4 text-sm font-semibold text-gray-900">
+                <td className="px-4 py-4 text-[10px] font-semibold text-gray-900">
                   {item.totalPrice.toLocaleString()} SAR
                 </td>
                 <td className="px-4 py-4">
                   <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
+                    className={`px-2 py-1 rounded text-[10px] font-medium ${
                       item.availability === "In Stock"
                         ? "bg-green-100 text-green-700"
                         : "bg-red-100 text-red-700"
@@ -81,7 +102,7 @@ const RfbsDetailsProposil: React.FC<RfbsDetailsProposilProps> = ({
                     {item.availability}
                   </span>
                 </td>
-                <td className="px-4 py-4 text-sm text-gray-600">
+                <td className="px-4 py-4 text-[11px] text-gray-600">
                   {item.deliveryTime}
                 </td>
               </tr>
@@ -97,7 +118,7 @@ const RfbsDetailsProposil: React.FC<RfbsDetailsProposilProps> = ({
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Subtotal:</span>
               <span className="font-medium text-gray-900">
-               {pricing.subtotal.toLocaleString()} SAR
+                {pricing.subtotal.toLocaleString()} SAR
               </span>
             </div>
             <div className="flex justify-between text-sm">
@@ -113,9 +134,7 @@ const RfbsDetailsProposil: React.FC<RfbsDetailsProposilProps> = ({
               </span>
             </div>
             <div className="flex justify-between text-sm pt-3 border-t border-gray-200">
-              <span className="font-semibold text-gray-900">
-                Total Amount:
-              </span>
+              <span className="font-semibold text-gray-900">Total Amount:</span>
               <span className="font-bold text-lg text-green-600">
                 {pricing.total.toLocaleString()} SAR
               </span>
