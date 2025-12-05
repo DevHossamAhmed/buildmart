@@ -31,7 +31,7 @@ const RFBDetailsPage = () => {
   const [activeTab, setActiveTab] = useState("items");
   const [newComment, setNewComment] = useState("");
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [uploadFile, setUploadFile] = useState(null);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState("");
   const [fileType, setFileType] = useState("");
   const [isDragging, setIsDragging] = useState(false);
