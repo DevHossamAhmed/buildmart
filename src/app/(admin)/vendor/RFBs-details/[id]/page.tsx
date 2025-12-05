@@ -28,14 +28,14 @@ import RfbsDetailsProposilEdite from "@/components/rfbs-ui/RFBsDetailsProposilEd
 import VersionsEdite from "@/components/rfbs-ui/VersionsEdite";
 
 const RFBDetailsPage = () => {
-  const [activeTab, setActiveTab] = useState("items");
-  const [newComment, setNewComment] = useState("");
-  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("items");
+  const [newComment, setNewComment] = useState<string>("");
+  const [showUploadModal, setShowUploadModal] = useState<boolean>(false);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
-  const [fileName, setFileName] = useState("");
-  const [fileType, setFileType] = useState("");
-  const [isDragging, setIsDragging] = useState(false);
-  const [itemsTab, setItemsTab] = useState("Original");
+  const [fileName, setFileName] = useState<string>("");
+  const [fileType, setFileType] = useState<string>("");
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [itemsTab, setItemsTab] = useState<string>("Original");
 
   const toggleUploadModal = () => {
     setShowUploadModal(!showUploadModal);
@@ -156,21 +156,17 @@ const RFBDetailsPage = () => {
     }
   };
 
-  const handleDragOver = (e: { preventDefault: () => void }) => {
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
   };
 
-  const handleDragLeave = (e: { preventDefault: () => void }) => {
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
   };
 
-  const handleDrop = (e: {
-    preventDefault: () => void;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dataTransfer: { files: any };
-  }) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
     const files = e.dataTransfer.files;
@@ -180,8 +176,7 @@ const RFBDetailsPage = () => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleFileSelect = (e: { target: { files: any } }) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       setUploadFile(files[0]);
@@ -710,7 +705,7 @@ const RFBDetailsPage = () => {
       </div>
 
       {showUploadModal && (
-        <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg">
             {/* Modal Header */}
             <div className="flex justify-between items-center p-5 border-b border-gray-200">
@@ -783,11 +778,13 @@ const RFBDetailsPage = () => {
               >
                 {uploadFile ? (
                   <div className="flex items-center justify-center gap-3">
-                    <p className="text-sm font-medium text-gray-900"></p>
+                    <p className="text-sm font-medium text-gray-900">{uploadFile.name}</p>
                     <button
                       onClick={() => setUploadFile(null)}
                       className="ml-4 text-red-500 hover:text-red-700"
-                    ></button>
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
                   </div>
                 ) : (
                   <>
