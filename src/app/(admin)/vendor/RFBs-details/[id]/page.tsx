@@ -24,7 +24,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import RfbsDetailsGeneral from "@/components/rfbs-ui/RfbsDetailsGeneral";
-import Versions from "@/components/rfbs-ui/Versions";
 import RfbsDetailsProposilEdite from "@/components/rfbs-ui/RFBsDetailsProposilEdite";
 import VersionsEdite from "@/components/rfbs-ui/VersionsEdite";
 
@@ -167,7 +166,6 @@ const RFBDetailsPage = () => {
     setIsDragging(false);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDrop = (e: {
     preventDefault: () => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
