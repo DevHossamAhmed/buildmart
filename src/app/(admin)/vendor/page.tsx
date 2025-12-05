@@ -328,17 +328,24 @@ const VendorPage = () => {
 
           <div className="flex items-center gap-2">
             <FaFilter className="text-gray-500" />
-            <select
-              className="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="reviewed">Reviewed</option>
-              <option value="responded">Responded</option>
-              <option value="expired">Expired</option>
-            </select>
+            <div className="relative w-max">
+              <select
+                className="appearance-none pr-4  pl-6 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none text-sm bg-white cursor-pointer"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="reviewed">Reviewed</option>
+                <option value="responded">Responded</option>
+                <option value="expired">Expired</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pl-4 pr-2 text-gray-700">
+                <svg className="h-4 w-4 fill-current " viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -423,13 +430,10 @@ const VendorPage = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <Link href={`vendor/RFBs-details/${request.id}`}>
-                        <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                        <button className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer">
                           <FaEye className="text-[16px]" />
                         </button>
                       </Link>
-                      <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                        <FaDownload className="text-[16px]" />
-                      </button>
                     </div>
                   </td>
                 </tr>
