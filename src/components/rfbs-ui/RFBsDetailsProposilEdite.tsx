@@ -56,6 +56,10 @@ const RfbsDetailsProposilEdite: React.FC<RfbsDetailsProposilProps> = ({
             updatedItem.availability = value;
           } else if (field === "deliveryTime") {
             updatedItem.deliveryTime = value;
+          } else if (field === "vendorCode") {
+            updatedItem.vendorCode = value;
+          } else if (field === "description") {
+            updatedItem.description = value;
           }
           
           return updatedItem;
@@ -115,11 +119,45 @@ const RfbsDetailsProposilEdite: React.FC<RfbsDetailsProposilProps> = ({
                 <td className="px-4 py-4 text-[10px] font-medium text-gray-900">
                   {item.mrCode}
                 </td>
-                <td className="px-4 py-4 text-[10px] font-medium text-gray-900">
-                  {item.vendorCode}
+                <td
+                  className="px-4 py-4 text-[10px] font-medium text-gray-900 cursor-pointer hover:bg-blue-50"
+                  onClick={() => handleCellClick(item.id, "vendorCode")}
+                >
+                  {editingCell?.id === item.id &&
+                  editingCell?.field === "vendorCode" ? (
+                    <input
+                      type="text"
+                      className="w-32 px-2 py-1 border border-blue-500 rounded text-[10px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={item.vendorCode}
+                      onChange={(e) =>
+                        handleCellChange(item.id, "vendorCode", e.target.value)
+                      }
+                      onBlur={handleBlur}
+                      autoFocus
+                    />
+                  ) : (
+                    item.vendorCode
+                  )}
                 </td>
-                <td className="px-4 py-4 text-[10px] font-medium text-gray-900">
-                  {item.description}
+                <td
+                  className="px-4 py-4 text-[10px] font-medium text-gray-900 cursor-pointer hover:bg-blue-50"
+                  onClick={() => handleCellClick(item.id, "description")}
+                >
+                  {editingCell?.id === item.id &&
+                  editingCell?.field === "description" ? (
+                    <input
+                      type="text"
+                      className="w-full px-2 py-1 border border-blue-500 rounded text-[10px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={item.description}
+                      onChange={(e) =>
+                        handleCellChange(item.id, "description", e.target.value)
+                      }
+                      onBlur={handleBlur}
+                      autoFocus
+                    />
+                  ) : (
+                    item.description
+                  )}
                 </td>
                 <td
                   className="px-4 py-4 text-[10px] text-gray-600 cursor-pointer hover:bg-blue-50"
