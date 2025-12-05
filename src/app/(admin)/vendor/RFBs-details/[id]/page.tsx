@@ -34,7 +34,7 @@ const RFBDetailsPage = () => {
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState<string>("");
   const [fileType, setFileType] = useState<string>("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // @typescript-eslint/no-unused-vars
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [itemsTab, setItemsTab] = useState<string>("Original");
 
