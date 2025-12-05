@@ -1,629 +1,842 @@
 "use client";
+
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
-  FaArrowLeft,
-  FaCalendarAlt,
-  FaBuilding,
-  FaUser,
-  FaEnvelope,
-  FaPhone,
-  FaFileAlt,
-  FaDownload,
-  FaBoxes,
-  FaPaperPlane,
-  FaUpload,
-  FaEdit,
-  FaTrash,
-  FaPlus,
-  FaCheckCircle,
-  FaClock,
-} from "react-icons/fa";
+  ArrowLeft,
+  Download,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Building2,
+  User,
+  Calendar,
+  Package,
+  DollarSign,
+  FileText,
+  Mail,
+  Phone,
+  MapPin,
+  Paperclip,
+  Printer,
+  Share2,
+  Trash2,
+  X,
+} from "lucide-react";
+import Link from "next/link";
+import RfbsDetailsGeneral from "@/components/rfbs-ui/RfbsDetailsGeneral";
+import Versions from "@/components/rfbs-ui/Versions";
+import RfbsDetailsProposilEdite from "@/components/rfbs-ui/RFBsDetailsProposilEdite";
+import VersionsEdite from "@/components/rfbs-ui/VersionsEdite";
 
-interface ProposalItem {
-  id: string;
-  itemName: string;
-  specification: string;
-  requestedQty: number;
-  unit: string;
-  unitPrice: string;
-  totalPrice: string;
-  deliveryTime: string;
-  notes: string;
-}
+const RFBDetailsPage = () => {
+  const [activeTab, setActiveTab] = useState("items");
+  const [newComment, setNewComment] = useState("");
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadFile, setUploadFile] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [fileType, setFileType] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
+  const [itemsTab, setItemsTab] = useState("Original");
 
-const RFPDetailsPage = ({ params }: { params: { id: string } }) => {
-  const router = useRouter();
-  const [inputMethod, setInputMethod] = useState<"manual" | "upload">("manual");
-  const [proposalItems, setProposalItems] = useState<ProposalItem[]>([
-    {
-      id: "1",
-      itemName: "",
-      specification: "",
-      requestedQty: 0,
-      unit: "",
-      unitPrice: "",
-      totalPrice: "",
-      deliveryTime: "",
-      notes: "",
+  const toggleUploadModal = () => {
+    setShowUploadModal(!showUploadModal);
+  };
+
+  // Sample RFB Data
+  const rfbData = {
+    id: "RFPs-001",
+    status: "submitted",
+    supplier: {
+      name: "Ahmed Steel Co.",
+      contactPerson: "Ahmed Hassan",
+      email: "ahmed.hassan@ahmedsteel.com",
+      phone: "+966 50 123 4567",
+      address: "Industrial Area, Riyadh, Saudi Arabia",
+      rating: 4.5,
+      completedOrders: 127,
     },
-  ]);
-
-  // Mock RFP Data
-  const rfpData = {
-    rfpNumber: "RFP-2024-001",
-    projectName: "New Office Building - Phase 1",
-    department: "Construction",
-    requestDate: "2024-11-20",
-    dueDate: "2024-12-05",
-    status: "pending",
-    priority: "high",
-    description:
-      "We require high-quality construction materials for the foundation and structural work of our new office building project. All materials must meet local building codes and international standards.",
-    contactPerson: "Ahmed Hassan",
-    contactEmail: "ahmed.hassan@buildmart.com",
-    contactPhone: "+96655889955",
-    requestedItems: [
+    requestDetails: {
+      materialRequestId: "MR-001",
+      projectName: "Building A",
+      projectCode: "PRJ-2024-001",
+      sentDate: "2025-02-11",
+      dueDate: "2025-02-18",
+      responseDate: "2025-02-13",
+      responseTime: "2 days",
+    },
+    pricing: {
+      subtotal: 12050,
+      tax: 1807.5,
+      shipping: 500,
+      discount: 0,
+      total: 14357.5,
+    },
+    items: [
       {
-        id: "1",
-        name: "Portland Cement",
-        specification: "Type I, 50kg bags, CEM I 42.5N",
-        quantity: 500,
-        unit: "bags",
-        notes: "Must comply with ASTM C150 standards",
+        id: 1,
+        description: "Steel Rebar 16mm",
+        requestedQty: 300,
+        offeredQty: 300,
+        unit: "kg",
+        unitPrice: 26.5,
+        totalPrice: 7950,
+        availability: "In Stock",
+        deliveryTime: "5 days",
+        mrCode: "MR-2024-001",
+        masterCode: "CONST-STL-16MM-001",
+        vendorCode: "VND-STL-16-A001"
       },
       {
-        id: "2",
-        name: "Steel Reinforcement Bars",
-        specification: "Grade 60, 16mm diameter, 12m length",
-        quantity: 2000,
-        unit: "pieces",
-        notes: "Hot-rolled deformed bars",
-      },
-      {
-        id: "3",
-        name: "Ready-Mix Concrete",
-        specification: "Grade C30/37, Slump 150mm",
-        quantity: 150,
-        unit: "m³",
-        notes: "Delivery schedule to be coordinated",
-      },
-    ],
-    attachments: [
-      {
-        id: "1",
-        name: "Technical_Specifications.pdf",
-        size: "2.4 MB",
-        type: "PDF",
-      },
-      {
-        id: "2",
-        name: "Project_Drawings.dwg",
-        size: "5.1 MB",
-        type: "CAD",
+        id: 2,
+        description: "Steel Rebar 12mm",
+        requestedQty: 200,
+        offeredQty: 200,
+        unit: "kg",
+        unitPrice: 23.5,
+        totalPrice: 4700,
+        availability: "In Stock",
+        deliveryTime: "5 days",
+        mrCode: "MR-2024-002",
+        masterCode: "CONST-STL-12MM-002",
+        vendorCode: "VND-STL-12-A002"
       },
     ],
+    terms: {
+      paymentTerms: "Net 30 days",
+      deliveryTerms: "FOB Destination",
+      warranty: "12 months manufacturer warranty",
+      validityPeriod: "30 days from submission",
+    },
+    documents: [
+      { name: "Quote_RFPs-001.pdf", size: "245 KB", type: "PDF" },
+      { name: "Product_Specs.pdf", size: "1.2 MB", type: "PDF" },
+      { name: "Certifications.pdf", size: "892 KB", type: "PDF" },
+    ],
+    activities: [
+      {
+        id: 1,
+        user: "Ahmed Hassan",
+        action: "submitted",
+        message: "Quote submitted with competitive pricing",
+        timestamp: "2025-02-13 02:30 PM",
+        type: "system",
+      },
+      {
+        id: 2,
+        user: "System",
+        action: "sent",
+        message: "RFB sent to supplier",
+        timestamp: "2025-02-11 10:00 AM",
+        type: "system",
+      },
+    ],
   };
 
-  const handleAddItem = () => {
-    const newItem: ProposalItem = {
-      id: Date.now().toString(),
-      itemName: "",
-      specification: "",
-      requestedQty: 0,
-      unit: "",
-      unitPrice: "",
-      totalPrice: "",
-      deliveryTime: "",
-      notes: "",
+  const getStatusColor = (status: string) => {
+    const colors = {
+      pending: "bg-yellow-100 text-yellow-700 border-yellow-300",
+      submitted: "bg-blue-100 text-blue-700 border-blue-300",
+      approved: "bg-green-100 text-green-700 border-green-300",
+      rejected: "bg-red-100 text-red-700 border-red-300",
     };
-    setProposalItems([...proposalItems, newItem]);
+    return colors[status as keyof typeof colors] || colors.pending;
   };
 
-  const handleRemoveItem = (id: string) => {
-    setProposalItems(proposalItems.filter((item) => item.id !== id));
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "submitted":
+        return <CheckCircle className="w-5 h-5" />;
+      case "pending":
+        return <Clock className="w-5 h-5" />;
+      case "approved":
+        return <CheckCircle className="w-5 h-5" />;
+      case "rejected":
+        return <XCircle className="w-5 h-5" />;
+      default:
+        return <Clock className="w-5 h-5" />;
+    }
   };
 
-  const handleItemChange = (id: string, field: string, value: string | number) => {
-    setProposalItems(
-      proposalItems.map((item) => {
-        if (item.id === id) {
-          const updatedItem = { ...item, [field]: value };
-          // Auto-calculate total price
-          if (field === "unitPrice" || field === "requestedQty") {
-            const qty = field === "requestedQty" ? Number(value) : item.requestedQty;
-            const price = field === "unitPrice" ? value : item.unitPrice;
-            updatedItem.totalPrice = (qty * Number(price)).toFixed(2);
-          }
-          return updatedItem;
-        }
-        return item;
-      })
-    );
+  const handleDragOver = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    setIsDragging(true);
   };
 
-  const calculateGrandTotal = () => {
-    return proposalItems
-      .reduce((sum, item) => sum + Number(item.totalPrice || 0), 0)
-      .toFixed(2);
+  const handleDragLeave = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    setIsDragging(false);
   };
 
-  const getStatusBadge = (status: string) => {
-    const styles = {
-      pending: "bg-yellow-100 text-yellow-800 border-yellow-300",
-      reviewed: "bg-blue-100 text-blue-800 border-blue-300",
-      responded: "bg-green-100 text-green-800 border-green-300",
-    };
-    const icons = {
-      pending: <FaClock className="text-[12px]" />,
-      reviewed: <FaCheckCircle className="text-[12px]" />,
-      responded: <FaCheckCircle className="text-[12px]" />,
-    };
-    return (
-      <span
-        className={`flex items-center gap-1 px-3 py-1 rounded-full text-[12px] font-semibold border ${
-          styles[status as keyof typeof styles]
-        }`}
-      >
-        {icons[status as keyof typeof icons]}
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </span>
-    );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleDrop = (e: {
+    preventDefault: () => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dataTransfer: { files: any };
+  }) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      setUploadFile(files[0]);
+      setFileName(files[0].name);
+    }
   };
 
-  const getPriorityBadge = (priority: string) => {
-    const styles = {
-      high: "bg-red-50 text-red-700 border-red-200",
-      medium: "bg-orange-50 text-orange-700 border-orange-200",
-      low: "bg-gray-50 text-gray-700 border-gray-200",
-    };
-    return (
-      <span
-        className={`px-2 py-1 rounded text-[11px] font-medium border ${
-          styles[priority as keyof typeof styles]
-        }`}
-      >
-        {priority.toUpperCase()}
-      </span>
-    );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFileSelect = (e: { target: { files: any } }) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setUploadFile(files[0]);
+      setFileName(files[0].name);
+    }
+  };
+
+  const handleUploadSubmit = () => {
+    console.log("Uploading file:", { uploadFile, fileName, fileType });
+    setShowUploadModal(false);
+    setUploadFile(null);
+    setFileName("");
+    setFileType("");
+  };
+
+  const resetUploadModal = () => {
+    setShowUploadModal(false);
+    setUploadFile(null);
+    setFileName("");
+    setFileType("");
+    setIsDragging(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      {/* Back Button */}
-      <button
-        onClick={() => router.back()}
-        className="flex items-center gap-2 text-gray-600 hover:text-red-600 mb-6 transition-colors"
-      >
-        <FaArrowLeft />
-        <span className="font-medium">Back to Requests</span>
-      </button>
-
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className=" text-black rounded-xl p-6 mb-6 shadow-lg">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">{rfpData.rfpNumber}</h1>
-            <p className="text-black text-lg">{rfpData.projectName}</p>
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <Link href={`/RFBs/${rfbData.requestDetails.materialRequestId}`}>
+                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                  <ArrowLeft className="w-5 h-5 text-gray-600" />
+                </button>
+              </Link>
+              <div>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    {rfbData.id}
+                  </h1>
+                  <span
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium border flex items-center gap-1.5 ${getStatusColor(
+                      rfbData.status
+                    )}`}
+                  >
+                    {getStatusIcon(rfbData.status)}
+                    {rfbData.status.charAt(0).toUpperCase() +
+                      rfbData.status.slice(1)}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 mt-1">
+                  Request for Bid - {rfbData.supplier.name}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium">
+                <Share2 className="w-4 h-4" />
+                Share
+              </button>
+              <button className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium">
+                <Printer className="w-4 h-4" />
+                Print
+              </button>
+              <button className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium">
+                <Download className="w-4 h-4" />
+                Download
+              </button>
+              <button className="px-4 py-2 cursor-pointer bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium">
+                <CheckCircle className="w-4 h-4" />
+                Submit proposal
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            {getStatusBadge(rfpData.status)}
-            {getPriorityBadge(rfpData.priority)}
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <FaCalendarAlt className="text-red-600" />
-            <span className="text-red-600">Request Date:</span>
-            <span className="font-semibold">{rfpData.requestDate}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <FaCalendarAlt className="text-red-600" />
-            <span className="text-red-600">Due Date:</span>
-            <span className="font-semibold">{rfpData.dueDate}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <FaBuilding className="text-red-600" />
-            <span className="text-red-600">Department:</span>
-            <span className="font-semibold">{rfpData.department}</span>
+
+          {/* Tabs */}
+          <div className="flex gap-6 border-b border-gray-200">
+            {["items", "terms", "documents", "Communication"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => {
+                  setActiveTab(tab);
+                  if (tab === "items") {
+                    setItemsTab("Original"); 
+                  }
+                }}
+                className={`pb-3 px-1 text-sm font-medium cursor-pointer transition-colors relative ${
+                  activeTab === tab
+                    ? "text-red-600"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {activeTab === tab && (
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600" />
+                )}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - RFP Information */}
-        <div className="lg:col-span-1 space-y-6">
-          {/* Description */}
-          <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
-            <h3 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
-              <FaFileAlt className="text-red-600" />
-              Description
-            </h3>
-            <p className="text-gray-700 leading-relaxed text-sm">
-              {rfpData.description}
-            </p>
-          </div>
-
-          {/* Contact Information */}
-          <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
-            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <FaUser className="text-blue-600" />
-              Contact Person
-            </h3>
-            <div className="space-y-3">
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Name</p>
-                <p className="text-gray-800 font-medium">{rfpData.contactPerson}</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Email</p>
-                <p className="text-blue-600 font-medium flex items-center gap-2 text-sm">
-                  <FaEnvelope className="text-[10px]" />
-                  {rfpData.contactEmail}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Phone</p>
-                <p className="text-gray-800 font-medium flex items-center gap-2 text-sm">
-                  <FaPhone className="text-[10px]" />
-                  {rfpData.contactPhone}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Requested Items */}
-          <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
-            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <FaBoxes className="text-red-600" />
-              Requested Items ({rfpData.requestedItems.length})
-            </h3>
-            <div className="space-y-3">
-              {rfpData.requestedItems.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="bg-gray-50 rounded-lg p-3 border border-gray-200"
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="bg-red-100 text-red-700 text-xs font-bold px-2 py-0.5 rounded">
-                          #{index + 1}
-                        </span>
-                        <h4 className="text-gray-800 font-bold text-sm">
-                          {item.name}
-                        </h4>
-                      </div>
-                      <p className="text-gray-600 text-xs mb-1">
-                        {item.specification}
-                      </p>
-                    </div>
-                    <div className="text-right ml-3">
-                      <p className="text-lg font-bold text-red-600">
-                        {item.quantity}
-                      </p>
-                      <p className="text-xs text-gray-500">{item.unit}</p>
-                    </div>
+      {/* Main Content */}
+      <div className="px-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Price Summary Cards */}
+            <div className="grid grid-cols-4 gap-4">
+              <div className="bg-white rounded-lg border border-gray-200 p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <Package className="w-4 h-4 text-blue-600" />
                   </div>
-                  {item.notes && (
-                    <div className="bg-yellow-50 border-l-2 border-yellow-400 p-2 mt-2">
-                      <p className="text-xs text-gray-700">
-                        <span className="font-semibold">Note:</span> {item.notes}
-                      </p>
-                    </div>
-                  )}
+                  <p className="text-xs text-gray-600">Items</p>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Attachments */}
-          {rfpData.attachments.length > 0 && (
-            <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <FaFileAlt className="text-red-600" />
-                Attachments ({rfpData.attachments.length})
-              </h3>
-              <div className="space-y-2">
-                {rfpData.attachments.map((file) => (
-                  <div
-                    key={file.id}
-                    className="flex items-center justify-between bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-red-100 rounded flex items-center justify-center">
-                        <FaFileAlt className="text-red-600 text-sm" />
-                      </div>
-                      <div>
-                        <p className="text-gray-800 font-medium text-sm">
-                          {file.name}
-                        </p>
-                        <p className="text-gray-500 text-xs">
-                          {file.size} • {file.type}
-                        </p>
-                      </div>
-                    </div>
-                    <button className="text-blue-600 hover:bg-blue-50 p-2 rounded transition-colors">
-                      <FaDownload className="text-sm" />
-                    </button>
-                  </div>
-                ))}
+                <p className="text-2xl font-bold text-gray-900">
+                  {rfbData.items.length}
+                </p>
               </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right Column - Proposal Form */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-            {/* Form Header */}
-            <div className="border-b border-gray-200 p-5">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                Submit Your Proposal
-              </h2>
-
-              {/* Input Method Toggle */}
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => setInputMethod("manual")}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
-                    inputMethod === "manual"
-                      ? "bg-red-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                >
-                  <FaEdit />
-                  Manual Entry
-                </button>
-                <button
-                  onClick={() => setInputMethod("upload")}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
-                    inputMethod === "upload"
-                      ? "bg-red-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                >
-                  <FaUpload />
-                  Upload File
-                </button>
+              <div className="bg-white rounded-lg border border-gray-200 p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <DollarSign className="w-4 h-4 text-purple-600" />
+                  </div>
+                  <p className="text-xs text-gray-600">Subtotal</p>
+                </div>
+                <p className="text-2xl font-bold text-gray-900">
+                  {rfbData.pricing.subtotal.toLocaleString()} SAR
+                </p>
+              </div>
+              <div className="bg-white rounded-lg border border-gray-200 p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="p-2 bg-orange-100 rounded-lg">
+                    <DollarSign className="w-4 h-4 text-orange-600" />
+                  </div>
+                  <p className="text-xs text-gray-600">Tax (15%)</p>
+                </div>
+                <p className="text-2xl font-bold text-gray-900">
+                  {rfbData.pricing.tax.toLocaleString()} SAR
+                </p>
+              </div>
+              <div className="bg-white rounded-lg border border-gray-200 p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <DollarSign className="w-4 h-4 text-green-600" />
+                  </div>
+                  <p className="text-xs text-gray-600">Total</p>
+                </div>
+                <p className="text-2xl font-bold text-green-600">
+                  {rfbData.pricing.total.toLocaleString()} SAR
+                </p>
               </div>
             </div>
 
-            <div className="p-5">
-              {inputMethod === "manual" ? (
-                <>
-                  {/* Manual Entry Form */}
-                  <div className="space-y-4 mb-6">
-                    {proposalItems.map((item, index) => (
-                      <div
-                        key={item.id}
-                        className="border border-gray-200 rounded-lg p-4 bg-gray-50"
-                      >
-                        <div className="flex items-center justify-between mb-4">
-                          <h4 className="font-bold text-gray-800">
-                            Item #{index + 1}
-                          </h4>
-                          {proposalItems.length > 1 && (
-                            <button
-                              onClick={() => handleRemoveItem(item.id)}
-                              className="text-red-600 hover:bg-red-50 p-2 rounded transition-colors"
-                            >
-                              <FaTrash className="text-sm" />
-                            </button>
-                          )}
-                        </div>
+            {activeTab === "items" && (
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">
+                  Quoted Items
+                </h3>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Item Name *
-                            </label>
-                            <input
-                              type="text"
-                              value={item.itemName}
-                              onChange={(e) =>
-                                handleItemChange(item.id, "itemName", e.target.value)
-                              }
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                              placeholder="Enter item name"
-                            />
-                          </div>
-
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Specification *
-                            </label>
-                            <textarea
-                              value={item.specification}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  item.id,
-                                  "specification",
-                                  e.target.value
-                                )
-                              }
-                              rows={2}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                              placeholder="Enter specifications"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Quantity *
-                            </label>
-                            <input
-                              type="number"
-                              value={item.requestedQty || ""}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  item.id,
-                                  "requestedQty",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                              placeholder="0"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Unit *
-                            </label>
-                            <input
-                              type="text"
-                              value={item.unit}
-                              onChange={(e) =>
-                                handleItemChange(item.id, "unit", e.target.value)
-                              }
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                              placeholder="e.g., bags, pieces"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Unit Price (SAR) *
-                            </label>
-                            <input
-                              type="number"
-                              step="0.01"
-                              value={item.unitPrice}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  item.id,
-                                  "unitPrice",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                              placeholder="0.00"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Total Price (SAR)
-                            </label>
-                            <input
-                              type="text"
-                              value={item.totalPrice}
-                              readOnly
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-800 font-semibold"
-                              placeholder="0.00"
-                            />
-                          </div>
-
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Delivery Time *
-                            </label>
-                            <input
-                              type="text"
-                              value={item.deliveryTime}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  item.id,
-                                  "deliveryTime",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                              placeholder="e.g., 5-7 business days"
-                            />
-                          </div>
-
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Notes (Optional)
-                            </label>
-                            <textarea
-                              value={item.notes}
-                              onChange={(e) =>
-                                handleItemChange(item.id, "notes", e.target.value)
-                              }
-                              rows={2}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                              placeholder="Add any additional notes"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Add Item Button */}
-                  <button
-                    onClick={handleAddItem}
-                    className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-red-600 hover:text-red-600 transition-colors font-medium flex items-center justify-center gap-2 mb-6"
-                  >
-                    <FaPlus />
-                    Add Another Item
-                  </button>
-
-                  {/* Grand Total */}
-                  <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-lg p-5 mb-6">
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-gray-800">
-                        Grand Total:
-                      </span>
-                      <span className="text-3xl font-bold text-red-600">
-                        {calculateGrandTotal()} SAR
-                      </span>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                /* Upload File Section */
-                <div className="py-12">
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-red-600 transition-colors">
-                    <FaUpload className="text-6xl text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">
-                      Upload Your Proposal File
-                    </h3>
-                    <p className="text-gray-600 mb-6">
-                      Upload an Excel or PDF file containing your proposal details
-                    </p>
-                    <input
-                      type="file"
-                      accept=".xlsx,.xls,.pdf"
-                      className="hidden"
-                      id="fileUpload"
-                    />
-                    <label
-                      htmlFor="fileUpload"
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium cursor-pointer"
+                {/* Tabs Navigation */}
+                <div className="flex border-b cursor-pointer border-gray-200 mb-6">
+                  {["Original", "Proposal", "Versions"].map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setItemsTab(tab)}
+                      className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200
+            ${
+              itemsTab === tab
+                ? "border-b-2 border-red-600 text-red-600"
+                : "text-gray-500 hover:text-red-600"
+            }`}
                     >
-                      <FaUpload />
-                      Choose File
-                    </label>
-                    <p className="text-sm text-gray-500 mt-4">
-                      Supported formats: Excel (.xlsx, .xls), PDF (.pdf)
+                      {tab === "Original"
+                        ? "Original"
+                        : tab === "Proposal"
+                        ? "Proposal"
+                        : "Versions"}
+                    </button>
+                  ))}
+                </div>
+
+                {/* ---------------- TAB 1: Original ---------------- */}
+                {itemsTab === "Original" && (
+                  <div className="overflow-x-auto">
+                    <RfbsDetailsGeneral />
+                  </div>
+                )}
+
+                {/* ---------------- TAB 2: Proposal ---------------- */}
+                {itemsTab === "Proposal" && (
+                  <>
+                    <RfbsDetailsProposilEdite
+                      items={rfbData.items}
+                      pricing={rfbData.pricing}
+                    />
+                  </>
+                )}
+
+                {/* ---------------- TAB 3: Versions ---------------- */}
+                {itemsTab === "Versions" && <>
+                <VersionsEdite/>
+                </>}
+              </div>
+            )}
+
+            {activeTab === "terms" && (
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">
+                  Terms & Conditions
+                </h3>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-xs text-gray-600 mb-1">
+                        Payment Terms
+                      </p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {rfbData.terms.paymentTerms}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-600 mb-1">
+                        Delivery Terms
+                      </p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {rfbData.terms.deliveryTerms}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-xs text-gray-600 mb-1">Warranty</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {rfbData.terms.warranty}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-600 mb-1">
+                        Quote Validity
+                      </p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {rfbData.terms.validityPeriod}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                    Additional Notes
+                  </h4>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-1.5"></div>
+                      <span>
+                        All materials meet ASTM A615 Grade 60 specifications
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-1.5"></div>
+                      <span>Mill test certificates included with delivery</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-1.5"></div>
+                      <span>Free delivery within Riyadh city limits</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-1.5"></div>
+                      <span>
+                        Bulk discounts available for orders over 1000kg
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "documents" && (
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Attached Documents
+                  </h3>
+                  <button
+                    onClick={toggleUploadModal}
+                    className="px-4 py-2 bg-red-600 text-white cursor-pointer rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2 text-sm font-medium"
+                  >
+                    <Paperclip className="w-4 h-4 rotate-45" /> Upload Document
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {rfbData.documents.map((doc, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-red-100 rounded-lg">
+                          <FileText className="w-5 h-5 text-red-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {doc.name}
+                          </p>
+                          <p className="text-xs text-gray-500">{doc.size}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button className="p-2 hover:bg-gray-200 cursor-pointer rounded-lg transition-colors">
+                          <Trash2 className="w-4 h-4 text-gray-600" />
+                        </button>
+                        <button className="p-2 hover:bg-gray-200 cursor-pointer rounded-lg transition-colors">
+                          <Download className="w-4 h-4 text-gray-600" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === "Communication" && (
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">
+                  Communication
+                </h3>
+                <div className="space-y-6">
+                  {rfbData.activities.map((activity) => (
+                    <div key={activity.id} className="flex gap-4">
+                      <div className="flex-shrink-0">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-semibold">
+                          {activity.user.charAt(0)}
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <div className="bg-gray-50 rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-sm font-semibold text-gray-900">
+                              {activity.user}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {activity.timestamp}
+                            </p>
+                          </div>
+                          <p className="text-sm text-gray-700">
+                            {activity.message}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Add Comment */}
+                <div className="mt-8 border-t border-gray-200 pt-6">
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center text-white font-semibold">
+                        M
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <textarea
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Add a comment or note..."
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 focus:outline-none resize-none"
+                        rows={3}
+                      />
+                      <div className="flex items-center justify-between mt-3">
+                        <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                          <Paperclip className="w-5 h-5" />
+                        </button>
+                        <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium">
+                          Post Comment
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right Column - Sidebar */}
+          <div className="space-y-6">
+            {/* Supplier Information */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h3 className="text-sm font-semibold text-gray-900 uppercase mb-4">
+                Client Information
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-lg font-bold text-gray-900 mb-1">
+                    {rfbData.supplier.name}
+                  </p>
+                  <div className="flex items-center gap-1 mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <svg
+                        key={i}
+                        className={`w-4 h-4 ${
+                          i < Math.floor(rfbData.supplier.rating)
+                            ? "text-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                    <span className="text-sm text-gray-600 ml-1">
+                      {rfbData.supplier.rating}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    {rfbData.supplier.completedOrders} completed orders
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-gray-200 space-y-3">
+                  <div className="flex items-start gap-3">
+                    <User className="w-4 h-4 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-gray-600">Contact Person</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {rfbData.supplier.contactPerson}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Mail className="w-4 h-4 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-gray-600">Email</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {rfbData.supplier.email}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Phone className="w-4 h-4 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-gray-600">Phone</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {rfbData.supplier.phone}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <MapPin className="w-4 h-4 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-gray-600">Address</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {rfbData.supplier.address}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Request Details */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h3 className="text-sm font-semibold text-gray-900 uppercase mb-4">
+                Request Details
+              </h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <FileText className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <div>
+                    <p className="text-xs text-gray-600">Material Request</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {rfbData.requestDetails.materialRequestId}
                     </p>
                   </div>
                 </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between pt-6 border-t border-gray-200">
-                <button
-                  onClick={() => router.back()}
-                  className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-                >
-                  Cancel
-                </button>
-                <button className="px-8 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium flex items-center gap-2 shadow-lg">
-                  <FaPaperPlane />
-                  Submit Proposal
-                </button>
+                <div className="flex items-start gap-3">
+                  <Building2 className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <div>
+                    <p className="text-xs text-gray-600">Project</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {rfbData.requestDetails.projectName}
+                    </p>
+                    <p className="text-xs text-gray-500 font-mono mt-0.5">
+                      {rfbData.requestDetails.projectCode}
+                    </p>
+                    <p className="text-xs text-gray-500 font-mono mt-0.5">
+                      Riyadh/ABCC/IT
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <div>
+                    <p className="text-xs text-gray-600">Sent Date</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {rfbData.requestDetails.sentDate}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Clock className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <div>
+                    <p className="text-xs text-gray-600">Response Time</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {rfbData.requestDetails.responseTime}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <div>
+                    <p className="text-xs text-gray-600">Due Date</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {rfbData.requestDetails.dueDate}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {showUploadModal && (
+        <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-5 border-b border-gray-200">
+              <h3 className="text-xl font-semibold text-gray-900">
+                Upload New Document
+              </h3>
+              <button
+                onClick={resetUploadModal}
+                className="p-1 rounded-full hover:bg-gray-100 cursor-pointer transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label
+                  htmlFor="document-name"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Document Name
+                </label>
+                <input
+                  id="document-name"
+                  type="text"
+                  placeholder="Enter document name"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Document Type
+                </label>
+                <div className="relative">
+                  <select
+                    value={fileType}
+                    onChange={(e) => setFileType(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 appearance-none pr-10"
+                  >
+                    <option value="" disabled>
+                      Select a document type
+                    </option>
+                    <option value="specification">Specification</option>
+                    <option value="drawing">Drawing</option>
+                    <option value="certificate">Certificate</option>
+                    <option value="quotation">Quotation</option>
+                    <option value="invoice">Invoice</option>
+                    <option value="other">Other</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg
+                      className="fill-current h-4 w-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`border-2 border-dashed p-10 rounded-lg text-center transition-colors ${
+                  isDragging
+                    ? "border-red-500 bg-red-50"
+                    : "border-gray-300 bg-gray-50"
+                }`}
+              >
+                {uploadFile ? (
+                  <div className="flex items-center justify-center gap-3">
+                    <p className="text-sm font-medium text-gray-900"></p>
+                    <button
+                      onClick={() => setUploadFile(null)}
+                      className="ml-4 text-red-500 hover:text-red-700"
+                    ></button>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-600">
+                      Drag and drop your file here, or{" "}
+                      <label className="text-red-600 font-medium cursor-pointer hover:text-red-700">
+                        <input
+                          type="file"
+                          className="hidden"
+                          onChange={handleFileSelect}
+                        />
+                        browse
+                      </label>
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Max file size: 5MB
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-5 border-t border-gray-200 flex justify-end gap-3">
+              <button
+                onClick={resetUploadModal}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUploadSubmit}
+                disabled={!uploadFile || !fileType}
+                className={`px-4 py-2 text-white rounded-lg text-sm font-medium transition-opacity ${
+                  !uploadFile || !fileType
+                    ? "bg-red-300 cursor-not-allowed"
+                    : "bg-red-600 hover:bg-red-700"
+                }`}
+              >
+                Upload
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default RFPDetailsPage;
+export default RFBDetailsPage;
