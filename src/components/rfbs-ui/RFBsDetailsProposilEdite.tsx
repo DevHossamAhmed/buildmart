@@ -306,6 +306,8 @@ const RfbsDetailsProposilEdite: React.FC<RfbsDetailsProposilProps> = ({
       </div>
     </div>
   );
+
+  
 };
 
 export default RfbsDetailsProposilEdite;
