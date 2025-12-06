@@ -285,54 +285,7 @@ const RFBDetailsPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Price Summary Cards */}
-            <div className="grid grid-cols-4 gap-4">
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Package className="w-4 h-4 text-blue-600" />
-                  </div>
-                  <p className="text-xs text-gray-600">Items</p>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {rfbData.items.length}
-                </p>
-              </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <DollarSign className="w-4 h-4 text-purple-600" />
-                  </div>
-                  <p className="text-xs text-gray-600">Subtotal</p>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {rfbData.pricing.subtotal.toLocaleString()} SAR
-                </p>
-              </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-2 bg-orange-100 rounded-lg">
-                    <DollarSign className="w-4 h-4 text-orange-600" />
-                  </div>
-                  <p className="text-xs text-gray-600">Tax (15%)</p>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {rfbData.pricing.tax.toLocaleString()} SAR
-                </p>
-              </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <DollarSign className="w-4 h-4 text-green-600" />
-                  </div>
-                  <p className="text-xs text-gray-600">Total</p>
-                </div>
-                <p className="text-2xl font-bold text-green-600">
-                  {rfbData.pricing.total.toLocaleString()} SAR
-                </p>
-              </div>
-            </div>
-
+            
             {activeTab === "items" && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-6">
