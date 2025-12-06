@@ -3,13 +3,8 @@ import { Clock, User, CheckCircle, FileText, TrendingDown } from "lucide-react";
 
 const VersionsEdite = () => {
   const [activeVersion, setActiveVersion] = useState(1);
-  const [editingCell, setEditingCell] = useState<{
-    versionId: number;
-    itemId: number;
-    field: string;
-  } | null>(null);
 
-  const [versions, setVersions] = useState([
+  const versions = [
     {
       id: 1,
       version: "Version 1",
@@ -145,59 +140,7 @@ const VersionsEdite = () => {
       },
       notes: "Final revision with best pricing to secure the deal",
     },
-  ]);
-
-  const handleCellClick = (
-    versionId: number,
-    itemId: number,
-    field: string
-  ) => {
-    setEditingCell({ versionId, itemId, field });
-  };
-
-  const handleCellChange = (
-    versionId: number,
-    itemId: number,
-    field: string,
-    value: string
-  ) => {
-    //@ts-expect-error:prevVersions
-    setVersions((prevVersions) =>
-      prevVersions.map((version) => {
-        if (version.id === versionId) {
-          const updatedItems = version.items.map((item) => {
-            if (item.id === itemId) {
-              const updatedItem = { ...item };
-
-              if (field === "offeredQty") {
-                updatedItem.offeredQty = parseFloat(value) || 0;
-                updatedItem.totalPrice =
-                  updatedItem.offeredQty * updatedItem.unitPrice;
-              } else if (field === "unitPrice") {
-                updatedItem.unitPrice = parseFloat(value) || 0;
-                updatedItem.totalPrice =
-                  updatedItem.offeredQty * updatedItem.unitPrice;
-              } else if (field === "availability") {
-                updatedItem.availability = value;
-              } else if (field === "deliveryTime") {
-                updatedItem.deliveryTime = value;
-              }
-
-              return updatedItem;
-            }
-            return item;
-          });
-
-          return { ...version, items: updatedItems };
-        }
-        return version;
-      })
-    );
-  };
-
-  const handleBlur = () => {
-    setEditingCell(null);
-  };
+  ];
 
   const currentVersion = versions.find((v) => v.id === activeVersion);
 
@@ -368,69 +311,17 @@ const VersionsEdite = () => {
                       <td className="px-4 py-4 text-sm font-medium text-gray-900">
                         {item.description}
                       </td>
-                      <td
-                        className="px-4 py-4 text-sm text-gray-600 whitespace-nowrap cursor-pointer hover:bg-blue-50"
-                        onClick={() =>
-                          handleCellClick(activeVersion, item.id, "offeredQty")
-                        }
-                      >
-                        {editingCell?.versionId === activeVersion &&
-                        editingCell?.itemId === item.id &&
-                        editingCell?.field === "offeredQty" ? (
-                          <input
-                            type="number"
-                            className="w-20 px-2 py-1 border border-blue-500 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            value={item.offeredQty}
-                            onChange={(e) =>
-                              handleCellChange(
-                                activeVersion,
-                                item.id,
-                                "offeredQty",
-                                e.target.value
-                              )
-                            }
-                            onBlur={handleBlur}
-                            autoFocus
-                          />
-                        ) : (
-                          <>
-                            {item.offeredQty} {item.unit}
-                          </>
-                        )}
+                      <td className="px-4 py-4 text-sm text-gray-600 whitespace-nowrap">
+                        {item.offeredQty} {item.unit}
                       </td>
-                      <td
-                        className="px-4 py-4 whitespace-nowrap cursor-pointer hover:bg-blue-50"
-                        onClick={() =>
-                          handleCellClick(activeVersion, item.id, "unitPrice")
-                        }
-                      >
-                        {editingCell?.versionId === activeVersion &&
-                        editingCell?.itemId === item.id &&
-                        editingCell?.field === "unitPrice" ? (
-                          <input
-                            type="number"
-                            className="w-24 px-2 py-1 border border-blue-500 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            value={item.unitPrice}
-                            onChange={(e) =>
-                              handleCellChange(
-                                activeVersion,
-                                item.id,
-                                "unitPrice",
-                                e.target.value
-                              )
-                            }
-                            onBlur={handleBlur}
-                            autoFocus
-                          />
-                        ) : (
-                          <span
-                            className={`text-sm font-semibold ${getChangeColor(
-                              item.change
-                            )}`}
-                          >
-                            {item.unitPrice} SAR
-                          </span>
-                        )}
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <span
+                          className={`text-sm font-semibold ${getChangeColor(
+                            item.change
+                          )}`}
+                        >
+                          {item.unitPrice} SAR
+                        </span>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
                         <span
@@ -441,85 +332,19 @@ const VersionsEdite = () => {
                           {item.totalPrice.toLocaleString()} SAR
                         </span>
                       </td>
-                      <td
-                        className="px-4 py-4 whitespace-nowrap cursor-pointer hover:bg-blue-50"
-                        onClick={() =>
-                          handleCellClick(
-                            activeVersion,
-                            item.id,
-                            "availability"
-                          )
-                        }
-                      >
-                        {editingCell?.versionId === activeVersion &&
-                        editingCell?.itemId === item.id &&
-                        editingCell?.field === "availability" ? (
-                          <select
-                            className="px-2 py-1 border border-blue-500 rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            value={item.availability}
-                            onChange={(e) =>
-                              handleCellChange(
-                                activeVersion,
-                                item.id,
-                                "availability",
-                                e.target.value
-                              )
-                            }
-                            onBlur={handleBlur}
-                            autoFocus
-                          >
-                            <option value="In Stock">In Stock</option>
-                            <option value="Out of Stock">Out of Stock</option>
-                          </select>
-                        ) : (
-                          <span
-                            className={`px-2 py-1 rounded text-xs font-medium ${
-                              item.availability === "In Stock"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-red-100 text-red-700"
-                            }`}
-                          >
-                            {item.availability}
-                          </span>
-                        )}
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <span
+                          className={`px-2 py-1 rounded text-xs font-medium ${
+                            item.availability === "In Stock"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-red-100 text-red-700"
+                          }`}
+                        >
+                          {item.availability}
+                        </span>
                       </td>
-                      <td
-                        className="px-4 py-4 text-sm text-gray-600 whitespace-nowrap cursor-pointer hover:bg-blue-50"
-                        onClick={() =>
-                          handleCellClick(
-                            activeVersion,
-                            item.id,
-                            "deliveryTime"
-                          )
-                        }
-                      >
-                        {editingCell?.versionId === activeVersion &&
-                        editingCell?.itemId === item.id &&
-                        editingCell?.field === "deliveryTime" ? (
-                          <select
-                            className="px-2 py-1 border border-blue-500 rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            value={item.deliveryTime}
-                            onChange={(e) =>
-                              handleCellChange(
-                                activeVersion,
-                                item.id,
-                                "deliveryTime",
-                                e.target.value
-                              )
-                            }
-                            onBlur={handleBlur}
-                            autoFocus
-                          >
-                            <option value="1-2 days">1-2 days</option>
-                            <option value="3-5 days">3-5 days</option>
-                            <option value="5 days">5 days</option>
-                            <option value="1 week">1 week</option>
-                            <option value="2 weeks">2 weeks</option>
-                            <option value="1 month">1 month</option>
-                          </select>
-                        ) : (
-                          item.deliveryTime
-                        )}
+                      <td className="px-4 py-4 text-sm text-gray-600 whitespace-nowrap">
+                        {item.deliveryTime}
                       </td>
                     </tr>
                   ))}
