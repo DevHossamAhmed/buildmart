@@ -1,8 +1,7 @@
-"use client";
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client"
 import React, { useState } from "react";
 import {
-  Plus,
   Search,
   Filter,
   Edit2,
@@ -23,14 +22,18 @@ const CategoriesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("all");
-  const [showAddModal, setShowAddModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
+  const [showManualModal, setShowManualModal] = useState(false);
   const [importSource, setImportSource] = useState("");
   const [importMethod, setImportMethod] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [apiUrl, setApiUrl] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  
+  // Manual Category Form States
+  const [categoryName, setCategoryName] = useState("");
+  const [parentCategory, setParentCategory] = useState("");
 
   // Sample Categories Data
   const categoriesData = [
@@ -95,15 +98,15 @@ const CategoriesPage = () => {
       icon: "🔌",
     },
   ];
-  //@ts-expect-error:status
-  const getStatusColor = (status) => {
+
+  const getStatusColor = (status: string) => {
     return status === "active"
       ? "bg-green-100 text-green-700 border-green-300"
       : "bg-gray-100 text-gray-700 border-gray-300";
   };
-  //@ts-expect-error:color
-  const getCategoryColor = (color) => {
-    const colors = {
+
+  const getCategoryColor = (color: string) => {
+    const colors: Record<string, string> = {
       blue: "bg-blue-100 text-blue-700",
       yellow: "bg-yellow-100 text-yellow-700",
       cyan: "bg-cyan-100 text-cyan-700",
@@ -112,7 +115,6 @@ const CategoriesPage = () => {
       purple: "bg-purple-100 text-purple-700",
       green: "bg-green-100 text-green-700",
     };
-    //@ts-expect-error:color
     return colors[color] || colors.blue;
   };
 
@@ -129,12 +131,24 @@ const CategoriesPage = () => {
     return matchesSearch && matchesFilter;
   });
 
-  const handleFileChange = (e: {
-    target: { files: React.SetStateAction<null>[] };
-  }) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
+      setSelectedFile(e.target.files[0] as any);
     }
+  };
+
+  const handleSaveManualCategory = () => {
+    console.log("Saving category:", { categoryName, parentCategory });
+    // Add your save logic here
+    setShowManualModal(false);
+    setCategoryName("");
+    setParentCategory("");
+  };
+
+  const handleCancelManual = () => {
+    setShowManualModal(false);
+    setCategoryName("");
+    setParentCategory("");
   };
 
   return (
@@ -162,6 +176,14 @@ const CategoriesPage = () => {
               >
                 <Upload className="w-4 h-4" />
                 Import Categories
+              </button>
+              <button
+                onClick={() => setShowManualModal(true)}
+                className="px-4 py-2 text-white cursor-pointer rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2 text-sm font-medium"
+                style={{ backgroundColor: "#d92335" }}
+              >
+                <Package className="w-4 h-4" />
+                Add manual category
               </button>
             </div>
           </div>
@@ -361,9 +383,88 @@ const CategoriesPage = () => {
         </div>
       </div>
 
+      {/* Manual Category Modal */}
+      {showManualModal && (
+        <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">
+                Add Manual Category
+              </h2>
+              <button
+                onClick={handleCancelManual}
+                className="p-2 hover:bg-gray-100 cursor-pointer rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {/* Parent Category */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Parent Category
+                </label>
+               <div className="relative w-max">
+                 <select
+                  value={parentCategory}
+                  onChange={(e) => setParentCategory(e.target.value)}
+                  className="appearance-none w-full px-6 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
+                >
+                  <option value="">Select parent category</option>
+                  {categoriesData.map((cat) => (
+                    <option key={cat.id} value={cat.name}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pl-4 pr-2 text-gray-700">
+                  <svg className="h-4 w-4 fill-current ml-[10px] " viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
+               </div>
+              </div>
+              {/* Category Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Category Name
+                </label>
+                <input
+                  type="text"
+                  value={categoryName}
+                  onChange={(e) => setCategoryName(e.target.value)}
+                  placeholder="Enter category name"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
+                />
+              </div>
+
+              
+            </div>
+
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
+              <button
+                onClick={handleCancelManual}
+                className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveManualCategory}
+                disabled={!categoryName}
+                className="px-4 py-2 cursor-pointer text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ backgroundColor: "#d92335" }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Import Modal */}
       {showImportModal && (
-        <div className="fixed inset-0 bg-black/5 bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white">
               <h2 className="text-xl font-semibold text-gray-900">
@@ -466,7 +567,6 @@ const CategoriesPage = () => {
                     <div className="flex-1 relative">
                       <input
                         type="file"
-                        //@ts-expect-error:onChange
                         onChange={handleFileChange}
                         className="hidden"
                         id="fileInput"
@@ -479,8 +579,7 @@ const CategoriesPage = () => {
                         <FileText className="text-gray-400 mr-2" size={20} />
                         <span className="text-gray-600 text-sm">
                           {selectedFile
-                            ? //@ts-expect-error:name
-                              selectedFile.name
+                            ? (selectedFile as File).name
                             : "Choose file..."}
                         </span>
                       </label>
@@ -494,11 +593,7 @@ const CategoriesPage = () => {
                   </div>
                   {selectedFile && (
                     <p className="mt-2 text-sm text-green-600">
-                      ✓ File selected:{" "}
-                      {
-                        //@ts-expect-error:name
-                        selectedFile.name
-                      }
+                      ✓ File selected: {(selectedFile as File).name}
                     </p>
                   )}
                 </div>
