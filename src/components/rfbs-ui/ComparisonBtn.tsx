@@ -57,7 +57,7 @@ const ComparisonBtn = () => {
                       <th
                       //@ts-expect-error:ColSpan
                         rowSpan="2"
-                        className="px-4 py-3 text-center text-sm font-semibold text-gray-900 border-b border-gray-300 bg-yellow-100"
+                        className="px-4 py-3 text-center text-sm font-semibold text-gray-900 border-b border-gray-300 bg-green-200"
                       >
                         Best Price
                       </th>
@@ -119,7 +119,7 @@ const ComparisonBtn = () => {
                       <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border-b border-r border-gray-300 whitespace-nowrap bg-red-50">
                         Unit Price
                       </th>
-                      <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border-b border-r border-gray-300 whitespace-nowrap bg-red-50">
+                      <th className="px-3 py-2 text-left text-xs font-semibold  text-gray-700 border-b border-r border-gray-300 whitespace-nowrap bg-green">
                         Total Price
                       </th>
                     </tr>
@@ -180,11 +180,11 @@ const ComparisonBtn = () => {
                       <td className="px-3 py-3 text-sm text-gray-900 border-b border-r border-gray-300 bg-red-50">
                         25.0
                       </td>
-                      <td className="px-3 py-3 text-sm text-gray-900 border-b border-r border-gray-300 bg-red-50">
+                      <td className="px-3 py-3 text-sm text-gray-900 border-b border-r border-gray-300 bg-green-200">
                         7,500
                       </td>
 
-                      <td className="px-3 py-3 text-sm font-semibold text-green-700 border-b border-gray-300 bg-yellow-50 text-center">
+                      <td className="px-3 py-3  text-sm font-semibold text-gray-900 border-b border-gray-300 bg-green-200 text-center">
                         7,500
                       </td>
                     </tr>
@@ -225,8 +225,8 @@ const ComparisonBtn = () => {
                       <td className="px-3 py-3 text-sm text-gray-900 border-b border-r border-gray-300 bg-orange-50">
                         15.0
                       </td>
-                      <td className="px-3 py-3 text-sm text-gray-900 border-b border-r border-gray-300 bg-orange-50">
-                        1,800
+                      <td className="px-3 py-3 text-sm text-gray-900 border-b border-r border-gray-300 bg-green-200">
+                        1,500
                       </td>
 
                       <td className="px-3 py-3 text-sm text-gray-900 border-b border-r border-gray-300 bg-red-50">
@@ -248,8 +248,8 @@ const ComparisonBtn = () => {
                         1,740
                       </td>
 
-                      <td className="px-3 py-3 text-sm font-semibold text-green-700 border-b border-gray-300 bg-yellow-50 text-center">
-                        1,740
+                      <td className="px-3 py-3 text-sm font-semibold text-gray-900 border-b border-gray-300 bg-green-200 text-center">
+                        1,500
                       </td>
                     </tr>
 
@@ -268,7 +268,7 @@ const ComparisonBtn = () => {
                         Sum Total Price:
                       </td>
                       <td className="px-3 py-3 text-sm text-gray-900 border-r border-gray-300 bg-orange-100">
-                        9,750
+                        9,450
                       </td>
                       <td
                       //@ts-expect-error:ColSpan
@@ -280,8 +280,8 @@ const ComparisonBtn = () => {
                       <td className="px-3 py-3 text-sm text-gray-900 border-r border-gray-300 bg-red-100">
                         9,240
                       </td>
-                      <td className="px-3 py-3 text-sm font-bold text-green-700 bg-yellow-100 text-center">
-                        9,240
+                      <td className="px-3 py-3 text-sm font-bold text-gray-900 bg-green-200 text-center">
+                        9,000
                       </td>
                     </tr>
                   </tbody>
@@ -294,11 +294,11 @@ const ComparisonBtn = () => {
                 <div className="w-full md:w-96 space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Subtotal (Best Price):</span>
-                    <span className="font-medium text-gray-900">9,240 SAR</span>
+                    <span className="font-medium text-gray-900">9,000 SAR</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Tax (15%):</span>
-                    <span className="font-medium text-gray-900">1,386 SAR</span>
+                    <span className="font-medium text-gray-900">1,150 SAR</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Shipping:</span>
@@ -309,7 +309,7 @@ const ComparisonBtn = () => {
                       Total Amount:
                     </span>
                     <span className="font-bold text-lg text-green-600">
-                      11,126 SAR
+                      10,650 SAR
                     </span>
                   </div>
                 </div>
