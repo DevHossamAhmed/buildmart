@@ -5,6 +5,8 @@ import React, { useState } from "react";
 const ComparisonBtn = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredTerm, setHoveredTerm] = useState(null);
+  const [activeTab, setActiveTab] = useState("price");
+
 
   const deliveryTermsInfo = {
     FOB: "Free On Board - Seller delivers goods on board the ship. Buyer pays shipping, insurance, and customs.",
@@ -499,46 +501,77 @@ const ComparisonBtn = () => {
             </div>
 
             <div className="p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0">
-              {/* Our Recommendation Header */}
-              <div className="flex flex-col justify-end mb-4 pb-4 border-b border-gray-300">
-                <div className="flex items-center gap-2 justify-end">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <h3 className="text-base font-semibold text-gray-900">
-                    Our Recommendation
-                  </h3>
-                </div>
-                <p className="text-sm text-gray-600 mt-1 ml-4 text-end">
-                  Based on Price
-                </p>
-              </div>
 
-              <div className="flex justify-end">
-                <div className="w-full md:w-96 space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">
-                      Subtotal (Best Price):
-                    </span>
-                    <span className="font-medium text-gray-900">10,440 SAR</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Tax (15%):</span>
-                    <span className="font-medium text-gray-900">1,609 SAR</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Shipping:</span>
-                    <span className="font-medium text-gray-900">500 SAR</span>
-                  </div>
-                  <div className="flex justify-between text-sm pt-3 border-t border-gray-300">
-                    <span className="font-semibold text-gray-900">
-                      Total Amount:
-                    </span>
-                    <span className="font-bold text-lg text-green-600">
-                      12,834 SAR
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+  {/* Tabs */}
+  <div className="flex justify-end mb-4 border-b border-gray-300">
+    <button
+      onClick={() => setActiveTab("price")}
+      className={`px-4 py-2 text-sm font-medium ${
+        activeTab === "price"
+          ? "text-green-600 border-b-2 border-green-600"
+          : "text-gray-600 hover:text-gray-800"
+      }`}
+    >
+      Our Recommendation Based on Price
+    </button>
+
+    <button
+      onClick={() => setActiveTab("delivery")}
+      className={`px-4 py-2 text-sm font-medium ml-4 ${
+        activeTab === "delivery"
+          ? "text-green-600 border-b-2 border-green-600"
+          : "text-gray-600 hover:text-gray-800"
+      }`}
+    >
+      Our Recommendation Based on Delivery Time
+    </button>
+  </div>
+
+  {/* Content (same for both tabs) */}
+  <div className="flex flex-col justify-end mb-4 pb-4">
+
+    <div className="flex items-center gap-2 justify-end mb-2">
+      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+      <h3 className="text-base font-semibold text-gray-900">
+        Our Recommendation
+      </h3>
+    </div>
+
+    <p className="text-sm text-gray-600 mt-1 ml-4 text-end">
+      {activeTab === "price"
+        ? "Based on Price"
+        : "Based on Delivery Time"}
+    </p>
+  </div>
+
+  <div className="flex justify-end">
+    <div className="w-full md:w-96 space-y-3">
+      <div className="flex justify-between text-sm">
+        <span className="text-gray-600">
+          Subtotal (Best Price):
+        </span>
+        <span className="font-medium text-gray-900">10,440 SAR</span>
+      </div>
+      <div className="flex justify-between text-sm">
+        <span className="text-gray-600">Tax (15%):</span>
+        <span className="font-medium text-gray-900">1,609 SAR</span>
+      </div>
+      <div className="flex justify-between text-sm">
+        <span className="text-gray-600">Shipping:</span>
+        <span className="font-medium text-gray-900">500 SAR</span>
+      </div>
+      <div className="flex justify-between text-sm pt-3 border-t border-gray-300">
+        <span className="font-semibold text-gray-900">
+          Total Amount:
+        </span>
+        <span className="font-bold text-lg text-green-600">
+          12,834 SAR
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
           </div>
         </div>
       )}
