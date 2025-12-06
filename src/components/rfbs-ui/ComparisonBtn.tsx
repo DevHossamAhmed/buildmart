@@ -26,7 +26,7 @@ const ComparisonBtn = () => {
 
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg w-full max-w-[95vw] h-[85vh] border border-gray-100 shadow-2xl flex flex-col relative">
+          <div className="bg-white rounded-lg w-full max-w-[99vw] h-[85vh] border border-gray-100 shadow-2xl flex flex-col relative">
             <div className="p-6 border-b border-gray-200 flex-shrink-0">
               <button
                 onClick={() => setIsOpen(false)}
