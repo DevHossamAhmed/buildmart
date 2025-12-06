@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+
 import React, { useEffect, useRef, useState } from "react";
 import { FiMoreVertical, FiArrowUp, FiArrowDown } from "react-icons/fi";
 
@@ -205,8 +205,8 @@ const RightSide = () => {
 
         <div className="space-y-4 sm:space-y-5">
           <div className="flex gap-3 sm:gap-4">
-            <Image
-              src="https://i.pravatar.cc/150?Image=12"
+            <img
+              src="https://i.pravatar.cc/150?img=12"
               alt="Francisco Grbbs"
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
             />
@@ -240,8 +240,8 @@ const RightSide = () => {
           </div>
 
           <div className="flex gap-3 sm:gap-4">
-            <Image
-              src="https://i.pravatar.cc/150?Image=5"
+            <img
+              src="https://i.pravatar.cc/150?img=5"
               alt="Courtney Henry"
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
             />
@@ -258,8 +258,8 @@ const RightSide = () => {
           </div>
 
           <div className="flex gap-3 sm:gap-4">
-            <Image
-              src="https://i.pravatar.cc/150?Image=9"
+            <img
+              src="https://i.pravatar.cc/150?img=9"
               alt="Bessie Cooper"
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
             />
@@ -276,8 +276,8 @@ const RightSide = () => {
           </div>
 
           <div className="flex gap-3 sm:gap-4">
-            <Image
-              src="https://i.pravatar.cc/150?Image=8"
+            <img
+              src="https://i.pravatar.cc/150?img=8"
               alt="Theresa Web"
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
             />
