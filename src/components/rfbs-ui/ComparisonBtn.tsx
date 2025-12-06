@@ -93,7 +93,7 @@ const ComparisonBtn = () => {
                         Qty
                       </th>
                       <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border-b border-r border-gray-300 whitespace-nowrap">
-                        Unit
+                        U
                       </th>
 
                       {/* Proposal One Headers */}
@@ -107,13 +107,13 @@ const ComparisonBtn = () => {
                         Qty
                       </th>
                       <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border-b border-r border-gray-300 whitespace-nowrap bg-orange-50">
-                        Unit
+                        U
                       </th>
                       <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border-b border-r border-gray-300 whitespace-nowrap bg-orange-50">
-                        Unit Price
+                        U.P
                       </th>
                       <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border-b border-r border-gray-300 whitespace-nowrap bg-orange-50">
-                        Total Price
+                        T.P
                       </th>
                       <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border-b border-r border-gray-300 whitespace-nowrap bg-orange-50">
                         Delivery Time
@@ -133,13 +133,13 @@ const ComparisonBtn = () => {
                         Qty
                       </th>
                       <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border-b border-r border-gray-300 whitespace-nowrap bg-red-50">
-                        Unit
+                        U
                       </th>
                       <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border-b border-r border-gray-300 whitespace-nowrap bg-red-50">
-                        Unit Price
+                        U.P
                       </th>
                       <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border-b border-r border-gray-300 whitespace-nowrap bg-red-50">
-                        Total Price
+                        T.P
                       </th>
                       <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border-b border-r border-gray-300 whitespace-nowrap bg-red-50">
                         Delivery Time
@@ -494,6 +494,9 @@ const ComparisonBtn = () => {
                       <td className="px-3 py-3 text-sm font-bold text-gray-900 bg-green-200 text-center">
                         10,440
                       </td>
+                      <td className="px-3 py-3 text-sm font-bold text-gray-900 bg-blue-200 text-center">
+                        10,440
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -539,8 +542,8 @@ const ComparisonBtn = () => {
 
     <p className="text-sm text-gray-600 mt-1 ml-4 text-end">
       {activeTab === "price"
-        ? "Based on Price"
-        : "Based on Delivery Time"}
+        ? ""
+        : ""}
     </p>
   </div>
 
@@ -548,7 +551,7 @@ const ComparisonBtn = () => {
     <div className="w-full md:w-96 space-y-3">
       <div className="flex justify-between text-sm">
         <span className="text-gray-600">
-          Subtotal (Best Price):
+          Subtotal (Price):
         </span>
         <span className="font-medium text-gray-900">10,440 SAR</span>
       </div>
