@@ -298,7 +298,7 @@ const ComparisonBtn = () => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Tax (15%):</span>
-                    <span className="font-medium text-gray-900">1,150 SAR</span>
+                    <span className="font-medium text-gray-900">1,350 SAR</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Shipping:</span>
@@ -309,7 +309,7 @@ const ComparisonBtn = () => {
                       Total Amount:
                     </span>
                     <span className="font-bold text-lg text-green-600">
-                      10,650 SAR
+                      10,850 SAR
                     </span>
                   </div>
                 </div>
