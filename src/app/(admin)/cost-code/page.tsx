@@ -162,56 +162,6 @@ const CostCodePage = () => {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500 text-sm font-medium">Total Codes</p>
-              <p className="text-2xl font-bold text-gray-800 mt-1">{stats.total}</p>
-            </div>
-            <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-              <FaFolder className="text-blue-600 text-[20px]" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500 text-sm font-medium">Active</p>
-              <p className="text-2xl font-bold text-green-600 mt-1">{stats.active}</p>
-            </div>
-            <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-              <FaCheck className="text-green-600 text-[20px]" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500 text-sm font-medium">Inactive</p>
-              <p className="text-2xl font-bold text-gray-600 mt-1">{stats.inactive}</p>
-            </div>
-            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-              <FaTimes className="text-gray-600 text-[20px]" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500 text-sm font-medium">Total Usage</p>
-              <p className="text-2xl font-bold text-red-600 mt-1">{stats.totalUsage}</p>
-            </div>
-            <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
-              <FaDollarSign className="text-red-600 text-[20px]" />
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Filters and Actions */}
       <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm mb-6">
@@ -293,9 +243,7 @@ const CostCodePage = () => {
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Description
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Usage
-                </th>
+                
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Status
                 </th>
@@ -325,19 +273,7 @@ const CostCodePage = () => {
                       {code.description}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <div className="w-full bg-gray-200 rounded-full h-2 max-w-[60px]">
-                        <div
-                          className="bg-red-600 h-2 rounded-full"
-                          style={{ width: `${Math.min(code.usageCount, 100)}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-sm text-gray-800 font-medium">
-                        {code.usageCount}
-                      </span>
-                    </div>
-                  </td>
+                  
                   <td className="px-6 py-4 whitespace-nowrap">
                     {getStatusBadge(code.status)}
                   </td>
