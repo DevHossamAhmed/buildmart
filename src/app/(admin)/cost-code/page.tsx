@@ -84,7 +84,9 @@ const CostCodePage = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState<"add" | "edit" | "view">("add");
-  const [selectedCostCode, setSelectedCostCode] = useState<CostCode | null>(null);
+  const [selectedCostCode, setSelectedCostCode] = useState<CostCode | null>(
+    null
+  );
 
   const categories = [
     "Direct Costs",
@@ -120,7 +122,8 @@ const CostCodePage = () => {
       code.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory =
       filterCategory === "all" || code.category === filterCategory;
-    const matchesStatus = filterStatus === "all" || code.status === filterStatus;
+    const matchesStatus =
+      filterStatus === "all" || code.status === filterStatus;
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
@@ -154,14 +157,15 @@ const CostCodePage = () => {
             <FaDollarSign className="text-red-600 text-[24px]" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">Cost Code Management</h1>
+            <h1 className="text-3xl font-bold text-gray-800">
+              Cost Code Management
+            </h1>
             <p className="text-gray-600 text-sm">
               Manage and organize your project cost codes
             </p>
           </div>
         </div>
       </div>
-
 
       {/* Filters and Actions */}
       <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm mb-6">
@@ -182,30 +186,44 @@ const CostCodePage = () => {
             {/* Category Filter */}
             <div className="flex items-center gap-2">
               <FaFilter className="text-gray-500" />
-              <select
-                className="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-              >
-                <option value="all">All Categories</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
+              <div className="relative w-max">
+                <select
+                  className="appearance-none px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  value={filterCategory}
+                  onChange={(e) => setFilterCategory(e.target.value)}
+                >
+                  <option value="all">All Categories</option>
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-700">
+                  <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
+              </div>
             </div>
 
             {/* Status Filter */}
-            <select
-              className="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
+            <div className="relative w-max">
+              <select
+                className="appearance-none px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-700">
+                <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                </svg>
+              </div>
+            </div>
           </div>
 
           {/* Action Buttons */}
@@ -243,7 +261,7 @@ const CostCodePage = () => {
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Description
                 </th>
-                
+
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Status
                 </th>
@@ -254,9 +272,14 @@ const CostCodePage = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {filteredCostCodes.map((code) => (
-                <tr key={code.id} className="hover:bg-gray-50 transition-colors">
+                <tr
+                  key={code.id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-bold text-red-600">{code.code}</span>
+                    <span className="text-sm font-bold text-red-600">
+                      {code.code}
+                    </span>
                   </td>
                   <td className="px-6 py-4">
                     <span className="text-sm text-gray-800 font-medium">
@@ -273,7 +296,7 @@ const CostCodePage = () => {
                       {code.description}
                     </span>
                   </td>
-                  
+
                   <td className="px-6 py-4 whitespace-nowrap">
                     {getStatusBadge(code.status)}
                   </td>
@@ -369,12 +392,16 @@ const CostCodePage = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 mb-1">Description</p>
-                    <p className="text-gray-800">{selectedCostCode.description}</p>
+                    <p className="text-gray-800">
+                      {selectedCostCode.description}
+                    </p>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-gray-500 mb-1">Created Date</p>
-                      <p className="text-gray-800">{selectedCostCode.createdDate}</p>
+                      <p className="text-gray-800">
+                        {selectedCostCode.createdDate}
+                      </p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500 mb-1">Usage Count</p>
@@ -402,17 +429,27 @@ const CostCodePage = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Category *
                       </label>
-                      <select
-                        defaultValue={selectedCostCode?.category}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                      >
-                        <option value="">Select Category</option>
-                        {categories.map((cat) => (
-                          <option key={cat} value={cat}>
-                            {cat}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="relative">
+                        <select
+                          defaultValue={selectedCostCode?.category}
+                          className="appearance-none w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        >
+                          <option value="">Select Category</option>
+                          {categories.map((cat) => (
+                            <option key={cat} value={cat}>
+                              {cat}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-700">
+                          <svg
+                            className="h-4 w-4 fill-current"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                          </svg>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -439,18 +476,27 @@ const CostCodePage = () => {
                       placeholder="Enter description"
                     />
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Status *
                     </label>
-                    <select
-                      defaultValue={selectedCostCode?.status}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                    </select>
+                    <div className="relative">
+                      <select
+                        defaultValue={selectedCostCode?.status}
+                        className="appearance-none w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      >
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-700">
+                        <svg
+                          className="h-4 w-4 fill-current"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </form>
               )}
