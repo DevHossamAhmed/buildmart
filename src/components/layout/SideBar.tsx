@@ -17,6 +17,7 @@ import {
   FaChevronUp,
   FaHandshake,
   FaDollarSign,
+  FaUserCog,
 } from "react-icons/fa";
 
 interface SideBarProps {
@@ -183,7 +184,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                   }`}
                 onClick={onClose}
               >
-                <FaHandshake className="text-[20px]" />
+                <FaUserCog  className="text-[20px]" />
                 <span>Vendor Setting</span>
               </Link>
             </li>
