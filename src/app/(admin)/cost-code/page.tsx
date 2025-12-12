@@ -11,7 +11,7 @@ import {
   FaCheck,
   FaFilter,
   FaFileExport,
-  FaFolder,
+
 } from "react-icons/fa";
 
 interface CostCode {
@@ -127,12 +127,7 @@ const CostCodePage = () => {
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
-  const stats = {
-    total: mockCostCodes.length,
-    active: mockCostCodes.filter((c) => c.status === "active").length,
-    inactive: mockCostCodes.filter((c) => c.status === "inactive").length,
-    totalUsage: mockCostCodes.reduce((sum, c) => sum + c.usageCount, 0),
-  };
+
 
   const getStatusBadge = (status: string) => {
     return status === "active" ? (

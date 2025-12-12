@@ -173,6 +173,20 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, onClose }) => {
                 <span>Vendor</span>
               </Link>
             </li>
+            <li>
+              <Link
+                href="/vendor-setting"
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200
+                  ${pathname === "/vendor-setting"
+                    ? "bg-red-600 text-white"
+                    : "text-gray-700 hover:bg-gray-50 hover:text-[#d92335]"
+                  }`}
+                onClick={onClose}
+              >
+                <FaHandshake className="text-[20px]" />
+                <span>Vendor Setting</span>
+              </Link>
+            </li>
           </ul>
         </nav>
       </aside>
