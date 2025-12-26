@@ -1,12 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
-  Plus,
-  Search,
-  Download,
   Edit2,
-  Trash2,
   Eye,
   CheckCircle,
   Clock,
@@ -14,34 +10,35 @@ import {
   AlertCircle,
   FileText,
   Loader,
+  Package,
+  CheckCircle2,
+  X,
 } from "lucide-react";
 import Link from "next/link";
+import PageHeaderWrapper from "@/components/ui/PageHeaderWrapper";
+import StatCard from "@/components/ui/StatCard";
+import Pagination from "@/components/ui/Pagination";
+import MaterialRequestFilterBar, {
+  MaterialRequestFilters,
+} from "./components/MaterialRequestFilterBar";
+import CreateMaterialRequest, {
+  MaterialRequestFormData,
+  BoqItem,
+} from "./components/modals/CreateMaterialRequest";
 
 const MaterialRequestDashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [boqItems, setBoqItems] = useState([
-    {
-      id: 1,
-      category: "",
-      description: "",
-      quantity: 0,
-      unit: "",
-    },
-  ]);
-  const [formData, setFormData] = useState({
-    materialName: "",
-    quantity: "",
-    unit: "units",
-    category: "",
-    priority: "normal",
-    description: "",
-    projectName: "",
-    requestedDate: "",
-    duedate: "",
-    estValue: "",
+  const [filters, setFilters] = useState<MaterialRequestFilters>({
+    search: "",
+    status: "all",
+    priority: "all",
+    project: "all",
+    requestedBy: "all",
+    dateFrom: "",
+    dateTo: "",
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const [requests, setRequests] = useState([
     {
@@ -171,16 +168,34 @@ const MaterialRequestDashboard = () => {
       label: "Total Requests",
       value: "248",
       change: "+12%",
-      color: "bg-blue-500",
+      icon: Package,
+      iconColor: "text-blue-500",
+      trend: "up" as const,
     },
     {
       label: "In Progress",
       value: "45",
       change: "+5%",
-      color: "bg-yellow-500",
+      icon: Loader,
+      iconColor: "text-yellow-500",
+      trend: "up" as const,
     },
-    { label: " Completed", value: "178", change: "+8%", color: "bg-green-500" },
-    { label: " Closed", value: "25", change: "-3%", color: "bg-red-500" },
+    {
+      label: "Completed",
+      value: "178",
+      change: "+8%",
+      icon: CheckCircle2,
+      iconColor: "text-green-500",
+      trend: "up" as const,
+    },
+    {
+      label: "Closed",
+      value: "25",
+      change: "-3%",
+      icon: X,
+      iconColor: "text-red-500",
+      trend: "down" as const,
+    },
   ];
 
   //@ts-expect-error:status
@@ -260,13 +275,7 @@ const MaterialRequestDashboard = () => {
     return `${String(rfbs).padStart(2, "0")} RFPs`;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleInputChange = (e: { target: { name: any; value: any } }) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSave = () => {
+  const handleSubmit = (formData: MaterialRequestFormData, boqItems: BoqItem[]) => {
     const newRequest = {
       id: `MR-${String(requests.length + 1).padStart(3, "0")}`,
       ...formData,
@@ -278,564 +287,342 @@ const MaterialRequestDashboard = () => {
     //@ts-expect-error:newRequest
     setRequests([newRequest, ...requests]);
     setIsDrawerOpen(false);
-    setFormData({
-      materialName: "",
-      quantity: "",
-      unit: "units",
-      category: "",
-      priority: "normal",
-      description: "",
-      projectName: "",
-      requestedDate: "",
-      duedate: "",
-      estValue: "",
-    });
   };
 
-  const filteredRequests = requests.filter((req) => {
-    const matchesSearch =
-      req.materialName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      req.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      req.projectName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || req.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const handleSaveDraft = (formData: MaterialRequestFormData, boqItems: BoqItem[]) => {
+    const newRequest = {
+      id: `MR-${String(requests.length + 1).padStart(3, "0")}`,
+      ...formData,
+      status: "draft",
+      requestedBy: "Mahmoud Ahmed",
+      updatedAt: new Date().toISOString().split("T")[0],
+      rfbs: 0,
+    };
+    //@ts-expect-error:newRequest
+    setRequests([newRequest, ...requests]);
+    setIsDrawerOpen(false);
+  };
 
-  const handleBoqChange = (id: number, field: string, value: string) => {
-    setBoqItems(
-      boqItems.map((item) => {
-        if (item.id === id) {
-          const updatedItem = { ...item, [field]: value };
-          if (field === "unitPrice" || field === "unit") {
-            const quantity = parseFloat(formData.quantity) || 0;
-          }
-          return updatedItem;
-        }
-        return item;
-      })
+  // Extract unique values for filter options
+  const projectOptions = useMemo(() => {
+    const uniqueProjects = Array.from(
+      new Set(requests.map((req) => req.projectName))
     );
+    return uniqueProjects.map((project) => ({
+      value: project,
+      label: project,
+    }));
+  }, [requests]);
+
+  const requestedByOptions = useMemo(() => {
+    const uniqueUsers = Array.from(
+      new Set(requests.map((req) => req.requestedBy))
+    );
+    return uniqueUsers.map((user) => ({
+      value: user,
+      label: user,
+    }));
+  }, [requests]);
+
+  const statusFilterOptions = [
+    { value: "draft", label: "Draft" },
+    { value: "in_progress", label: "In Progress" },
+    { value: "pending", label: "Pending" },
+    { value: "completed", label: "Completed" },
+    { value: "closed", label: "Closed" },
+  ];
+
+  const priorityFilterOptions = [
+    { value: "urgent", label: "Urgent" },
+    { value: "high", label: "High" },
+    { value: "normal", label: "Normal" },
+    { value: "low", label: "Low" },
+  ];
+
+  const filteredRequests = useMemo(() => {
+    return requests.filter((req) => {
+      // Search only Material ID and Request Title (materialName)
+      const matchesSearch =
+        !filters.search ||
+        req.id.toLowerCase().includes(filters.search.toLowerCase()) ||
+        req.materialName.toLowerCase().includes(filters.search.toLowerCase());
+
+      // Status filter
+      const matchesStatus =
+        filters.status === "all" || req.status === filters.status;
+
+      // Priority filter
+      const matchesPriority =
+        filters.priority === "all" || req.priority === filters.priority;
+
+      // Project filter
+      const matchesProject =
+        filters.project === "all" || req.projectName === filters.project;
+
+      // Requested By filter
+      const matchesRequestedBy =
+        filters.requestedBy === "all" ||
+        req.requestedBy === filters.requestedBy;
+
+      // Date range filter (checking requestedDate)
+      let matchesDateRange = true;
+      if (filters.dateFrom || filters.dateTo) {
+        const requestDate = new Date(req.requestedDate);
+        if (filters.dateFrom) {
+          const fromDate = new Date(filters.dateFrom);
+          fromDate.setHours(0, 0, 0, 0);
+          if (requestDate < fromDate) {
+            matchesDateRange = false;
+          }
+        }
+        if (filters.dateTo) {
+          const toDate = new Date(filters.dateTo);
+          toDate.setHours(23, 59, 59, 999);
+          if (requestDate > toDate) {
+            matchesDateRange = false;
+          }
+        }
+      }
+
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesPriority &&
+        matchesProject &&
+        matchesRequestedBy &&
+        matchesDateRange
+      );
+    });
+  }, [requests, filters]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
+  const paginatedRequests = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredRequests.slice(startIndex, endIndex);
+  }, [filteredRequests, currentPage, itemsPerPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const addBoqRow = () => {
-    const newId = Math.max(...boqItems.map((item) => item.id), 0) + 1;
-    setBoqItems([
-      ...boqItems,
-      {
-        id: newId,
-        category: "",
-        unit: "",
-        quantity: 0,
-        description: "",
-      },
-    ]);
+  const handleExport = () => {
+    // Export functionality
+    console.log("Exporting data...", filteredRequests);
+    // You can implement actual export logic here (CSV, Excel, etc.)
   };
 
-  const removeBoqRow = (id: number) => {
-    if (boqItems.length > 1) {
-      setBoqItems(boqItems.filter((item) => item.id !== id));
-    }
+  const handleFiltersChange = (newFilters: MaterialRequestFilters) => {
+    setFilters(newFilters);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 w-full">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b ">
-        <div className="px-6 py-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                Material Requests
-              </h1>
-              <p className="text-sm text-gray-600 mt-1">
-                Manage and track all material requests
-              </p>
-            </div>
-            <button
-              onClick={() => setIsDrawerOpen(true)}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 sm:px-6 sm:py-3 text-white rounded-lg shadow-md hover:opacity-90 transition-opacity font-medium"
-              style={{ backgroundColor: "#d92335" }}
-            >
-              <Plus className="w-5 h-5" />
-              <span>New Request</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* Enhanced Header */}
+      <PageHeaderWrapper
+        title="Material Requests"
+        description="Manage and track all material requests"
+        onAdd={() => setIsDrawerOpen(true)}
+        addButtonText="New Request"
+      />
 
-      <div className="py-6">
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="px-4 sm:px-6 lg:px-8 py-6">
+        {/* Enhanced Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
           {stats.map((stat, idx) => (
-            <div
+            <StatCard
               key={idx}
-              className="bg-white rounded-lg shadow-sm p-5 border border-gray-100"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stat.value}
-                  </p>
-                  <p
-                    className={`text-xs mt-1 ${
-                      stat.change.startsWith("+")
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {stat.change} from last month
-                  </p>
-                </div>
-                <div
-                  className={`w-12 h-12 rounded-full ${stat.color} bg-opacity-20 flex items-center justify-center`}
-                >
-                  <div className={`w-2 h-2 rounded-full ${stat.color}`}></div>
-                </div>
-              </div>
-            </div>
+              label={stat.label}
+              value={stat.value}
+              change={stat.change}
+              icon={stat.icon}
+              iconColor={stat.iconColor}
+              trend={stat.trend}
+            />
           ))}
         </div>
 
-        {/* Search and Filter Bar */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-6 border border-gray-100">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search by material, ID, or project..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none text-sm"
-              />
-            </div>
-            <div className="flex gap-3">
-              <div className="relative w-max">
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="appearance-none pr-4  pl-6 py-2.5 border border-gray-200 rounded-lg focus:outline-none text-sm bg-white cursor-pointer"
-                >
-                  <option value="all">All Status</option>
-                  <option value="draft">Draft</option>
-                  <option value="in_progress">In Progress</option>
-                  <option value="pending">Pending</option>
-                  <option value="completed">Completed</option>
-                  <option value="closed">Closed</option>
-                </select>
-
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pl-4 pr-2 text-gray-700">
-                  <svg className="h-4 w-4 fill-current " viewBox="0 0 20 20">
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                  </svg>
-                </div>
-              </div>
-              <button className="px-4 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium text-gray-700">
-                <Download className="w-4 h-4" />
-                <span className="hidden sm:inline">Export</span>
-              </button>
-            </div>
-          </div>
+        {/* Professional Filter and Export Bar */}
+        <div className="mb-6">
+          <MaterialRequestFilterBar
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+            onExport={handleExport}
+            statusOptions={statusFilterOptions}
+            priorityOptions={priorityFilterOptions}
+            projectOptions={projectOptions}
+            requestedByOptions={requestedByOptions}
+          />
         </div>
 
-        {/* Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+        {/* Enhanced Table with Pagination */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+            <table className="w-full min-w-[1000px]">
+              <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                     Request ID
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                     Request TITLE
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                     Due Date
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                     PRIORITY
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                     Project
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                     Requested By
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                     Requested Date
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                     RFPs
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 sm:px-6 py-3.5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredRequests.map((request) => (
-                  <tr
-                    key={request.id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-4 py-4 text-sm font-medium text-gray-900">
-                      {request.id}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-gray-900">
-                      {request.materialName}
-                    </td>
-
-                    <td className="px-4 py-4 text-sm text-gray-600">
-                      {request.duedate}
-                    </td>
-                    <td className="px-4 py-4">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusBadge(
-                          request.status
-                        )}`}
-                      >
-                        {getStatusIcon(request.status)}
-                        {getStatusLabel(request.status)}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getPriorityBadge(
-                          request.priority
-                        )}`}
-                      >
-                        {getPriorityIcon(request.priority)}
-                        {request.priority.charAt(0).toUpperCase() +
-                          request.priority.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 text-sm text-gray-600">
-                      {request.projectName}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-gray-600">
-                      {request.requestedBy}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-gray-600">
-                      {request.requestedDate}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-gray-600 ">
-                      {getRFBsDisplay(request.status, request.rfbs)}
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="flex justify-center items-center gap-2">
-                        {(request.status === "in_progress" ||
-                          request.status === "completed" ||
-                          request.status === "closed") && (
-                          <button className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
-                            <Link href={`/RFBs/${request.id}`}>
-                              <Eye className="w-4 h-4" />
-                            </Link>
-                          </button>
-                        )}
-
-                        {(request.status === "pending" ||
-                          request.status === "draft") && (
-                          <button className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded transition-colors">
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                        )}
+              <tbody className="bg-white divide-y divide-gray-200">
+                {paginatedRequests.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={10}
+                      className="px-4 sm:px-6 py-12 sm:py-16 text-center"
+                    >
+                      <div className="flex flex-col items-center justify-center">
+                        <Package className="w-12 h-12 text-gray-400 mb-3" />
+                        <p className="text-sm sm:text-base font-medium text-gray-900 mb-1">
+                          No requests found
+                        </p>
+                        <p className="text-xs sm:text-sm text-gray-500">
+                          {filters.search || filters.status !== "all"
+                            ? "Try adjusting your filters"
+                            : "Create your first material request"}
+                        </p>
                       </div>
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  paginatedRequests.map((request) => (
+                    <tr
+                      key={request.id}
+                      className="hover:bg-gray-50 transition-colors duration-150"
+                    >
+                      <td className="px-4 sm:px-6 py-4 text-sm font-semibold text-gray-900">
+                        {request.id}
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
+                        <div className="font-medium">{request.materialName}</div>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-600">
+                        {request.duedate}
+                      </td>
+                      <td className="px-4 sm:px-6 py-4">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusBadge(
+                            request.status
+                          )}`}
+                        >
+                          {getStatusIcon(request.status)}
+                          {getStatusLabel(request.status)}
+                        </span>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getPriorityBadge(
+                            request.priority
+                          )}`}
+                        >
+                          {getPriorityIcon(request.priority)}
+                          {request.priority.charAt(0).toUpperCase() +
+                            request.priority.slice(1)}
+                        </span>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-600">
+                        {request.projectName}
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-600">
+                        {request.requestedBy}
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-600">
+                        {request.requestedDate}
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-600 font-medium">
+                        {getRFBsDisplay(request.status, request.rfbs)}
+                      </td>
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="flex justify-center items-center gap-2">
+                          {(request.status === "in_progress" ||
+                            request.status === "completed" ||
+                            request.status === "closed") && (
+                            <Link
+                              href={`/RFBs/${request.id}`}
+                              className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors duration-150"
+                              title="View RFBs"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Link>
+                          )}
+
+                          {(request.status === "pending" ||
+                            request.status === "draft") && (
+                            <button
+                              className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-md transition-colors duration-150"
+                              title="Edit Request"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          {filteredRequests.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredRequests.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={handlePageChange}
+              onItemsPerPageChange={setItemsPerPage}
+              itemsPerPageOptions={[10, 25, 50, 100]}
+              showItemsPerPage={true}
+            />
+          )}
         </div>
       </div>
 
-      {/* Side Drawer */}
-      {isDrawerOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/10 bg-opacity-50 z-[99999] transition-opacity"
-            onClick={() => setIsDrawerOpen(false)}
-          />
-
-          <div className="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white shadow-2xl z-[100000] flex flex-col animate-slide-in">
-            <div className="absolute top-4 right-4 z-10">
-              <button
-                onClick={() => setIsDrawerOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-colors"
-              >
-                <span className="text-xl font-bold">×</span>
-              </button>
-            </div>
-
-            <div className="p-6 pt-16 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">
-                New Material Request
-              </h2>
-              <p className="text-sm text-gray-600 mt-1">
-                Fill in the details to create a new request
-              </p>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Request Title <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="materialName"
-                    value={formData.materialName}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                    placeholder="e.g., Steel Rebar Grade 60"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Project Name
-                    </label>
-                    <select
-                      name="projectName"
-                      value={formData.projectName}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                    >
-                      <option value="">Select Project</option>
-                      <option value="PRJ-2024-001 - Structural Steel Installation">
-                        PRJ-2024-001 - Structural Steel Installation
-                      </option>
-                      <option value="PRJ-2024-002 - HVAC System Upgrade">
-                        PRJ-2024-002 - HVAC System Upgrade
-                      </option>
-                      <option value="PRJ-2024-003 - Electrical Infrastructure">
-                        PRJ-2024-003 - Electrical Infrastructure
-                      </option>
-                      <option value="PRJ-2024-004 - Foundation & Concrete Works">
-                        PRJ-2024-004 - Foundation & Concrete Works
-                      </option>
-                      <option value="PRJ-2024-005 - Plumbing & Drainage System">
-                        PRJ-2024-005 - Plumbing & Drainage System
-                      </option>
-                      <option value="PRJ-2024-006 - Facade & Cladding Works">
-                        PRJ-2024-006 - Facade & Cladding Works
-                      </option>
-                      <option value="PRJ-2024-007 - MEP Integration Phase 1">
-                        PRJ-2024-007 - MEP Integration Phase 1
-                      </option>
-                      <option value="PRJ-2024-008 - Fire Safety Systems">
-                        PRJ-2024-008 - Fire Safety Systems
-                      </option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Priority <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      name="priority"
-                      value={formData.priority}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                    >
-                      <option value="low">Low</option>
-                      <option value="normal">Normal</option>
-                      <option value="high">High</option>
-                      <option value="urgent">Urgent</option>
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Due Date <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    name="duedate"
-                    value={formData.duedate}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Est.Value <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    name="estValue"
-                    value={formData.estValue}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description / Notes
-                  </label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    rows={4}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                    placeholder="Add any additional information or special requirements..."
-                  />
-                </div>
-                <div className="w-full h-[1px] bg-gray-300 mx-auto mt-[20px]"></div>
-                <div className="w-full flex justify-between">
-                  <h2 className="pt-1">BOQs</h2>
-                  <button className="bg-red-500 text-white p-1 rounded-md">
-                    Import
-                  </button>
-                </div>
-                {/* BOQ Table */}
-                <div className="overflow-x-auto border border-gray-200 rounded-lg">
-                  <table className="w-full text-sm table-fixed">
-                    <thead className="bg-gray-100 border-b border-gray-300">
-                      <tr>
-                        <th className="w-[20%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
-                          Category
-                        </th>
-                        <th className="w-[15%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
-                          Description
-                        </th>
-                        <th className="w-[12%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
-                          Quantity
-                        </th>
-                        <th className="w-[15%] px-1 py-1 text-left text-[10px] font-semibold text-gray-700 border-r border-gray-300">
-                          Unit
-                        </th>
-                        <th className="w-[10%] px-1 py-1 text-center text-[10px] font-semibold text-gray-700"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {boqItems.map((boqItem) => (
-                        <tr
-                          key={boqItem.id}
-                          className="border-b border-gray-200"
-                        >
-                          <td className="px-2 py-2 border-r border-gray-200">
-                            <select
-                              value={boqItem.category}
-                              onChange={(e) =>
-                                handleBoqChange(
-                                  boqItem.id,
-                                  "category",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:outline-none"
-                            >
-                              <option value="">Select</option>
-                              <option value="Construction">Construction</option>
-                              <option value="Electrical">Electrical</option>
-                              <option value="Plumbing">Plumbing</option>
-                              <option value="Finishing">Finishing</option>
-                              <option value="Safety">Safety</option>
-                            </select>
-                          </td>
-                          <td className="px-2 py-2 border-r border-gray-200">
-                            <input
-                              type="text"
-                              value={boqItem.description}
-                              onChange={(e) =>
-                                handleBoqChange(
-                                  boqItem.id,
-                                  "description",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:outline-none"
-                              placeholder="Description"
-                            />
-                          </td>
-                          <td className="px-2 py-2 border-r border-gray-200">
-                            <input
-                              type="number"
-                              value={boqItem.quantity}
-                              onChange={(e) =>
-                                handleBoqChange(
-                                  boqItem.id,
-                                  "quantity",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:outline-none"
-                              placeholder="0.00"
-                            />
-                          </td>
-                          <td className="px-2 py-2 border-r border-gray-200">
-                            <select
-                              value={boqItem.unit}
-                              onChange={(e) =>
-                                handleBoqChange(
-                                  boqItem.id,
-                                  "unit",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:outline-none"
-                            >
-                              <option value="">Select</option>
-                              <option value="units">Units</option>
-                              <option value="kg">Kg</option>
-                              <option value="tons">Tons</option>
-                              <option value="meters">Meters</option>
-                              <option value="bags">Bags</option>
-                              <option value="gallons">Gallons</option>
-                            </select>
-                          </td>
-                          <td className="px-2 py-2 text-center">
-                            <button
-                              onClick={() => removeBoqRow(boqItem.id)}
-                              className="text-red-500 hover:text-red-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                              disabled={boqItems.length === 1}
-                            >
-                              <Trash2 className="w-4 h-4 mx-auto" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <button
-                  onClick={addBoqRow}
-                  className="w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-red-500 hover:text-red-500 transition-colors flex items-center justify-center gap-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Row
-                </button>
-              </div>
-            </div>
-
-            <div className="p-6 border-t border-gray-200">
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setIsDrawerOpen(false)}
-                  className="flex-1 px-6 py-3 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-                >
-                  Save as Draft
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="flex-1 px-6 py-3 text-white rounded-lg shadow-md hover:opacity-90 transition-opacity font-medium"
-                  style={{ backgroundColor: "#d92335" }}
-                >
-                  Submit Request
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      {/* Create Material Request Modal */}
+      <CreateMaterialRequest
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onSubmit={handleSubmit}
+        onSaveDraft={handleSaveDraft}
+      />
     </div>
   );
 };

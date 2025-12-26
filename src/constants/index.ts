@@ -29,11 +29,26 @@ export const STATUS_COLORS = {
     border: 'border-yellow-300',
   },
   completed: {
+    bg: 'bg-green-100',
+    text: 'text-green-700',
+    border: 'border-green-300',
+  },
+  cancelled: {
+    bg: 'bg-red-100',
+    text: 'text-red-700',
+    border: 'border-red-300',
+  },
+  draft: {
+    bg: 'bg-gray-100',
+    text: 'text-gray-700',
+    border: 'border-gray-300',
+  },
+  in_progress: {
     bg: 'bg-blue-100',
     text: 'text-blue-700',
     border: 'border-blue-300',
   },
-  cancelled: {
+  closed: {
     bg: 'bg-red-100',
     text: 'text-red-700',
     border: 'border-red-300',
