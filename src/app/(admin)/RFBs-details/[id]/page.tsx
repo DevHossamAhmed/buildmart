@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Download,
@@ -23,11 +23,16 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import RfbsDetailsGeneral from "@/components/rfbs-ui/RfbsDetailsGeneral";
 import RfbsDetailsProposil from "@/components/rfbs-ui/RfbsDetailsProposil";
 import Versions from "@/components/rfbs-ui/Versions";
+import { useBreadcrumbContext } from "@/contexts/BreadcrumbContext";
 
 const RFBDetailsPage = () => {
+  const params = useParams();
+  const rfbsId = params?.id as string;
+  const { setBreadcrumbs } = useBreadcrumbContext();
   const [activeTab, setActiveTab] = useState("items");
   const [newComment, setNewComment] = useState("");
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -36,6 +41,15 @@ const RFBDetailsPage = () => {
   const [fileType, setFileType] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [itemsTab, setItemsTab] = useState("Original");
+
+  // Set custom breadcrumbs for this dynamic route
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: "Home", href: "/dashboard" },
+      { label: "RFBs Details", href: "/rfbs-details" },
+      { label: `RFB ${rfbsId || "Details"}` },
+    ]);
+  }, [rfbsId, setBreadcrumbs]);
 
   const toggleUploadModal = () => {
     setShowUploadModal(!showUploadModal);
@@ -552,7 +566,7 @@ const RFBDetailsPage = () => {
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         placeholder="Add a comment or note..."
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 focus:outline-none resize-none"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none resize-none"
                         rows={3}
                       />
                       <div className="flex items-center justify-between mt-3">
@@ -738,7 +752,7 @@ const RFBDetailsPage = () => {
                   id="document-name"
                   type="text"
                   placeholder="Enter document name"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg "
                 />
               </div>
               <div>
@@ -749,7 +763,7 @@ const RFBDetailsPage = () => {
                   <select
                     value={fileType}
                     onChange={(e) => setFileType(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 appearance-none pr-10"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg  appearance-none pr-10"
                   >
                     <option value="" disabled>
                       Select a document type
@@ -815,7 +829,7 @@ const RFBDetailsPage = () => {
             <div className="p-5 border-t border-gray-200 flex justify-end gap-3">
               <button
                 onClick={resetUploadModal}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>

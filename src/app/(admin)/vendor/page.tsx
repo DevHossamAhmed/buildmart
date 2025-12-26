@@ -320,7 +320,7 @@ const VendorPage = () => {
             <input
               type="text"
               placeholder="Search by RFP number or project name..."
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -330,7 +330,7 @@ const VendorPage = () => {
             <FaFilter className="text-gray-500" />
             <div className="relative w-max">
               <select
-                className="appearance-none pr-4  pl-6 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none text-sm bg-white cursor-pointer"
+                className="appearance-none pr-4  pl-6 py-2.5 border border-gray-200 rounded-lg focus:outline-none text-sm bg-white cursor-pointer"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
               >

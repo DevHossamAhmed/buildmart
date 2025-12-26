@@ -197,7 +197,7 @@ const CategoriesPage = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search categories..."
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 focus:outline-none text-sm w-64"
+                className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none text-sm w-64"
               />
             </div>
             <div className="relative">
@@ -245,7 +245,7 @@ const CategoriesPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="px-6 py-6">
+      <div className="py-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-lg border border-gray-200 p-5">
@@ -409,7 +409,7 @@ const CategoriesPage = () => {
                  <select
                   value={parentCategory}
                   onChange={(e) => setParentCategory(e.target.value)}
-                  className="appearance-none w-full px-6 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
+                  className="appearance-none w-full px-6 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                 >
                   <option value="">Select parent category</option>
                   {categoriesData.map((cat) => (
@@ -435,7 +435,7 @@ const CategoriesPage = () => {
                   value={categoryName}
                   onChange={(e) => setCategoryName(e.target.value)}
                   placeholder="Enter category name"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                 />
               </div>
 
@@ -611,7 +611,7 @@ const CategoriesPage = () => {
                       value={apiUrl}
                       onChange={(e) => setApiUrl(e.target.value)}
                       placeholder="https://api.example.com/categories"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     />
                   </div>
 
@@ -624,7 +624,7 @@ const CategoriesPage = () => {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       placeholder="Enter username"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     />
                   </div>
 
@@ -637,7 +637,7 @@ const CategoriesPage = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter password"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     />
                   </div>
                 </div>

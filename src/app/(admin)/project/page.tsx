@@ -260,7 +260,7 @@ const ProjectsDashboard = () => {
         </div>
       </div>
 
-      <div className="px-6 py-6">
+      <div className="py-6">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           {stats.map((stat, idx) => {
@@ -313,14 +313,14 @@ const ProjectsDashboard = () => {
                 placeholder="Search projects by name, code, or location..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none text-sm"
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none text-sm"
               />
             </div>
             <div className="flex gap-3">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none text-sm bg-white"
+                className="px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none text-sm bg-white"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -519,7 +519,7 @@ const ProjectsDashboard = () => {
                     name="projectName"
                     value={formData.projectName}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     placeholder="e.g., Building A Construction"
                   />
                 </div>
@@ -534,7 +534,7 @@ const ProjectsDashboard = () => {
                       name="projectCode"
                       value={formData.projectCode}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                       placeholder="BA-2025"
                     />
                   </div>
@@ -546,7 +546,7 @@ const ProjectsDashboard = () => {
                       name="status"
                       value={formData.status}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     >
                       <option value="planning">Planning</option>
                       <option value="active">Active</option>
@@ -577,7 +577,7 @@ const ProjectsDashboard = () => {
                     name="projectPortofolioDirector"
                     value={formData.projectPortofolioDirector}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     placeholder="Project Portofolio Director"
                   />
                 </div>
@@ -590,7 +590,7 @@ const ProjectsDashboard = () => {
                     name="projectDirector"
                     value={formData.projectDirector}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     placeholder="Project Director"
                   />
                 </div>
@@ -604,7 +604,7 @@ const ProjectsDashboard = () => {
                     name="projectManager"
                     value={formData.projectManager}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     placeholder="Project Manager"
                   />
                 </div>
@@ -619,7 +619,7 @@ const ProjectsDashboard = () => {
                       name="startDate"
                       value={formData.startDate}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     />
                   </div>
                   <div>
@@ -631,7 +631,7 @@ const ProjectsDashboard = () => {
                       name="endDate"
                       value={formData.endDate}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     />
                   </div>
                 </div>
@@ -645,7 +645,7 @@ const ProjectsDashboard = () => {
                     name="budget"
                     value={formData.budget}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     placeholder="0"
                   />
                 </div>
@@ -660,7 +660,7 @@ const ProjectsDashboard = () => {
                     onChange={handleInputChange}
                     //@ts-expect-error:rows
                     rows="4"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     placeholder="Project description and additional details..."
                   />
                 </div>
@@ -671,7 +671,7 @@ const ProjectsDashboard = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => setIsDrawerOpen(false)}
-                  className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                  className="flex-1 px-6 py-3 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                 >
                   Cancel
                 </button>

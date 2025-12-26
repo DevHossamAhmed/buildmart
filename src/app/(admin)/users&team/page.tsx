@@ -264,7 +264,7 @@ const UsersTeamsPage = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={`Search ${activeTab}...`}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 focus:outline-none text-sm w-64"
+                  className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none text-sm w-64"
                 />
               </div>
               {activeTab === "users" && (
@@ -315,7 +315,7 @@ const UsersTeamsPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="px-6 py-6">
+      <div className="py-6">
         {activeTab === "users" && (
           <div className="space-y-4">
             {/* Stats Cards */}
@@ -653,7 +653,7 @@ const UsersTeamsPage = () => {
                   <input
                     type="text"
                     placeholder="Enter first name"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                   />
                 </div>
                 <div>
@@ -663,7 +663,7 @@ const UsersTeamsPage = () => {
                   <input
                     type="text"
                     placeholder="Enter last name"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                   />
                 </div>
               </div>
@@ -676,7 +676,7 @@ const UsersTeamsPage = () => {
                   <input
                     type="email"
                     placeholder="user@company.com"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                   />
                 </div>
                 <div>
@@ -686,7 +686,7 @@ const UsersTeamsPage = () => {
                   <input
                     type="tel"
                     placeholder="+966 XX XXX XXXX"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                   />
                 </div>
               </div>
@@ -696,7 +696,7 @@ const UsersTeamsPage = () => {
                   Team
                 </label>
                 <div className="relative">
-                  <select className="appearance-none w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 focus:outline-none bg-white pr-10">
+                  <select className="appearance-none w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none bg-white pr-10">
                     <option value="">Select team</option>
                     {teamsData.map((team) => (
                       <option key={team.id} value={team.name}>
@@ -729,7 +729,7 @@ const UsersTeamsPage = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Permissions <span className="text-red-500">*</span>
                 </label>
-                <div className="border border-gray-300 rounded-lg p-4">
+                <div className="border border-gray-200 rounded-lg p-4">
                   <div className="grid grid-cols-2 gap-4">
                     <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
                       <input
@@ -927,7 +927,7 @@ const UsersTeamsPage = () => {
                 <input
                   type="text"
                   placeholder="Enter team name"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 focus:outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                 />
               </div>
 
@@ -938,7 +938,7 @@ const UsersTeamsPage = () => {
                 <textarea
                   placeholder="Enter team description"
                   rows={3}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 focus:outline-none resize-none"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none resize-none"
                 />
               </div>
 
@@ -946,7 +946,7 @@ const UsersTeamsPage = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Permissions <span className="text-red-500">*</span>
                 </label>
-                <div className="border border-gray-300 rounded-lg p-4">
+                <div className="border border-gray-200 rounded-lg p-4">
                   <div className="grid grid-cols-2 gap-4">
                     <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
                       <input
@@ -1105,7 +1105,7 @@ const UsersTeamsPage = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Team Members
                 </label>
-                <div className="border border-gray-300 rounded-lg p-4 max-h-48 overflow-y-auto">
+                <div className="border border-gray-200 rounded-lg p-4 max-h-48 overflow-y-auto">
                   <div className="space-y-2">
                     {usersData.map((user) => (
                       <label

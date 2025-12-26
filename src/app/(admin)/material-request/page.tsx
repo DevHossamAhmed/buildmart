@@ -362,7 +362,7 @@ const MaterialRequestDashboard = () => {
         </div>
       </div>
 
-      <div className="px-6 py-6">
+      <div className="py-6">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           {stats.map((stat, idx) => (
@@ -406,7 +406,7 @@ const MaterialRequestDashboard = () => {
                 placeholder="Search by material, ID, or project..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none text-sm"
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none text-sm"
               />
             </div>
             <div className="flex gap-3">
@@ -414,7 +414,7 @@ const MaterialRequestDashboard = () => {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="appearance-none pr-4  pl-6 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none text-sm bg-white cursor-pointer"
+                  className="appearance-none pr-4  pl-6 py-2.5 border border-gray-200 rounded-lg focus:outline-none text-sm bg-white cursor-pointer"
                 >
                   <option value="all">All Status</option>
                   <option value="draft">Draft</option>
@@ -430,7 +430,7 @@ const MaterialRequestDashboard = () => {
                   </svg>
                 </div>
               </div>
-              <button className="px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium text-gray-700">
+              <button className="px-4 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium text-gray-700">
                 <Download className="w-4 h-4" />
                 <span className="hidden sm:inline">Export</span>
               </button>
@@ -591,7 +591,7 @@ const MaterialRequestDashboard = () => {
                     name="materialName"
                     value={formData.materialName}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     placeholder="e.g., Steel Rebar Grade 60"
                   />
                 </div>
@@ -604,7 +604,7 @@ const MaterialRequestDashboard = () => {
                       name="projectName"
                       value={formData.projectName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     >
                       <option value="">Select Project</option>
                       <option value="PRJ-2024-001 - Structural Steel Installation">
@@ -641,7 +641,7 @@ const MaterialRequestDashboard = () => {
                       name="priority"
                       value={formData.priority}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     >
                       <option value="low">Low</option>
                       <option value="normal">Normal</option>
@@ -659,7 +659,7 @@ const MaterialRequestDashboard = () => {
                     name="duedate"
                     value={formData.duedate}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                   />
                 </div>
                 <div>
@@ -671,7 +671,7 @@ const MaterialRequestDashboard = () => {
                     name="estValue"
                     value={formData.estValue}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                   />
                 </div>
 
@@ -684,7 +684,7 @@ const MaterialRequestDashboard = () => {
                     value={formData.description}
                     onChange={handleInputChange}
                     rows={4}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
                     placeholder="Add any additional information or special requirements..."
                   />
                 </div>
@@ -696,7 +696,7 @@ const MaterialRequestDashboard = () => {
                   </button>
                 </div>
                 {/* BOQ Table */}
-                <div className="overflow-x-auto border border-gray-300 rounded-lg">
+                <div className="overflow-x-auto border border-gray-200 rounded-lg">
                   <table className="w-full text-sm table-fixed">
                     <thead className="bg-gray-100 border-b border-gray-300">
                       <tr>
@@ -731,7 +731,7 @@ const MaterialRequestDashboard = () => {
                                   e.target.value
                                 )
                               }
-                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-500 focus:outline-none"
+                              className="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:outline-none"
                             >
                               <option value="">Select</option>
                               <option value="Construction">Construction</option>
@@ -752,7 +752,7 @@ const MaterialRequestDashboard = () => {
                                   e.target.value
                                 )
                               }
-                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-500 focus:outline-none"
+                              className="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:outline-none"
                               placeholder="Description"
                             />
                           </td>
@@ -767,7 +767,7 @@ const MaterialRequestDashboard = () => {
                                   e.target.value
                                 )
                               }
-                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-500 focus:outline-none"
+                              className="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:outline-none"
                               placeholder="0.00"
                             />
                           </td>
@@ -781,7 +781,7 @@ const MaterialRequestDashboard = () => {
                                   e.target.value
                                 )
                               }
-                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-500 focus:outline-none"
+                              className="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:outline-none"
                             >
                               <option value="">Select</option>
                               <option value="units">Units</option>
@@ -820,7 +820,7 @@ const MaterialRequestDashboard = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => setIsDrawerOpen(false)}
-                  className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                  className="flex-1 px-6 py-3 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                 >
                   Save as Draft
                 </button>

@@ -588,7 +588,7 @@ const VendorSettingsPage = () => {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg "
                       placeholder="e.g., Net 30"
                     />
                   </div>
@@ -598,7 +598,7 @@ const VendorSettingsPage = () => {
                     </label>
                     <input
                       type="number"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg "
                       placeholder="30"
                     />
                   </div>
@@ -608,7 +608,7 @@ const VendorSettingsPage = () => {
                     </label>
                     <textarea
                       rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg "
                       placeholder="Payment due within 30 days"
                     />
                   </div>
@@ -629,7 +629,7 @@ const VendorSettingsPage = () => {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg "
                       placeholder="e.g., Free On Board"
                     />
                   </div>
@@ -639,7 +639,7 @@ const VendorSettingsPage = () => {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent font-mono"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg  font-mono"
                       placeholder="FOB"
                       maxLength={5}
                     />
@@ -650,7 +650,7 @@ const VendorSettingsPage = () => {
                     </label>
                     <textarea
                       rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg "
                       placeholder="Describe the responsibilities and conditions"
                     />
                   </div>
@@ -671,7 +671,7 @@ const VendorSettingsPage = () => {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg "
                       placeholder="e.g., Standard"
                     />
                   </div>
@@ -682,7 +682,7 @@ const VendorSettingsPage = () => {
                       </label>
                       <input
                         type="number"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg "
                         placeholder="5"
                       />
                     </div>
@@ -692,7 +692,7 @@ const VendorSettingsPage = () => {
                       </label>
                       <input
                         type="number"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg "
                         placeholder="7"
                       />
                     </div>
@@ -703,7 +703,7 @@ const VendorSettingsPage = () => {
                     </label>
                     <textarea
                       rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg "
                       placeholder="Regular delivery timeframe"
                     />
                   </div>
@@ -721,7 +721,7 @@ const VendorSettingsPage = () => {
             <div className="border-t border-gray-200 px-6 py-4 bg-gray-50 flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors font-medium"
+                className="px-6 py-2.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors font-medium"
               >
                 Cancel
               </button>
