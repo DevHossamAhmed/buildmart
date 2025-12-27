@@ -1,13 +1,9 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Users,
-  
-  Search,
-  Filter,
- 
   Edit2,
   Trash2,
   Mail,
@@ -17,21 +13,32 @@ import {
   Eye,
   Download,
   Upload,
-  
   UserCheck,
   UserX,
-  
   Plus,
-  X,
 } from "lucide-react";
+import PageHeaderWrapper from "@/components/ui/PageHeaderWrapper";
+import StatCard from "@/components/ui/StatCard";
+import Pagination from "@/components/ui/Pagination";
+import Button from "@/components/ui/Button";
+import UsersTeamsFilterBar, {
+  UsersTeamsFilters,
+} from "./components/UsersTeamsFilterBar";
+import { CreateUserModal, CreateTeamModal } from "./components/modals";
 
 const UsersTeamsPage = () => {
-  const [activeTab, setActiveTab] = useState("teams");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<"users" | "teams">("teams");
+  const [filters, setFilters] = useState<UsersTeamsFilters>({
+    search: "",
+    status: "all",
+    department: "all",
+    role: "all",
+    team: "all",
+  });
   const [showUserModal, setShowUserModal] = useState(false);
   const [showTeamModal, setShowTeamModal] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState("all");
-  const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Sample Users Data
   const usersData = [
@@ -45,7 +52,7 @@ const UsersTeamsPage = () => {
       status: "active",
       avatar: "AM",
       department: "Engineering",
-      entity: "Main Office", 
+      entity: "Main Office",
       joinDate: "2024-01-15",
       lastActive: "2 hours ago",
     },
@@ -59,7 +66,7 @@ const UsersTeamsPage = () => {
       status: "active",
       avatar: "SA",
       department: "Procurement",
-      entity: "Supply Chain Division", 
+      entity: "Supply Chain Division",
       joinDate: "2024-02-20",
       lastActive: "5 mins ago",
     },
@@ -73,7 +80,7 @@ const UsersTeamsPage = () => {
       status: "active",
       avatar: "MA",
       department: "Engineering",
-      entity: "Main Office", 
+      entity: "Main Office",
       joinDate: "2023-11-10",
       lastActive: "1 day ago",
     },
@@ -87,7 +94,7 @@ const UsersTeamsPage = () => {
       status: "inactive",
       avatar: "FH",
       department: "Finance",
-      entity: "Corporate Headquarters", 
+      entity: "Corporate Headquarters",
       joinDate: "2024-03-05",
       lastActive: "1 week ago",
     },
@@ -101,14 +108,14 @@ const UsersTeamsPage = () => {
       status: "active",
       avatar: "OK",
       department: "IT",
-      entity: "Technology Center", 
+      entity: "Technology Center",
       joinDate: "2023-09-12",
       lastActive: "30 mins ago",
     },
   ];
 
   // Sample Teams Data
- const teamsData = [
+  const teamsData = [
     {
       id: 1,
       name: "Engineering Team",
@@ -119,7 +126,7 @@ const UsersTeamsPage = () => {
       projects: 8,
       status: "active",
       color: "blue",
-      entity: "Main Office", 
+      entity: "Main Office",
     },
     {
       id: 2,
@@ -141,7 +148,7 @@ const UsersTeamsPage = () => {
       projects: 20,
       status: "active",
       color: "purple",
-      entity: "Corporate Headquarters", 
+      entity: "Corporate Headquarters",
     },
     {
       id: 4,
@@ -152,17 +159,17 @@ const UsersTeamsPage = () => {
       projects: 3,
       status: "active",
       color: "orange",
-      entity: "Technology Center", 
+      entity: "Technology Center",
     },
   ];
 
-//@ts-expect-error:status
+  //@ts-expect-error:status
   const getStatusColor = (status) => {
     return status === "active"
       ? "bg-green-100 text-green-700 border-green-300"
       : "bg-gray-100 text-gray-700 border-gray-300";
   };
-//@ts-expect-error:color
+  //@ts-expect-error:color
   const getTeamColor = (color) => {
     const colors = {
       blue: "bg-blue-100 text-blue-700 border-blue-300",
@@ -175,983 +182,611 @@ const UsersTeamsPage = () => {
     return colors[color] || colors.blue;
   };
 
-  const filteredUsers = usersData.filter((user) => {
-    const matchesSearch =
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchQuery.toLowerCase());
+  // Extract unique values for filter options
+  const departmentOptions = useMemo(() => {
+    const uniqueDepartments = Array.from(
+      new Set(usersData.map((user) => user.department))
+    );
+    return uniqueDepartments.map((dept) => ({
+      value: dept,
+      label: dept,
+    }));
+  }, [usersData]);
 
-    const matchesFilter =
-      selectedFilter === "all" ||
-      (selectedFilter === "active" && user.status === "active") ||
-      (selectedFilter === "inactive" && user.status === "inactive");
+  const roleOptions = useMemo(() => {
+    const uniqueRoles = Array.from(
+      new Set(usersData.map((user) => user.role))
+    );
+    return uniqueRoles.map((role) => ({
+      value: role,
+      label: role,
+    }));
+  }, [usersData]);
 
-    return matchesSearch && matchesFilter;
-  });
+  const teamOptions = useMemo(() => {
+    const uniqueTeams = Array.from(
+      new Set(usersData.map((user) => user.team))
+    );
+    return uniqueTeams.map((team) => ({
+      value: team,
+      label: team,
+    }));
+  }, [usersData]);
 
-  const filteredTeams = teamsData.filter((team) =>
-    team.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const statusFilterOptions = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+  ];
+
+  const filteredUsers = useMemo(() => {
+    return usersData.filter((user) => {
+      const matchesSearch =
+        !filters.search ||
+        user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+        user.email.toLowerCase().includes(filters.search.toLowerCase()) ||
+        user.role.toLowerCase().includes(filters.search.toLowerCase());
+
+      const matchesStatus =
+        filters.status === "all" || user.status === filters.status;
+      const matchesDepartment =
+        filters.department === "all" || user.department === filters.department;
+      const matchesRole =
+        filters.role === "all" || user.role === filters.role;
+      const matchesTeam =
+        filters.team === "all" || user.team === filters.team;
+
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesDepartment &&
+        matchesRole &&
+        matchesTeam
+      );
+    });
+  }, [usersData, filters]);
+
+  const filteredTeams = useMemo(() => {
+    return teamsData.filter((team) =>
+      !filters.search ||
+      team.name.toLowerCase().includes(filters.search.toLowerCase())
+    );
+  }, [teamsData, filters]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters, activeTab]);
+
+  // Pagination logic
+  const usersTotalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const teamsTotalPages = Math.ceil(filteredTeams.length / itemsPerPage);
+  const totalPages = activeTab === "users" ? usersTotalPages : teamsTotalPages;
+
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredUsers.slice(startIndex, endIndex);
+  }, [filteredUsers, currentPage, itemsPerPage]);
+
+  const paginatedTeams = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredTeams.slice(startIndex, endIndex);
+  }, [filteredTeams, currentPage, itemsPerPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleExport = () => {
+    console.log("Exporting data...", activeTab === "users" ? filteredUsers : filteredTeams);
+  };
+
+  const handleFiltersChange = (newFilters: UsersTeamsFilters) => {
+    setFilters(newFilters);
+  };
+
+  // Stats for Users
+  const usersStats = [
+    {
+      label: "Total Users",
+      value: String(usersData.length),
+      icon: Users,
+      iconColor: "text-blue-500",
+      trend: "up" as const,
+    },
+    {
+      label: "Active Users",
+      value: String(usersData.filter((u) => u.status === "active").length),
+      icon: UserCheck,
+      iconColor: "text-green-500",
+      trend: "up" as const,
+    },
+    {
+      label: "Inactive Users",
+      value: String(usersData.filter((u) => u.status === "inactive").length),
+      icon: UserX,
+      iconColor: "text-gray-500",
+      trend: "neutral" as const,
+    },
+    {
+      label: "Admins",
+      value: String(usersData.filter((u) => u.role === "Admin").length),
+      icon: Shield,
+      iconColor: "text-purple-500",
+      trend: "neutral" as const,
+    },
+  ];
+
+  // Stats for Teams
+  const teamsStats = [
+    {
+      label: "Total Teams",
+      value: String(teamsData.length),
+      icon: Users,
+      iconColor: "text-blue-500",
+      trend: "up" as const,
+    },
+    {
+      label: "Total Users",
+      value: String(teamsData.reduce((sum, team) => sum + team.members, 0)),
+      icon: UserCheck,
+      iconColor: "text-green-500",
+      trend: "up" as const,
+    },
+    {
+      label: "Total Permissions",
+      value: "20",
+      icon: Building2,
+      iconColor: "text-purple-500",
+      trend: "neutral" as const,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Users & Teams
-              </h1>
-              <p className="text-sm text-gray-600 mt-1">
-                Manage your organization&lsquo;s users and teams
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium">
-                <Download className="w-4 h-4" />
-                Export
-              </button>
-              <button className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium">
-                <Upload className="w-4 h-4" />
-                Import
-              </button>
-              <button
-                onClick={() =>
-                  activeTab === "teams"
-                    ? setShowTeamModal(true)
-                    : setShowUserModal(true)
-                }
-                className="px-4 py-2 text-white cursor-pointer rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2 text-sm font-medium"
-                style={{ backgroundColor: "#d92335" }}
-              >
-                <Plus className="w-4 h-4" />
-                {activeTab === "teams" ?  "Create Team": "Add User"}
-              </button>
-            </div>
-          </div>
+      {/* Enhanced Header with Tabs */}
+      <PageHeaderWrapper
+        title="Users & Teams"
+        description="Manage your organization's users and teams"
+        sticky={true}
+        zIndex={40}
+        actions={
+          <>
+            <Button
+              variant="outline"
+              size="md"
+              leftIcon={<Upload className="w-4 h-4" />}
+            >
+              Import
+            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              leftIcon={<Plus className="w-4 h-4" />}
+              onClick={() =>
+                activeTab === "teams"
+                  ? setShowTeamModal(true)
+                  : setShowUserModal(true)
+              }
+              style={{ backgroundColor: "#d92335" }}
+            >
+              {activeTab === "teams" ? "Create Team" : "Add User"}
+            </Button>
+          </>
+        }
+      >
+        {/* Tabs */}
+        <div className="flex gap-6 border-b border-gray-200 -mb-4">
+          {(["teams", "users"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`pb-3 px-1 text-sm font-medium transition-colors cursor-pointer relative ${
+                activeTab === tab
+                  ? "text-red-600"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              {tab === "teams" ? "Teams" : "Users"}
+              {activeTab === tab && (
+                <div
+                  className="absolute bottom-0 left-0 right-0 h-0.5"
+                  style={{ backgroundColor: "#d92335" }}
+                />
+              )}
+            </button>
+          ))}
+        </div>
+      </PageHeaderWrapper>
 
-          {/* Tabs */}
-          <div className="flex items-center justify-between">
-            <div className="flex gap-6 border-b border-gray-200">
-              {["teams", "users"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`pb-3 px-1 text-sm  font-medium transition-colors cursor-pointer relative ${
-                    activeTab === tab
-                      ? "text-red-600"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
-                >
-                  {tab === "teams" ? "Teams" : "Users"}
-                  {activeTab === tab && (
-                    <div
-                      className="absolute bottom-0 left-0 right-0 h-0.5"
-                      style={{ backgroundColor: "#d92335" }}
-                    />
-                  )}
-                </button>
+      {/* Main Content */}
+      <div className="px-4 sm:px-6 lg:px-8 py-6">
+        {activeTab === "users" && (
+          <div className="space-y-6">
+            {/* Enhanced Stats Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {usersStats.map((stat, idx) => (
+                <StatCard
+                  key={idx}
+                  label={stat.label}
+                  value={stat.value}
+                  icon={stat.icon}
+                  iconColor={stat.iconColor}
+                  trend={stat.trend}
+                />
               ))}
             </div>
 
-            {/* Search and Filter */}
-            <div className="flex items-center gap-3 pb-3">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={`Search ${activeTab}...`}
-                  className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none text-sm w-64"
-                />
-              </div>
-              {activeTab === "users" && (
-                <div className="relative">
-                  <button
-                    onClick={() => setShowFilterMenu(!showFilterMenu)}
-                    className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium"
-                  >
-                    <Filter className="w-4 h-4" />
-                    Filter
-                  </button>
-                  {showFilterMenu && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                      <button
-                        onClick={() => {
-                          setSelectedFilter("all");
-                          setShowFilterMenu(false);
-                        }}
-                        className="w-full px-4 py-2 cursor-pointer text-left text-sm hover:bg-gray-50"
-                      >
-                        All Users
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedFilter("active");
-                          setShowFilterMenu(false);
-                        }}
-                        className="w-full px-4 py-2 cursor-pointer text-left text-sm hover:bg-gray-50"
-                      >
-                        Active Only
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedFilter("inactive");
-                          setShowFilterMenu(false);
-                        }}
-                        className="w-full px-4 py-2 cursor-pointer text-left text-sm hover:bg-gray-50"
-                      >
-                        Inactive Only
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+            {/* Professional Filter Bar */}
+            <UsersTeamsFilterBar
+              filters={filters}
+              onFiltersChange={handleFiltersChange}
+              onExport={handleExport}
+              statusOptions={statusFilterOptions}
+              departmentOptions={departmentOptions}
+              roleOptions={roleOptions}
+              teamOptions={teamOptions}
+              activeTab={activeTab}
+            />
 
-      {/* Main Content */}
-      <div className="py-6">
-        {activeTab === "users" && (
-          <div className="space-y-4">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-4 gap-4 mb-6">
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Users className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <p className="text-sm text-gray-600">Total Users</p>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {usersData.length}
-                </p>
-              </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <UserCheck className="w-5 h-5 text-green-600" />
-                  </div>
-                  <p className="text-sm text-gray-600">Active Users</p>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {usersData.filter((u) => u.status === "active").length}
-                </p>
-              </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-gray-100 rounded-lg">
-                    <UserX className="w-5 h-5 text-gray-600" />
-                  </div>
-                  <p className="text-sm text-gray-600">Inactive Users</p>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {usersData.filter((u) => u.status === "inactive").length}
-                </p>
-              </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <Shield className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <p className="text-sm text-gray-600">Admins</p>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {usersData.filter((u) => u.role === "Admin").length}
-                </p>
-              </div>
-            </div>
-
-            {/* Users Table */}
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            {/* Enhanced Users Table */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                <table className="w-full min-w-[1000px]">
+                  <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         User
                       </th>
-                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Department
                       </th>
-                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                        Entity 
+                      <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                        Entity
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Role
                       </th>
-                     
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Team
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Contact
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Status
                       </th>
-                     
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Last Active
                       </th>
-                      <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {filteredUsers.map((user) => (
-                      <tr key={user.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div
-                              className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
-                              style={{ backgroundColor: "#d92335" }}
-                            >
-                              {user.avatar}
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-gray-900">
-                                {user.name}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {user.email}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                       
-                         <td className="px-6 py-4">
-                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
-                            {user.department}
-                          </span>
-                        </td>
-                         <td className="px-6 py-4">
-                          <p className="text-sm text-gray-600">
-                            {user.entity}
-                          </p>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
-                            {user.role}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <p className="text-sm text-gray-900">{user.team}</p>
-                          <p className="text-xs text-gray-500">
-                            {user.department}
-                          </p>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-2 text-xs text-gray-600">
-                              <Mail className="w-3 h-3" />
-                              {user.email}
-                            </div>
-                            <div className="flex items-center gap-2 text-xs text-gray-600">
-                              <Phone className="w-3 h-3" />
-                              {user.phone}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(
-                              user.status
-                            )}`}
-                          >
-                            {user.status.charAt(0).toUpperCase() +
-                              user.status.slice(1)}
-                          </span>
-                        </td>
-                       
-                        <td className="px-6 py-4">
-                          <p className="text-sm text-gray-600">
-                            {user.lastActive}
-                          </p>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center justify-end gap-2">
-                            <button className="p-2 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors">
-                              <Eye className="w-4 h-4 text-gray-600" />
-                            </button>
-                            <button className="p-2 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors">
-                              <Edit2 className="w-4 h-4 text-gray-600" />
-                            </button>
-                            <button className="p-2 hover:bg-red-50 rounded-lg cursor-pointer transition-colors">
-                              <Trash2 className="w-4 h-4 text-red-600" />
-                            </button>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {paginatedUsers.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={9}
+                          className="px-4 sm:px-6 py-12 sm:py-16 text-center"
+                        >
+                          <div className="flex flex-col items-center justify-center">
+                            <Users className="w-12 h-12 text-gray-400 mb-3" />
+                            <p className="text-sm sm:text-base font-medium text-gray-900 mb-1">
+                              No users found
+                            </p>
+                            <p className="text-xs sm:text-sm text-gray-500">
+                              {filters.search || filters.status !== "all"
+                                ? "Try adjusting your filters"
+                                : "Create your first user"}
+                            </p>
                           </div>
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      paginatedUsers.map((user) => (
+                        <tr
+                          key={user.id}
+                          className="hover:bg-gray-50 transition-colors duration-150"
+                        >
+                          <td className="px-4 sm:px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div
+                                className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0"
+                                style={{ backgroundColor: "#d92335" }}
+                              >
+                                {user.avatar}
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-gray-900">
+                                  {user.name}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  {user.email}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <span className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                              {user.department}
+                            </span>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <p className="text-sm text-gray-600">
+                              {user.entity}
+                            </p>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <span className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                              {user.role}
+                            </span>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <p className="text-sm font-medium text-gray-900">
+                              {user.team}
+                            </p>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-2 text-xs text-gray-600">
+                                <Mail className="w-3 h-3" />
+                                {user.email}
+                              </div>
+                              <div className="flex items-center gap-2 text-xs text-gray-600">
+                                <Phone className="w-3 h-3" />
+                                {user.phone}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <span
+                              className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusColor(
+                                user.status
+                              )}`}
+                            >
+                              {user.status.charAt(0).toUpperCase() +
+                                user.status.slice(1)}
+                            </span>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <p className="text-sm text-gray-600">
+                              {user.lastActive}
+                            </p>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors duration-150"
+                                title="View"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-md transition-colors duration-150"
+                                title="Edit"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
+                                className="p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors duration-150"
+                                title="Delete"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
+
+              {/* Pagination */}
+              {filteredUsers.length > 0 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={usersTotalPages}
+                  totalItems={filteredUsers.length}
+                  itemsPerPage={itemsPerPage}
+                  onPageChange={handlePageChange}
+                  onItemsPerPageChange={setItemsPerPage}
+                  itemsPerPageOptions={[10, 25, 50, 100]}
+                  showItemsPerPage={true}
+                />
+              )}
             </div>
           </div>
         )}
 
         {activeTab === "teams" && (
-          <div className="space-y-4">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-3 gap-12 mb-6">
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Users className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <p className="text-sm text-gray-600">Total Teams</p>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {teamsData.length}
-                </p>
-              </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <UserCheck className="w-5 h-5 text-green-600" />
-                  </div>
-                  <p className="text-sm text-gray-600">Total Users</p>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {teamsData.reduce((sum, team) => sum + team.members, 0)}
-                </p>
-              </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-5">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <Building2 className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <p className="text-sm text-gray-600">total permissions</p>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">20</p>
-              </div>
+          <div className="space-y-6">
+            {/* Enhanced Stats Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {teamsStats.map((stat, idx) => (
+                <StatCard
+                  key={idx}
+                  label={stat.label}
+                  value={stat.value}
+                  icon={stat.icon}
+                  iconColor={stat.iconColor}
+                  trend={stat.trend}
+                />
+              ))}
             </div>
 
-            {/* Teams Table */}
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            {/* Professional Filter Bar */}
+            <UsersTeamsFilterBar
+              filters={filters}
+              onFiltersChange={handleFiltersChange}
+              onExport={handleExport}
+              statusOptions={statusFilterOptions}
+              departmentOptions={departmentOptions}
+              roleOptions={roleOptions}
+              teamOptions={teamOptions}
+              activeTab={activeTab}
+            />
+
+            {/* Enhanced Teams Table */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                <table className="w-full min-w-[800px]">
+                  <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Name
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Entity
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Description
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Number of Permissions
                       </th>
-
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Count Users
                       </th>
-                      
-
-                      <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
+                      <th className="px-4 sm:px-6 py-3.5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {filteredTeams.map((team) => (
-                      <tr key={team.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`w-10 h-10 rounded-lg flex items-center justify-center ${getTeamColor(
-                                team.color
-                              )}`}
-                            >
-                              <Users className="w-5 h-5" />
-                            </div>
-                            <p className="text-sm font-semibold text-gray-900">
-                              {team.name}
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {paginatedTeams.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={6}
+                          className="px-4 sm:px-6 py-12 sm:py-16 text-center"
+                        >
+                          <div className="flex flex-col items-center justify-center">
+                            <Users className="w-12 h-12 text-gray-400 mb-3" />
+                            <p className="text-sm sm:text-base font-medium text-gray-900 mb-1">
+                              No teams found
                             </p>
-                          </div>
-                        </td>
-                         <td className="px-6 py-4 ">
-                          <span className="text-sm text-gray-600 max-w-xs truncate font-medium ">
-                            {team.entity}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <p className="text-sm text-gray-600 max-w-xs truncate">
-                            {team.description}
-                          </p>
-                        </td>
-                        <td className="px-6 py-4 ">
-                          <span className="text-sm text-gray-600 max-w-xs truncate font-medium ">
-                            {team.NumberofRoles}
-                          </span>
-                        </td>
-
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <Users className="w-4 h-4 text-gray-400" />
-                            <p className="text-sm font-medium text-gray-900">
-                              {team.members}
+                            <p className="text-xs sm:text-sm text-gray-500">
+                              {filters.search
+                                ? "Try adjusting your filters"
+                                : "Create your first team"}
                             </p>
-                          </div>
-                        </td>
-                       
-
-                        <td className="px-6 py-4">
-                          <div className="flex items-center justify-end gap-2">
-                            <button className="p-2 hover:bg-gray-100 cursor-pointer rounded-lg transition-colors">
-                              <Eye className="w-4 h-4 text-gray-600" />
-                            </button>
-                            <button className="p-2 hover:bg-gray-100 cursor-pointer rounded-lg transition-colors">
-                              <Edit2 className="w-4 h-4 text-gray-600" />
-                            </button>
-                            <button className="p-2 hover:bg-red-50 cursor-pointer rounded-lg transition-colors">
-                              <Trash2 className="w-4 h-4 text-red-600" />
-                            </button>
                           </div>
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      paginatedTeams.map((team) => (
+                        <tr
+                          key={team.id}
+                          className="hover:bg-gray-50 transition-colors duration-150"
+                        >
+                          <td className="px-4 sm:px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div
+                                className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${getTeamColor(
+                                  team.color
+                                )}`}
+                              >
+                                <Users className="w-5 h-5" />
+                              </div>
+                              <p className="text-sm font-semibold text-gray-900">
+                                {team.name}
+                              </p>
+                            </div>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <span className="text-sm text-gray-600 font-medium">
+                              {team.entity}
+                            </span>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <p className="text-sm text-gray-600 max-w-xs">
+                              {team.description}
+                            </p>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <span className="text-sm font-medium text-gray-900">
+                              {team.NumberofRoles}
+                            </span>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <div className="flex items-center gap-2">
+                              <Users className="w-4 h-4 text-gray-400" />
+                              <p className="text-sm font-medium text-gray-900">
+                                {team.members}
+                              </p>
+                            </div>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors duration-150"
+                                title="View"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-md transition-colors duration-150"
+                                title="Edit"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
+                                className="p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors duration-150"
+                                title="Delete"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
+
+              {/* Pagination */}
+              {filteredTeams.length > 0 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={teamsTotalPages}
+                  totalItems={filteredTeams.length}
+                  itemsPerPage={itemsPerPage}
+                  onPageChange={handlePageChange}
+                  onItemsPerPageChange={setItemsPerPage}
+                  itemsPerPageOptions={[10, 25, 50, 100]}
+                  showItemsPerPage={true}
+                />
+              )}
             </div>
           </div>
         )}
       </div>
 
-      {/* Add User Modal */}
-      {showUserModal && (
-        <div className="fixed inset-0 bg-black/5 bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white">
-              <h2 className="text-xl font-semibold text-gray-900">
-                Add New User
-              </h2>
-              <button
-                onClick={() => setShowUserModal(false)}
-                className="p-2 hover:bg-gray-100 cursor-pointer rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-600" />
-              </button>
-            </div>
+      {/* Modals */}
+      <CreateUserModal
+        isOpen={showUserModal}
+        onClose={() => setShowUserModal(false)}
+        onSubmit={(data) => {
+          console.log("User created:", data);
+          setShowUserModal(false);
+        }}
+        teamsData={teamsData}
+      />
 
-            <div className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    First Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter first name"
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Last Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter last name"
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="user@company.com"
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    placeholder="+966 XX XXX XXXX"
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="w-full relative">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Team
-                </label>
-                <div className="relative">
-                  <select className="appearance-none w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none bg-white pr-10">
-                    <option value="">Select team</option>
-                    {teamsData.map((team) => (
-                      <option key={team.id} value={team.name}>
-                        {team.name}
-                      </option>
-                    ))}
-                  </select>
-
-                  {/* السهم */}
-                  <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                    <svg
-                      className="w-5 h-5 text-gray-500"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Permissions <span className="text-red-500">*</span>
-                </label>
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          View Projects
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can view all projects
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Create Projects
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can create new projects
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Edit Projects
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can edit project details
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Delete Projects
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can delete projects
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Manage RFBs
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can create and manage RFBs
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Approve Requests
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can approve material requests
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Manage Users
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can add and edit users
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          View Reports
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can access all reports
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Manage Documents
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can upload and delete documents
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Financial Access
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can view financial data
-                        </p>
-                      </div>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
-              <button
-                onClick={() => setShowUserModal(false)}
-                className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 cursor-pointer text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium"
-                style={{ backgroundColor: "#d92335" }}
-              >
-                Add User
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Create Team Modal */}
-      {showTeamModal && (
-        <div className="fixed inset-0 bg-black/5 bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white">
-              <h2 className="text-xl font-semibold text-gray-900">
-                Create New Team
-              </h2>
-              <button
-                onClick={() => setShowTeamModal(false)}
-                className="p-2 hover:bg-gray-100 cursor-pointer rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-600" />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Team Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter team name"
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
-                </label>
-                <textarea
-                  placeholder="Enter team description"
-                  rows={3}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none resize-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Permissions <span className="text-red-500">*</span>
-                </label>
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          View Projects
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can view all projects
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Create Projects
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can create new projects
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Edit Projects
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can edit project details
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Delete Projects
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can delete projects
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Manage RFBs
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can create and manage RFBs
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Approve Requests
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can approve material requests
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Manage Users
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can add and edit users
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          View Reports
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can access all reports
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Manage Documents
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can upload and delete documents
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-red-600 focus:ring-red-500 rounded mt-0.5"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Financial Access
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Can view financial data
-                        </p>
-                      </div>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Team Members
-                </label>
-                <div className="border border-gray-200 rounded-lg p-4 max-h-48 overflow-y-auto">
-                  <div className="space-y-2">
-                    {usersData.map((user) => (
-                      <label
-                        key={user.id}
-                        className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          className="w-4 h-4 text-red-600 focus:ring-red-500 rounded"
-                        />
-                        <div
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold"
-                          style={{ backgroundColor: "#d92335" }}
-                        >
-                          {user.avatar}
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">
-                            {user.name}
-                          </p>
-                          <p className="text-xs text-gray-500">{user.role}</p>
-                        </div>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
-              <button
-                onClick={() => setShowTeamModal(false)}
-                className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 cursor-pointer text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium"
-                style={{ backgroundColor: "#d92335" }}
-              >
-                Create Team
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <CreateTeamModal
+        isOpen={showTeamModal}
+        onClose={() => setShowTeamModal(false)}
+        onSubmit={(data) => {
+          console.log("Team created:", data);
+          setShowTeamModal(false);
+        }}
+        usersData={usersData}
+      />
     </div>
   );
 };

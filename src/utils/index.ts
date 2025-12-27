@@ -13,7 +13,7 @@ export const formatDate = (
     return "Invalid Date";
   }
 
-  const options: Intl.DateTimeFormatOptions = {
+  const optionsMap: Record<"short" | "long" | "datetime", Intl.DateTimeFormatOptions> = {
     short: { year: "numeric", month: "short", day: "numeric" },
     long: { year: "numeric", month: "long", day: "numeric" },
     datetime: {
@@ -25,7 +25,7 @@ export const formatDate = (
     },
   };
 
-  return new Intl.DateTimeFormat("en-US", options[format]).format(dateObj);
+  return new Intl.DateTimeFormat("en-US", optionsMap[format]).format(dateObj);
 };
 
 /**

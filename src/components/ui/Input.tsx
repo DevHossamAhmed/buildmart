@@ -1,7 +1,7 @@
 import React, { InputHTMLAttributes, forwardRef } from "react";
 import { InputSize } from "@/types";
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string;
   error?: string;
   helperText?: string;

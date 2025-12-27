@@ -1,44 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Plus,
-  Search,
-  Calendar,
-  MapPin,
-  Users,
-  Package,
-  AlertCircle,
   TrendingUp,
   Clock,
   CheckCircle2,
-  MoreVertical,
+  Package,
+  AlertCircle,
   Eye,
   Edit2,
   Trash2,
-  Archive,
   GitBranch,
+  MapPin,
+  Users,
+  Calendar,
 } from "lucide-react";
+import PageHeaderWrapper from "@/components/ui/PageHeaderWrapper";
+import StatCard from "@/components/ui/StatCard";
+import Pagination from "@/components/ui/Pagination";
+import Button from "@/components/ui/Button";
+import ProjectFilterBar, { ProjectFilters } from "./components/ProjectFilterBar";
+import { CreateProjectModal } from "./components/modals";
 
 const ProjectsDashboard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    projectName: "",
-    projectCode: "",
-    location: "",
-    startDate: "",
-    endDate: "",
-    projectManager: "",
-    status: "active",
-    budget: "",
-    description: "",
-    projectPortofolioDirector: "",
-    projectDirector: "",
+  const [filters, setFilters] = useState<ProjectFilters>({
+    search: "",
+    status: "all",
   });
+  const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const [projects, setProjects] = useState([
     {
@@ -127,30 +121,30 @@ const ProjectsDashboard = () => {
     {
       label: "Active Projects",
       value: "12",
-      change: "+3",
       icon: TrendingUp,
-      color: "bg-blue-500",
+      iconColor: "text-blue-500",
+      trend: "up" as const,
     },
     {
       label: "Total Budget",
       value: "32.5M SAR",
-      change: "+15%",
       icon: Package,
-      color: "bg-green-500",
+      iconColor: "text-green-500",
+      trend: "up" as const,
     },
     {
       label: "Pending Requests",
       value: "40",
-      change: "-5",
       icon: Clock,
-      color: "bg-yellow-500",
+      iconColor: "text-yellow-500",
+      trend: "down" as const,
     },
     {
       label: "Completed",
       value: "8",
-      change: "+2",
       icon: CheckCircle2,
-      color: "bg-purple-500",
+      iconColor: "text-purple-500",
+      trend: "up" as const,
     },
   ];
 
@@ -184,13 +178,54 @@ const ProjectsDashboard = () => {
     }).format(amount);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleInputChange = (e: { target: { name: any; value: any } }) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const statusFilterOptions = [
+    { value: "active", label: "Active" },
+    { value: "planning", label: "Planning" },
+    { value: "on-hold", label: "On Hold" },
+    { value: "completed", label: "Completed" },
+  ];
+
+  const filteredProjects = useMemo(() => {
+    return projects.filter((project) => {
+      const matchesSearch =
+        !filters.search ||
+        project.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+        project.code.toLowerCase().includes(filters.search.toLowerCase()) ||
+        project.location.toLowerCase().includes(filters.search.toLowerCase());
+      const matchesStatus =
+        filters.status === "all" || project.status === filters.status;
+      return matchesSearch && matchesStatus;
+    });
+  }, [projects, filters]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+
+  const paginatedProjects = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredProjects.slice(startIndex, endIndex);
+  }, [filteredProjects, currentPage, itemsPerPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleSave = () => {
+  const handleExport = () => {
+    console.log("Exporting projects...", filteredProjects);
+  };
+
+  const handleFiltersChange = (newFilters: ProjectFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleSave = (formData: any) => {
     const newProject = {
       id: `PRJ-${String(projects.length + 1).padStart(3, "0")}`,
       name: formData.projectName,
@@ -209,484 +244,241 @@ const ProjectsDashboard = () => {
     };
     setProjects([newProject, ...projects]);
     setIsDrawerOpen(false);
-    setFormData({
-      projectName: "",
-      projectCode: "",
-      location: "",
-      startDate: "",
-      endDate: "",
-      projectManager: "",
-      status: "active",
-      budget: "",
-      description: "",
-      projectPortofolioDirector: "",
-      projectDirector: "",
-    });
   };
-
-  const filteredProjects = projects.filter((project) => {
-    const matchesSearch =
-      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || project.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
 
   return (
     <div className="min-h-screen bg-gray-50 w-full">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="px-6 py-6 ">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                Projects
-              </h1>
-              <p className="text-sm text-gray-600 mt-1">
-                Manage and track all construction projects
-              </p>
-            </div>
-            <button
-              onClick={() => setIsDrawerOpen(true)}
-              className="flex items-center justify-center gap-2 px-6 py-3 text-white rounded-lg shadow-md hover:opacity-90 transition-opacity font-medium"
-              style={{ backgroundColor: "#d92335" }}
-            >
-              <Plus className="w-5 h-5" />
-              <span>New Project</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* Enhanced Header */}
+      <PageHeaderWrapper
+        title="Projects"
+        description="Manage and track all construction projects"
+        sticky={true}
+        zIndex={40}
+        actions={
+          <Button
+            variant="primary"
+            size="md"
+            leftIcon={<Plus className="w-5 h-5" />}
+            onClick={() => setIsDrawerOpen(true)}
+            style={{ backgroundColor: "#d92335" }}
+          >
+            New Project
+          </Button>
+        }
+      />
 
-      <div className="py-6">
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          {stats.map((stat, idx) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={idx}
-                className="bg-white rounded-lg shadow-sm p-5 border border-gray-100"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {stat.value}
-                    </p>
-                    <p
-                      className={`text-xs mt-1 flex items-center gap-1 ${
-                        stat.change.startsWith("+")
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }`}
-                    >
-                      <TrendingUp className="w-3 h-3" />
-                      {stat.change} this month
-                    </p>
-                  </div>
-                  <div
-                    className={`w-12 h-12 rounded-lg ${stat.color} bg-opacity-10 flex items-center justify-center`}
-                  >
-                    <Icon
-                      className={`w-6 h-6 ${stat.color.replace(
-                        "bg-",
-                        "text-"
-                      )}`}
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Search and Filter */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-6 border border-gray-100">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search projects by name, code, or location..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none text-sm"
-              />
-            </div>
-            <div className="flex gap-3">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none text-sm bg-white"
-              >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="planning">Planning</option>
-                <option value="on-hold">On Hold</option>
-                <option value="completed">Completed</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredProjects.map((project) => (
-            <div
-              key={project.id}
-              className="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-            >
-              {/* Card Header */}
-              <div className="p-5 border-b border-gray-100">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">
-                      {project.name}
-                    </h3>
-                    <p className="text-sm text-gray-600">{project.code}</p>
-                  </div>
-                  <button className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors">
-                    <MoreVertical className="w-5 h-5" />
-                  </button>
-                </div>
-                <span
-                  className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusBadge(
-                    project.status
-                  )}`}
-                >
-                  {project.status.charAt(0).toUpperCase() +
-                    project.status.slice(1).replace("-", " ")}
-                </span>
-              </div>
-
-              {/* Card Body */}
-              <div className="p-5 space-y-4">
-                {/* Progress */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">
-                      Progress
-                    </span>
-                    <span className="text-sm font-bold text-gray-900">
-                      {project.progress}%
-                    </span>
-                  </div>
-                  <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full ${getProgressColor(
-                        project.progress
-                      )} transition-all duration-300`}
-                      style={{ width: `${project.progress}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Info Grid */}
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <MapPin className="w-4 h-4 text-gray-400" />
-                    <span className="truncate">{project.location}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Users className="w-4 h-4 text-gray-400" />
-                    <span>{project.team} members</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Calendar className="w-4 h-4 text-gray-400" />
-                    <span>{project.startDate}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Package className="w-4 h-4 text-gray-400" />
-                    <span>{project.totalRequests} requests</span>
-                  </div>
-                </div>
-
-                {/* Budget */}
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-gray-600">Budget</span>
-                    <span className="text-xs font-medium text-gray-900">
-                      {formatCurrency(project.budget)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-600">Spent</span>
-                    <span className="text-xs font-medium text-gray-900">
-                      {formatCurrency(project.spent)}
-                    </span>
-                  </div>
-                  <div className="mt-2 w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-blue-500"
-                      style={{
-                        width: `${(project.spent / project.budget) * 100}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-
-                {/* Manager & Pending */}
-                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold">
-                      {project.manager
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-gray-900">
-                        {project.manager}
-                      </p>
-                      <p className="text-xs text-gray-500">Project Manager</p>
-                    </div>
-                  </div>
-                  {project.pendingRequests > 0 && (
-                    <div className="flex items-center gap-1 text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">
-                      <AlertCircle className="w-3 h-3" />
-                      <span className="text-xs font-medium">
-                        {project.pendingRequests} pending
-                      </span>
-                    </div>
-                  )}
-                </div>
-               
-              </div>
-
-              {/* Card Footer */}
-              <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-2">
-                 <button
-                  onClick={() =>
-                    router.push(`/approval-work-flow/${project.id}`)
-                  }
-                  className="p-2 flex gap-1.5 bg-red-500 text-white text-[14px]  items-center   cursor-pointer  rounded-lg transition-colors"
-                >
-                  <GitBranch className="w-4 h-4" /> Work Flow
-                </button>
-                <button className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
-                  <Eye className="w-4 h-4" />
-                </button>
-                <button className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded transition-colors">
-                  <Edit2 className="w-4 h-4" />
-                </button>
-                <button className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+      <div className="px-4 sm:px-6 lg:px-8 py-6">
+        {/* Enhanced Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
+          {stats.map((stat, idx) => (
+            <StatCard
+              key={idx}
+              label={stat.label}
+              value={stat.value}
+              icon={stat.icon}
+              iconColor={stat.iconColor}
+              trend={stat.trend}
+            />
           ))}
         </div>
-      </div>
 
-      {/* Side Drawer */}
-      {isDrawerOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/10 bg-opacity-50 z-[99999] transition-opacity"
-            onClick={() => setIsDrawerOpen(false)}
-          />
+        {/* Professional Filter Bar */}
+        <ProjectFilterBar
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onExport={handleExport}
+          statusOptions={statusFilterOptions}
+          className="mb-6"
+        />
 
-          <div className="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white shadow-2xl z-[100000] flex flex-col">
-            <div className="absolute top-4 right-4 z-10">
-              <button
-                onClick={() => setIsDrawerOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-colors"
-              >
-                <span className="text-xl font-bold">×</span>
-              </button>
-            </div>
-
-            <div className="p-6 pt-16 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">
-                Create New Project
-              </h2>
-              <p className="text-sm text-gray-600 mt-1">
-                Fill in the project details
+        {/* Projects Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
+          {paginatedProjects.length === 0 ? (
+            <div className="col-span-full bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+              <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-sm sm:text-base font-medium text-gray-900 mb-1">
+                No projects found
+              </p>
+              <p className="text-xs sm:text-sm text-gray-500">
+                {filters.search || filters.status !== "all"
+                  ? "Try adjusting your filters"
+                  : "Create your first project"}
               </p>
             </div>
-
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Project Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="projectName"
-                    value={formData.projectName}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                    placeholder="e.g., Building A Construction"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Project Code <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="projectCode"
-                      value={formData.projectCode}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                      placeholder="BA-2025"
-                    />
+          ) : (
+            paginatedProjects.map((project) => (
+              <div
+                key={project.id}
+                className="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+              >
+                {/* Card Header */}
+                <div className="p-5 border-b border-gray-100">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-900 mb-1">
+                        {project.name}
+                      </h3>
+                      <p className="text-sm text-gray-600">{project.code}</p>
+                    </div>
                   </div>
+                  <span
+                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusBadge(
+                      project.status
+                    )}`}
+                  >
+                    {project.status.charAt(0).toUpperCase() +
+                      project.status.slice(1).replace("-", " ")}
+                  </span>
+                </div>
+
+                {/* Card Body */}
+                <div className="p-5 space-y-4">
+                  {/* Progress */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Status <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      name="status"
-                      value={formData.status}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                    >
-                      <option value="planning">Planning</option>
-                      <option value="active">Active</option>
-                      <option value="on-hold">On Hold</option>
-                      <option value="completed">Completed</option>
-                    </select>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">
+                        Progress
+                      </span>
+                      <span className="text-sm font-bold text-gray-900">
+                        {project.progress}%
+                      </span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full ${getProgressColor(
+                          project.progress
+                        )} transition-all duration-300`}
+                        style={{ width: `${project.progress}%` }}
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Location <span className="text-red-500">*</span>
-                  </label>
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d13820.901577242525!2d31.1590912!3d30.001683800000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sar!2seg!4v1761320431231!5m2!1sar!2seg"
-                    width="100%"
-                    height="150"
-                    loading="lazy"
-                  ></iframe>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Project Portofolio Director{" "}
-                    <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="projectPortofolioDirector"
-                    value={formData.projectPortofolioDirector}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                    placeholder="Project Portofolio Director"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Project Director <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="projectDirector"
-                    value={formData.projectDirector}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                    placeholder="Project Director"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Project Manager <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="projectManager"
-                    value={formData.projectManager}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                    placeholder="Project Manager"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Start Date <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="date"
-                      name="startDate"
-                      value={formData.startDate}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                    />
+                  {/* Info Grid */}
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <MapPin className="w-4 h-4 text-gray-400" />
+                      <span className="truncate">{project.location}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Users className="w-4 h-4 text-gray-400" />
+                      <span>{project.team} members</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Calendar className="w-4 h-4 text-gray-400" />
+                      <span>{project.startDate}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Package className="w-4 h-4 text-gray-400" />
+                      <span>{project.totalRequests} requests</span>
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      End Date <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="date"
-                      name="endDate"
-                      value={formData.endDate}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                    />
+
+                  {/* Budget */}
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-gray-600">Budget</span>
+                      <span className="text-xs font-medium text-gray-900">
+                        {formatCurrency(project.budget)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-600">Spent</span>
+                      <span className="text-xs font-medium text-gray-900">
+                        {formatCurrency(project.spent)}
+                      </span>
+                    </div>
+                    <div className="mt-2 w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-blue-500"
+                        style={{
+                          width: `${(project.spent / project.budget) * 100}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Manager & Pending */}
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold">
+                        {project.manager
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-gray-900">
+                          {project.manager}
+                        </p>
+                        <p className="text-xs text-gray-500">Project Manager</p>
+                      </div>
+                    </div>
+                    {project.pendingRequests > 0 && (
+                      <div className="flex items-center gap-1 text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">
+                        <AlertCircle className="w-3 h-3" />
+                        <span className="text-xs font-medium">
+                          {project.pendingRequests} pending
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Budget (SAR) <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    name="budget"
-                    value={formData.budget}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                    placeholder="0"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description
-                  </label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    //@ts-expect-error:rows
-                    rows="4"
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none"
-                    placeholder="Project description and additional details..."
-                  />
+                {/* Card Footer */}
+                <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-2">
+                  <button
+                    onClick={() =>
+                      router.push(`/approval-work-flow/${project.id}`)
+                    }
+                    className="p-2 flex gap-1.5 bg-red-500 text-white text-[14px] items-center cursor-pointer rounded-lg transition-colors hover:bg-red-600"
+                  >
+                    <GitBranch className="w-4 h-4" /> Work Flow
+                  </button>
+                  <button
+                    className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                    title="View"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                  <button
+                    className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
+                    title="Edit"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                    title="Delete"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
-            </div>
+            ))
+          )}
+        </div>
 
-            <div className="p-6 border-t border-gray-200">
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setIsDrawerOpen(false)}
-                  className="flex-1 px-6 py-3 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="flex-1 px-6 py-3 text-white rounded-lg shadow-md hover:opacity-90 transition-opacity font-medium"
-                  style={{ backgroundColor: "#d92335" }}
-                >
-                  Create Project
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+        {/* Pagination */}
+        {filteredProjects.length > 0 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredProjects.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={handlePageChange}
+            onItemsPerPageChange={setItemsPerPage}
+            itemsPerPageOptions={[10, 25, 50, 100]}
+            showItemsPerPage={true}
+          />
+        )}
+      </div>
+
+      {/* Modal */}
+      <CreateProjectModal
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onSubmit={handleSave}
+      />
     </div>
   );
 };
