@@ -63,7 +63,7 @@ const SignupPage = () => {
             <select
               value={userType}
               onChange={(e) => setUserType(e.target.value)}
-              className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all appearance-none bg-white"
+              className="w-full px-4 py-3 pr-10 border border-gray-200 rounded-lg  transition-all appearance-none bg-white"
               style={{
                 backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23374151' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                 backgroundRepeat: 'no-repeat',
@@ -84,7 +84,7 @@ const SignupPage = () => {
                   name="entityType"
                   value={entityType}
                   onChange={(e) => setEntityType(e.target.value)}
-                  className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all appearance-none bg-white"
+                  className="w-full px-4 py-3 pr-10 border border-gray-200 rounded-lg  transition-all appearance-none bg-white"
                   style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23374151' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                     backgroundRepeat: 'no-repeat',
@@ -103,7 +103,7 @@ const SignupPage = () => {
                   value={formData.companyName}
                   onChange={handleInputChange}
                   placeholder="e.g. Acme Corporation"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg  transition-all"
                 />
               </div>
               <div>
@@ -114,7 +114,7 @@ const SignupPage = () => {
                   value={formData.brandName}
                   onChange={handleInputChange}
                   placeholder="e.g. BrightTech Solutions"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg  transition-all"
                 />
               </div>
               <div>
@@ -125,7 +125,7 @@ const SignupPage = () => {
                   value={formData.taxId}
                   onChange={handleInputChange}
                   placeholder="Enter your CR number (e.g. 1010123456)"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg  transition-all"
                 />
               </div>
                <div className='grid grid-cols-2 gap-4'>
@@ -137,7 +137,7 @@ const SignupPage = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="email@example.com"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg  transition-all"
                   />
                 </div>
                 <div>
@@ -148,7 +148,7 @@ const SignupPage = () => {
                     value={formData.telephone}
                     onChange={handleInputChange}
                     placeholder="e.g. +966 55 123 4567"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg  transition-all"
                   />
                 </div>
               </div>
@@ -160,7 +160,7 @@ const SignupPage = () => {
                   value={formData.website}
                   onChange={handleInputChange}
                   placeholder="e.g. https://www.acme.com"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg  transition-all"
                 />
               </div>
               <div>
@@ -171,7 +171,7 @@ const SignupPage = () => {
                   value={formData.logo}
                   onChange={handleInputChange}
                   placeholder="Logo"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg  transition-all"
                 />
               </div>
               <hr />
@@ -194,7 +194,7 @@ const SignupPage = () => {
                 value={formData.firstName}
                 onChange={handleInputChange}
                 placeholder="First Name"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg transition-all"
               />
             </div>
             <div>
@@ -205,7 +205,7 @@ const SignupPage = () => {
                 value={formData.lastName}
                 onChange={handleInputChange}
                 placeholder="Last Name"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg  transition-all"
               />
             </div>
           </div>
@@ -217,7 +217,7 @@ const SignupPage = () => {
               value={formData.email}
               onChange={handleInputChange}
               placeholder="email@example.com"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg  transition-all"
             />
           </div>
           <div>
@@ -228,7 +228,7 @@ const SignupPage = () => {
               value={formData.mobile}
               onChange={handleInputChange}
               placeholder="e.g. +966 55 123 4567"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg  transition-all"
             />
           </div>
           <div>
@@ -239,7 +239,7 @@ const SignupPage = () => {
               value={formData.password}
               onChange={handleInputChange}
               placeholder="Enter your password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg  transition-all"
             />
           </div>
           <div>
@@ -250,7 +250,7 @@ const SignupPage = () => {
               value={formData.confirmPassword}
               onChange={handleInputChange}
               placeholder="Enter your confirm-password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg  transition-all"
             />
           </div>
           <button

@@ -1,16 +1,20 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
-  FaHandshake,
-  FaSearch,
-  FaFilter,
-  FaEye,
-  FaDownload,
-  FaCheckCircle,
-  FaClock,
-  FaTimesCircle,
-} from "react-icons/fa";
+  Handshake,
+  Eye,
+  Download,
+  CheckCircle,
+  Clock,
+  XCircle,
+  TrendingUp,
+} from "lucide-react";
+import PageHeaderWrapper from "@/components/ui/PageHeaderWrapper";
+import StatCard from "@/components/ui/StatCard";
+import Pagination from "@/components/ui/Pagination";
+import Button from "@/components/ui/Button";
+import VendorFilterBar, { VendorFilters } from "./components/VendorFilterBar";
 
 interface MaterialRequest {
   id: string;
@@ -58,52 +62,6 @@ const mockRequests: MaterialRequest[] = [
     contactPerson: "Ahmed Hassan",
     contactEmail: "ahmed.hassan@buildmart.com",
     contactPhone: "+20 100 123 4567",
-    items: [
-      {
-        id: "1",
-        name: "Portland Cement",
-        specification: "Type I, 50kg bags, CEM I 42.5N",
-        quantity: 500,
-        unit: "bags",
-        notes: "Must comply with ASTM C150 standards",
-      },
-      {
-        id: "2",
-        name: "Steel Reinforcement Bars",
-        specification: "Grade 60, 16mm diameter, 12m length",
-        quantity: 2000,
-        unit: "pieces",
-        notes: "Hot-rolled deformed bars",
-      },
-      {
-        id: "3",
-        name: "Ready-Mix Concrete",
-        specification: "Grade C30/37, Slump 150mm",
-        quantity: 150,
-        unit: "m³",
-        notes: "Delivery schedule to be coordinated",
-      },
-    ],
-    attachments: [
-      {
-        id: "1",
-        name: "Technical_Specifications.pdf",
-        size: "2.4 MB",
-        type: "PDF",
-      },
-      {
-        id: "2",
-        name: "Project_Drawings.dwg",
-        size: "5.1 MB",
-        type: "CAD",
-      },
-      {
-        id: "3",
-        name: "BOQ_Template.xlsx",
-        size: "856 KB",
-        type: "Excel",
-      },
-    ],
   },
   {
     id: "2",
@@ -120,30 +78,6 @@ const mockRequests: MaterialRequest[] = [
     contactPerson: "Fatma Ali",
     contactEmail: "fatma.ali@buildmart.com",
     contactPhone: "+20 100 987 6543",
-    items: [
-      {
-        id: "1",
-        name: "Ceramic Floor Tiles",
-        specification: "60x60cm, Porcelain, Grade A",
-        quantity: 5000,
-        unit: "m²",
-      },
-      {
-        id: "2",
-        name: "Interior Paint",
-        specification: "Acrylic emulsion, White base",
-        quantity: 800,
-        unit: "liters",
-      },
-    ],
-    attachments: [
-      {
-        id: "1",
-        name: "Material_List.pdf",
-        size: "1.2 MB",
-        type: "PDF",
-      },
-    ],
   },
   {
     id: "3",
@@ -160,24 +94,16 @@ const mockRequests: MaterialRequest[] = [
     contactPerson: "Mohamed Ibrahim",
     contactEmail: "mohamed.ibrahim@buildmart.com",
     contactPhone: "+20 100 555 7890",
-    items: [
-      {
-        id: "1",
-        name: "LED Lighting Fixtures",
-        specification: "40W, Cool white, IP65",
-        quantity: 300,
-        unit: "pieces",
-      },
-    ],
-    attachments: [],
   },
 ];
 
 const VendorPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [selectedRequest, setSelectedRequest] =
-    useState<MaterialRequest | null>(null);
+  const [filters, setFilters] = useState<VendorFilters>({
+    search: "",
+    status: "all",
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const getStatusBadge = (status: string) => {
     const styles = {
@@ -187,10 +113,10 @@ const VendorPage = () => {
       expired: "bg-red-100 text-red-800 border-red-300",
     };
     const icons = {
-      pending: <FaClock className="text-[12px]" />,
-      reviewed: <FaEye className="text-[12px]" />,
-      responded: <FaCheckCircle className="text-[12px]" />,
-      expired: <FaTimesCircle className="text-[12px]" />,
+      pending: <Clock className="text-[12px]" />,
+      reviewed: <Eye className="text-[12px]" />,
+      responded: <CheckCircle className="text-[12px]" />,
+      expired: <XCircle className="text-[12px]" />,
     };
     return (
       <span
@@ -221,13 +147,43 @@ const VendorPage = () => {
     );
   };
 
-  const filteredRequests = mockRequests.filter((req) => {
-    const matchesSearch =
-      req.rfpNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      req.projectName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterStatus === "all" || req.status === filterStatus;
-    return matchesSearch && matchesFilter;
-  });
+  const filteredRequests = useMemo(() => {
+    return mockRequests.filter((req) => {
+      const matchesSearch =
+        !filters.search ||
+        req.rfpNumber.toLowerCase().includes(filters.search.toLowerCase()) ||
+        req.projectName.toLowerCase().includes(filters.search.toLowerCase());
+      const matchesFilter = filters.status === "all" || req.status === filters.status;
+      return matchesSearch && matchesFilter;
+    });
+  }, [mockRequests, filters]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
+
+  const paginatedRequests = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredRequests.slice(startIndex, endIndex);
+  }, [filteredRequests, currentPage, itemsPerPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleExport = () => {
+    console.log("Exporting requests...", filteredRequests);
+  };
+
+  const handleFiltersChange = (newFilters: VendorFilters) => {
+    setFilters(newFilters);
+  };
 
   const stats = {
     total: mockRequests.length,
@@ -236,220 +192,208 @@ const VendorPage = () => {
     responded: mockRequests.filter((r) => r.status === "responded").length,
   };
 
+  const statsData = [
+    {
+      label: "Total Requests",
+      value: String(stats.total),
+      icon: Handshake,
+      iconColor: "text-blue-500",
+      trend: "up" as const,
+    },
+    {
+      label: "Pending",
+      value: String(stats.pending),
+      icon: Clock,
+      iconColor: "text-yellow-500",
+      trend: "neutral" as const,
+    },
+    {
+      label: "Reviewed",
+      value: String(stats.reviewed),
+      icon: Eye,
+      iconColor: "text-blue-500",
+      trend: "up" as const,
+    },
+    {
+      label: "Responded",
+      value: String(stats.responded),
+      icon: CheckCircle,
+      iconColor: "text-green-500",
+      trend: "up" as const,
+    },
+  ];
+
+  const statusFilterOptions = [
+    { value: "pending", label: "Pending" },
+    { value: "reviewed", label: "Reviewed" },
+    { value: "responded", label: "Responded" },
+    { value: "expired", label: "Expired" },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <FaHandshake className="text-red-600 text-[32px]" />
-          <h1 className="text-3xl font-bold text-gray-800">
-            Vendor Portal - Material Requests
-          </h1>
-        </div>
-        <p className="text-gray-600 ml-11">
-          Review and respond to incoming RFPs and material requests
-        </p>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Enhanced Header */}
+      <PageHeaderWrapper
+        title="Vendor Portal - Material Requests"
+        description="Review and respond to incoming RFPs and material requests"
+        sticky={true}
+        zIndex={40}
+      />
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500 text-sm font-medium">
-                Total Requests
-              </p>
-              <p className="text-2xl font-bold text-gray-800 mt-1">
-                {stats.total}
-              </p>
-            </div>
-            <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-              <FaHandshake className="text-blue-600 text-[20px]" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500 text-sm font-medium">Pending</p>
-              <p className="text-2xl font-bold text-yellow-600 mt-1">
-                {stats.pending}
-              </p>
-            </div>
-            <div className="w-12 h-12 bg-yellow-50 rounded-lg flex items-center justify-center">
-              <FaClock className="text-yellow-600 text-[20px]" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500 text-sm font-medium">Reviewed</p>
-              <p className="text-2xl font-bold text-blue-600 mt-1">
-                {stats.reviewed}
-              </p>
-            </div>
-            <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-              <FaEye className="text-blue-600 text-[20px]" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500 text-sm font-medium">Responded</p>
-              <p className="text-2xl font-bold text-green-600 mt-1">
-                {stats.responded}
-              </p>
-            </div>
-            <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-              <FaCheckCircle className="text-green-600 text-[20px]" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters and Search */}
-      <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm mb-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by RFP number or project name..."
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+      <div className="px-4 sm:px-6 lg:px-8 py-6">
+        {/* Enhanced Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
+          {statsData.map((stat, idx) => (
+            <StatCard
+              key={idx}
+              label={stat.label}
+              value={stat.value}
+              icon={stat.icon}
+              iconColor={stat.iconColor}
+              trend={stat.trend}
             />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <FaFilter className="text-gray-500" />
-            <div className="relative w-max">
-              <select
-                className="appearance-none pr-4  pl-6 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none text-sm bg-white cursor-pointer"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="reviewed">Reviewed</option>
-                <option value="responded">Responded</option>
-                <option value="expired">Expired</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pl-4 pr-2 text-gray-700">
-                <svg className="h-4 w-4 fill-current " viewBox="0 0 20 20">
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
-      </div>
 
-      {/* Requests Table */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  RFP Number
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Project Name
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Department
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Request Date
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Due Date
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Items
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Priority
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredRequests.map((request) => (
-                <tr
-                  key={request.id}
-                  className="hover:bg-gray-50 transition-colors"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-semibold text-red-600">
-                      {request.rfpNumber}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-gray-800 font-medium">
-                      {request.projectName}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-600">
-                      {request.department}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-600">
-                      {request.requestDate}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-600">
-                      {request.dueDate}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-800 font-medium">
-                      {request.itemsCount} items
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getPriorityBadge(request.priority)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getStatusBadge(request.status)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <Link href={`vendor/RFBs-details/${request.id}`}>
-                        <button className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer">
-                          <FaEye className="text-[16px]" />
-                        </button>
-                      </Link>
-                    </div>
-                  </td>
+        {/* Professional Filter Bar */}
+        <VendorFilterBar
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onExport={handleExport}
+          statusOptions={statusFilterOptions}
+          className="mb-6"
+        />
+
+        {/* Enhanced Requests Table */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[1000px]">
+              <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
+                <tr>
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    RFP Number
+                  </th>
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Project Name
+                  </th>
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Department
+                  </th>
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Request Date
+                  </th>
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Due Date
+                  </th>
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Items
+                  </th>
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Priority
+                  </th>
+                  <th className="px-4 sm:px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-4 sm:px-6 py-3.5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {filteredRequests.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No requests found</p>
-            <p className="text-gray-400 text-sm mt-1">
-              Try adjusting your search or filter criteria
-            </p>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {paginatedRequests.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={9}
+                      className="px-4 sm:px-6 py-12 sm:py-16 text-center"
+                    >
+                      <div className="flex flex-col items-center justify-center">
+                        <Handshake className="w-12 h-12 text-gray-400 mb-3" />
+                        <p className="text-sm sm:text-base font-medium text-gray-900 mb-1">
+                          No requests found
+                        </p>
+                        <p className="text-xs sm:text-sm text-gray-500">
+                          {filters.search || filters.status !== "all"
+                            ? "Try adjusting your filters"
+                            : "No material requests available"}
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedRequests.map((request) => (
+                    <tr
+                      key={request.id}
+                      className="hover:bg-gray-50 transition-colors duration-150"
+                    >
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm font-semibold text-red-600">
+                          {request.rfpNumber}
+                        </span>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4">
+                        <span className="text-sm text-gray-800 font-medium">
+                          {request.projectName}
+                        </span>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm text-gray-600">
+                          {request.department}
+                        </span>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm text-gray-600">
+                          {request.requestDate}
+                        </span>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm text-gray-600">
+                          {request.dueDate}
+                        </span>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm text-gray-800 font-medium">
+                          {request.itemsCount} items
+                        </span>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        {getPriorityBadge(request.priority)}
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        {getStatusBadge(request.status)}
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center justify-center gap-2">
+                          <Link href={`vendor/RFBs-details/${request.id}`}>
+                            <button
+                              className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
+                              title="View Details"
+                            >
+                              <Eye className="text-[16px]" />
+                            </button>
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
-        )}
+
+          {/* Pagination */}
+          {filteredRequests.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredRequests.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={handlePageChange}
+              onItemsPerPageChange={setItemsPerPage}
+              itemsPerPageOptions={[10, 25, 50, 100]}
+              showItemsPerPage={true}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

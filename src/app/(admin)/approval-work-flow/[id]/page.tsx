@@ -17,11 +17,13 @@ import {
   X,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
+import { useBreadcrumbContext } from "@/contexts/BreadcrumbContext";
 
 const ApprovalWorkflowPage = () => {
   const params = useParams();
   const router = useRouter();
   const projectId = params?.id as string;
+  const { setBreadcrumbs } = useBreadcrumbContext();
 
   // States
   const [steps, setSteps] = useState([
@@ -74,6 +76,15 @@ const ApprovalWorkflowPage = () => {
   ];
 
   // Effects
+  useEffect(() => {
+    // Set custom breadcrumbs for this dynamic route
+    setBreadcrumbs([
+      { label: "Home", href: "/dashboard" },
+      { label: "Approval Workflow", href: "/approval-work-flow" },
+      { label: `Project ${projectId || "Details"}` },
+    ]);
+  }, [projectId, setBreadcrumbs]);
+
   useEffect(() => {
     if (projectId) {
       const allProjects = [
@@ -327,7 +338,7 @@ const ApprovalWorkflowPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="px-4 sm:px-6 py-8">
+      <div className="sm:px-6 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Project Information Card */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
@@ -470,7 +481,7 @@ const ApprovalWorkflowPage = () => {
                                     newSteps[index].decisionData.team = e.target.value;
                                     setSteps(newSteps);
                                   }}
-                                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none appearance-none bg-white pr-10"
+                                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg  outline-none appearance-none bg-white pr-10"
                                 >
                                   {teams.map((team) => (
                                     <option key={team} value={team}>
@@ -584,7 +595,7 @@ const ApprovalWorkflowPage = () => {
                               onChange={(e) =>
                                 handleUpdateStep(index, "team", e.target.value)
                               }
-                              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none appearance-none bg-white pr-10"
+                              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg  outline-none appearance-none bg-white pr-10"
                             >
                               {teams.map((team) => (
                                 <option key={team} value={team}>
@@ -614,7 +625,7 @@ const ApprovalWorkflowPage = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none appearance-none bg-white pr-10"
+                                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg  outline-none appearance-none bg-white pr-10"
                               >
                                 {actions.map((action) => (
                                   <option
@@ -684,7 +695,7 @@ const ApprovalWorkflowPage = () => {
                         Assigned Team
                       </label>
                       <div className="relative">
-                        <select className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none appearance-none bg-white pr-10">
+                        <select className="w-full px-4 py-2.5 border border-gray-200 rounded-lg  outline-none appearance-none bg-white pr-10">
                           {teams.map((team) => (
                             <option key={team} value={team}>
                               {team}
@@ -782,7 +793,7 @@ const ApprovalWorkflowPage = () => {
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none appearance-none bg-white pr-10"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg  outline-none appearance-none bg-white pr-10"
                   >
                     <option value="">Select a category...</option>
                     {categories.map((category) => (
@@ -803,7 +814,7 @@ const ApprovalWorkflowPage = () => {
                   setShowPreviousModal(false);
                   setSelectedCategory("");
                 }}
-                className="flex-1 px-4 py-2.5 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                className="flex-1 px-4 py-2.5 bg-white text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors font-medium"
               >
                 Cancel
               </button>
